@@ -1,0 +1,5 @@
+﻿     Creating library D:\Universitat\-Programming-\Game Dev 1\Handouts\dev_class00-01_handout\dev_class01_handout\Debug\Dev Class01 Handout.lib and object D:\Universitat\-Programming-\Game Dev 1\Handouts\dev_class00-01_handout\dev_class01_handout\Debug\Dev Class01 Handout.exp
+physfs.lib(physfs.obj) : error LNK2019: unresolved external symbol __imp__sprintf referenced in function _PHYSFS_setSaneConfig
+SDL2main.lib(SDL_windows_main.obj) : error LNK2019: unresolved external symbol __imp__fprintf referenced in function _ShowError
+SDL2main.lib(SDL_windows_main.obj) : error LNK2019: unresolved external symbol __imp____iob_func referenced in function _ShowError
+D:\Universitat\-Programming-\Game Dev 1\Handouts\dev_class00-01_handout\dev_class01_handout\Debug\Dev Class01 Handout.exe : fatal error LNK1120: 3 unresolved externals
