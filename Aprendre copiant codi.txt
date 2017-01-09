@@ -1,0 +1,13 @@
+1-Crear Archiu de Visual Studio on tindrem TOT el codi de cada part (anirem copiant)
+  i copiar tot el sistema de headers, cpps, carpetes,... que hi hagi en cada handout
+  anar ampliant si fa falta.
+
+2-Agafar Handout que toqui començar a aprendre
+
+3-Mirar Todo X, llegir que et demana i copia la solucio des de el handout seguent.
+
+4- Al acabar cada TODO copiar en el Archiu apart en ordre amb la explicacio
+   que dona abans de cada funcio.
+
+5-Loop desde 2. Quan acabes un handout, tanques un, agafes el de referencia i
+  aprendre d'aquell obrint el seguent d'aquell de referencia.
