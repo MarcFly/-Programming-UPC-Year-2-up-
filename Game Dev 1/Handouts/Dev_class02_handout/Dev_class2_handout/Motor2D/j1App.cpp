@@ -67,6 +67,8 @@ bool j1App::Awake()
 	// pugi using load_buffer() method. If everything goes well, load
 	// the top tag inside the xml_node property created in the last TODO
 	// ---
+	size_t size = ;
+	doc.load_buffer( "config.xml", , 116U, );
 
 	p2List_item<j1Module*>* item;
 	item = modules.start;

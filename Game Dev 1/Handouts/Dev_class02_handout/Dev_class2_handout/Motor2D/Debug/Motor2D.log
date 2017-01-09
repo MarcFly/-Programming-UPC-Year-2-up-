@@ -1,0 +1,17 @@
+﻿  pugixml.cpp
+  j1Window.cpp
+  j1Textures.cpp
+  j1Render.cpp
+  p2Log.cpp
+  j1Scene.cpp
+  j1Input.cpp
+  j1Audio.cpp
+  j1App.cpp
+d:\universitat\-programming-\game dev 1\handouts\dev_class02_handout\dev_class2_handout\motor2d\j1app.cpp(70): error C2059: syntax error: ';'
+d:\universitat\-programming-\game dev 1\handouts\dev_class02_handout\dev_class2_handout\motor2d\j1app.cpp(71): error C2059: syntax error: ','
+  j1Main.cpp
+  j1FileSystem.cpp
+d:\universitat\-programming-\game dev 1\handouts\dev_class02_handout\dev_class2_handout\motor2d\j1filesystem.cpp(88): warning C4244: 'initializing': conversion from 'PHYSFS_sint64' to 'PHYSFS_sint32', possible loss of data
+d:\universitat\-programming-\game dev 1\handouts\dev_class02_handout\dev_class2_handout\motor2d\j1filesystem.cpp(93): warning C4244: 'initializing': conversion from 'PHYSFS_sint64' to 'int', possible loss of data
+d:\universitat\-programming-\game dev 1\handouts\dev_class02_handout\dev_class2_handout\motor2d\j1filesystem.cpp(146): warning C4244: 'initializing': conversion from 'PHYSFS_sint64' to 'unsigned int', possible loss of data
+  Generating Code...

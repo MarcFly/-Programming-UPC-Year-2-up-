@@ -76,6 +76,9 @@ public:
 	j1Scene*			scene;
 	j1FileSystem*		fs;
 
+	pugi::xml_document doc;
+	pugi::xml_node node;
+
 private:
 
 	p2List<j1Module*>	modules;

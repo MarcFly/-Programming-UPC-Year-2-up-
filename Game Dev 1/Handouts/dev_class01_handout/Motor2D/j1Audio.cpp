@@ -44,7 +44,7 @@ bool j1Audio::Awake()
 	if(Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
 	{
 		LOG("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
-		ret = false;
+		ret = true;
 	}
 
 	return ret;
@@ -93,7 +93,8 @@ bool j1Audio::PlayMusic(const char* path, float fade_time)
 	}
 
 	// TODO 6: Same as with the textures, use the proper RW loading function
-	music = Mix_LoadMUS(path);
+	//music = Mix_LoadMUS(path);
+	music = Mix_LoadMUS_RW(App->fs->Load(path), 1);
 
 	if(music == NULL)
 	{
