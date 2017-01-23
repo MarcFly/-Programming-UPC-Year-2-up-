@@ -86,11 +86,17 @@ bool j1Scene::Update(float dt)
 	// Gui ---
 	
 	// -------
+
+	//H3 TODO 5: Call load / save methods when pressing l/s
+
 	if(App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN)
 		App->LoadGame("save_game.xml");
 
 	if(App->input->GetKey(SDL_SCANCODE_S) == KEY_DOWN)
 		App->SaveGame("save_game.xml");
+
+	//
+
 
 	if(App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 		App->render->camera.y += floor(200.0f * dt);

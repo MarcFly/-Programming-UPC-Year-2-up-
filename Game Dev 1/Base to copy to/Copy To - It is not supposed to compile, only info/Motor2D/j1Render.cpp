@@ -83,6 +83,8 @@ bool j1Render::CleanUp()
 }
 
 // Load Game State
+//H3 TODO 6: Create a method to load the state
+// for now it will be camera's x and y
 bool j1Render::Load(pugi::xml_node& data)
 {
 	camera.x = data.child("camera").attribute("x").as_int();
@@ -90,8 +92,11 @@ bool j1Render::Load(pugi::xml_node& data)
 
 	return true;
 }
+//
 
 // Save Game State
+//H3 TODO 8: Create a method to save the state
+// using append_child and append_attribute
 bool j1Render::Save(pugi::xml_node& data) const
 {
 	pugi::xml_node cam = data.append_child("camera");
@@ -101,6 +106,8 @@ bool j1Render::Save(pugi::xml_node& data) const
 
 	return true;
 }
+//
+
 
 void j1Render::SetBackgroundColor(SDL_Color color)
 {

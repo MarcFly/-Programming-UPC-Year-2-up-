@@ -62,15 +62,19 @@ public:
 		return true;
 	}
 
-	virtual bool Load(pugi::xml_node&)
+	//H3 TODO 2: Create new virtual methods to Load and Save
+
+	virtual bool Load(pugi::xml_node&) //Loads a state saved to a node ?
 	{
 		return true;
 	}
 
-	virtual bool Save(pugi::xml_node&) const
+	virtual bool Save(pugi::xml_node&) const //Saves a state to a node ?
 	{
 		return true;
 	}
+
+	//
 
 public:
 

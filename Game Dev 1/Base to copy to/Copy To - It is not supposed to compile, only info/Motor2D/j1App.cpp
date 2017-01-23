@@ -236,11 +236,14 @@ void j1App::PrepareUpdate()
 // ---------------------------------------------
 void j1App::FinishUpdate()
 {
+	//H3 TODO 1: This is a good place to call load / Save functions
+	// Checks if we have called for a save or load in the last frame
 	if(want_to_save == true)
 		SavegameNow();
 
 	if(want_to_load == true)
 		LoadGameNow();
+	//
 
 	// Framerate calculations --
 
@@ -410,14 +413,22 @@ void j1App::GetSaveGames(p2List<p2SString>& list_to_fill) const
 	// need to add functionality to file_system module for this to work
 }
 
+
+//H3 TODO 3: Create a simulation of the xml file to read
+//   ????
+
+
+//H3 TODO 4: Create a method to actually load an xml file
+// then call all the modules to load themselves
+
 bool j1App::LoadGameNow()
 {
 	bool ret = false;
 
 	char* buffer;
-	uint size = fs->Load(load_game.GetString(), &buffer);
+	uint size = fs->Load(load_game.GetString(), &buffer); //Check there is data
 
-	if(size > 0)
+	if(size > 0) //""
 	{
 		pugi::xml_document data;
 		pugi::xml_node root;
@@ -456,6 +467,15 @@ bool j1App::LoadGameNow()
 	return ret;
 }
 
+//
+
+//H3 TODO 7: Create a method to save the current state
+// First fill a pugui::xml_document
+// Then put it all in memory with
+// std::stringstream stream;
+// my_xml_document.save(stream);
+// then access it via stream.str().c_str()
+
 bool j1App::SavegameNow() const
 {
 	bool ret = true;
@@ -492,3 +512,5 @@ bool j1App::SavegameNow() const
 	want_to_save = false;
 	return ret;
 }
+
+//
