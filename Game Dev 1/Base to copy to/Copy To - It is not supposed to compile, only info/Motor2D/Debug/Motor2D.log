@@ -1,37 +1,7 @@
-﻿  pugixml.cpp
-  j1Window.cpp
-  j1Textures.cpp
-  j1Render.cpp
-  p2Log.cpp
-  j1Timer.cpp
-  j1Scene.cpp
+﻿  j1Scene.cpp
 d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1scene.cpp(102): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
 d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1scene.cpp(105): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
 d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1scene.cpp(108): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
 d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1scene.cpp(111): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
-  j1PerfTimer.cpp
-  j1Pathfinding.cpp
-d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\p2point.h(114): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-  d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\p2point.h(110): note: while compiling class template member function 'int p2Point<int>::DistanceTo(const p2Point<int> &) const'
-  d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1pathfinding.cpp(160): note: see reference to function template instantiation 'int p2Point<int>::DistanceTo(const p2Point<int> &) const' being compiled
-  d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1pathfinding.h(81): note: see reference to class template instantiation 'p2Point<int>' being compiled
-d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\p2point.h(114): warning C4244: 'return': conversion from 'float' to 'int', possible loss of data
-  j1Map.cpp
-d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(107): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(108): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-  j1Input.cpp
-  j1Audio.cpp
-  j1App.cpp
-d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1app.cpp(267): warning C4018: '<': signed/unsigned mismatch
-d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1app.cpp(263): warning C4477: 'sprintf_s' : format string '%lu' requires an argument of type 'unsigned long', but variadic argument 6 has type 'uint64'
-  d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1app.cpp(263): note: consider using '%llu' in the format string
-  d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1app.cpp(263): note: consider using '%I64u' in the format string
-  j1Main.cpp
-  j1Gui.cpp
-  j1Fonts.cpp
-  j1FileSystem.cpp
-  Generating Code...
-     Creating library D:\Universitat\-Programming-\Game Dev 1\Base to copy to\Copy To - It is not supposed to compile, only info\Debug\Development - Class 11 Handout.lib and object D:\Universitat\-Programming-\Game Dev 1\Base to copy to\Copy To - It is not supposed to compile, only info\Debug\Development - Class 11 Handout.exp
-physfs.lib(physfs.obj) : warning LNK4217: locally defined symbol _sprintf imported in function _PHYSFS_setSaneConfig
   Motor2D.vcxproj -> D:\Universitat\-Programming-\Game Dev 1\Base to copy to\Copy To - It is not supposed to compile, only info\Debug\Development - Class 11 Handout.exe
   Motor2D.vcxproj -> D:\Universitat\-Programming-\Game Dev 1\Base to copy to\Copy To - It is not supposed to compile, only info\Debug\Development - Class 11 Handout.pdb (Full PDB)

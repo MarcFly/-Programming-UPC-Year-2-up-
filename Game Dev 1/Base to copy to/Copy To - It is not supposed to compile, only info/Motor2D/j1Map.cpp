@@ -32,6 +32,10 @@ void j1Map::Draw()
 	if(map_loaded == false)
 		return;
 
+	
+	// TODO 6: Iterate all tilesets and draw all their 
+	// images in 0,0 (you should have only one tileset for now)
+	
 	p2List_item<MapLayer*>* item = data.layers.start;
 
 	for(; item != NULL; item = item->next)
@@ -58,6 +62,7 @@ void j1Map::Draw()
 			}
 		}
 	}
+	//
 }
 
 int Properties::Get(const char* value, int default_value) const
@@ -207,10 +212,15 @@ bool j1Map::Load(const char* file_name)
 	// Load general info ----------------------------------------------
 	if(ret == true)
 	{
+		//H4 TODO 3: Create and call a private function to load and fill
+		// all your map data
 		ret = LoadMap();
+		//
 	}
 
 	// Load all tilesets info ----------------------------------------------
+	//H4 TODO 4: Create and call a private function to load a tileset
+	// remember to support more any number of tilesets!
 	pugi::xml_node tileset;
 	for(tileset = map_file.child("map").child("tileset"); tileset && ret; tileset = tileset.next_sibling("tileset"))
 	{
@@ -228,19 +238,25 @@ bool j1Map::Load(const char* file_name)
 
 		data.tilesets.add(set);
 	}
+	//
+
 
 	// Load layer info ----------------------------------------------
+	//H4 HW 1 Load all Layers
 	pugi::xml_node layer;
-	for(layer = map_file.child("map").child("layer"); layer && ret; layer = layer.next_sibling("layer"))
+	for (layer = map_file.child("map").child("layer"); layer && ret; layer = layer.next_sibling("layer"))
 	{
 		MapLayer* lay = new MapLayer();
 
 		ret = LoadLayer(layer, lay);
 
-		if(ret == true)
+		if (ret == true)
 			data.layers.add(lay);
 	}
+	//
 
+	//H4 TODO 5: LOG all the data loaded
+	// iterate all tilesets and LOG everything
 	if(ret == true)
 	{
 		LOG("Successfully parsed map XML file: %s", file_name);
@@ -268,6 +284,7 @@ bool j1Map::Load(const char* file_name)
 			item_layer = item_layer->next;
 		}
 	}
+	//
 
 	map_loaded = ret;
 
@@ -275,6 +292,8 @@ bool j1Map::Load(const char* file_name)
 }
 
 // Load map general properties
+//H4 TODO 3: Create and call a private function to load and fill
+// all your map data
 bool j1Map::LoadMap()
 {
 	bool ret = true;
@@ -339,6 +358,8 @@ bool j1Map::LoadMap()
 
 	return ret;
 }
+//
+
 
 bool j1Map::LoadTilesetDetails(pugi::xml_node& tileset_node, TileSet* set)
 {
