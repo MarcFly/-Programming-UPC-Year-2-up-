@@ -35,6 +35,7 @@ struct Properties
 };
 
 // ----------------------------------------------------
+//H5 TODO 1: Create a struct for the map layer
 struct MapLayer
 {
 	p2SString	name;
@@ -50,11 +51,12 @@ struct MapLayer
 	{
 		RELEASE(data);
 	}
-
+	//H5 TODO 6: Inside struct for the layer, create a short method to get the value of x,y
 	inline uint Get(int x, int y) const
 	{
 		return data[(y*width) + x];
 	}
+	//
 };
 
 // ----------------------------------------------------
@@ -98,7 +100,10 @@ struct MapData
 	SDL_Color			background_color;
 	MapTypes			type;
 	p2List<TileSet*>	tilesets;
+
+	//H5 TODO 2: Add a list/array of layers to the map!
 	p2List<MapLayer*>	layers;
+	//
 };
 
 // ----------------------------------------------------
@@ -123,7 +128,10 @@ public:
 	// Load new map
 	bool Load(const char* path);
 
+	//H5 TODO 8
 	iPoint MapToWorld(int x, int y) const;
+	//
+
 	iPoint WorldToMap(int x, int y) const;
 	bool CreateWalkabilityMap(int& width, int& height, uchar** buffer) const;
 
@@ -132,7 +140,12 @@ private:
 	bool LoadMap();
 	bool LoadTilesetDetails(pugi::xml_node& tileset_node, TileSet* set);
 	bool LoadTilesetImage(pugi::xml_node& tileset_node, TileSet* set);
+
+	//H5 TODO 3: Create a method that loads a single layer
+	//bool LoadLayer(pugi::xml_node& node, your_layer_struct* layer);
 	bool LoadLayer(pugi::xml_node& node, MapLayer* layer);
+	//
+
 	bool LoadProperties(pugi::xml_node& node, Properties& properties);
 
 	TileSet* GetTilesetFromTileId(int id) const;

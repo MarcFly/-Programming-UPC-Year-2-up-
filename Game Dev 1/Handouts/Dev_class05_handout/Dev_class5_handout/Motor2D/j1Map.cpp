@@ -106,6 +106,7 @@ bool j1Map::Load(const char* file_name)
 	}
 
 	// TODO 4: Iterate all layers and load each of them
+	//Similar to Load tilesets
 
 	if(ret == true)
 	{

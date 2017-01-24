@@ -33,9 +33,18 @@ void j1Map::Draw()
 		return;
 
 	
-	// TODO 6: Iterate all tilesets and draw all their 
+	//H4 TODO 6: Iterate all tilesets and draw all their 
 	// images in 0,0 (you should have only one tileset for now)
-	
+
+	//H5 TODO 5: Prepare the loop to draw all tilesets + Blit
+	// We draw 1 tile each time
+		// Each have a x, y
+		// We transform to 1 dimension
+		// Later we read tileset sprite id
+		// Then find out their tileset Rect
+		// Now find tile place in theworld
+		// Now we can Blit!
+
 	p2List_item<MapLayer*>* item = data.layers.start;
 
 	for(; item != NULL; item = item->next)
@@ -49,16 +58,19 @@ void j1Map::Draw()
 		{
 			for(int x = 0; x < data.width; ++x)
 			{
-				int tile_id = layer->Get(x, y);
+				//H5 TODO 9: Complete the draw function
+
+				int tile_id = layer->Get(x, y); // Each have a x, y; and transform to 1 dimension
 				if(tile_id > 0)
 				{
-					TileSet* tileset = GetTilesetFromTileId(tile_id);
+					TileSet* tileset = GetTilesetFromTileId(tile_id); // Later we read tileset sprite id
 
-					SDL_Rect r = tileset->GetTileRect(tile_id);
-					iPoint pos = MapToWorld(x, y);
+					SDL_Rect r = tileset->GetTileRect(tile_id); // Then find out their tileset Rect
+					iPoint pos = MapToWorld(x, y); // Now find tile place in theworld
 
-					App->render->Blit(tileset->texture, pos.x, pos.y, &r);
+					App->render->Blit(tileset->texture, pos.x, pos.y, &r); // Now we can Blit!
 				}
+				//
 			}
 		}
 	}
@@ -98,6 +110,7 @@ TileSet* j1Map::GetTilesetFromTileId(int id) const
 	return set;
 }
 
+//H5 TODO 8: Create a method that translates x,y coordinates from map positions to world positions
 iPoint j1Map::MapToWorld(int x, int y) const
 {
 	iPoint ret;
@@ -107,11 +120,15 @@ iPoint j1Map::MapToWorld(int x, int y) const
 		ret.x = x * data.tile_width;
 		ret.y = y * data.tile_height;
 	}
+	
+	//H6 TODO 1 Case Isometric
 	else if(data.type == MAPTYPE_ISOMETRIC)
 	{
 		ret.x = (x - y) * (data.tile_width * 0.5f);
 		ret.y = (x + y) * (data.tile_height * 0.5f);
 	}
+	//
+
 	else
 	{
 		LOG("Unknown map type");
@@ -120,16 +137,21 @@ iPoint j1Map::MapToWorld(int x, int y) const
 
 	return ret;
 }
+//
 
+//H4 TODO x?
 iPoint j1Map::WorldToMap(int x, int y) const
 {
 	iPoint ret(0,0);
-
+	//H6 TODO 2: Add orthographic world to map coordinates
 	if(data.type == MAPTYPE_ORTHOGONAL)
 	{
 		ret.x = x / data.tile_width;
 		ret.y = y / data.tile_height;
 	}
+	//
+
+	//H6 TODO 3: Add the case for isometric maps to WorldToMap
 	else if(data.type == MAPTYPE_ISOMETRIC)
 	{
 		
@@ -138,6 +160,8 @@ iPoint j1Map::WorldToMap(int x, int y) const
 		ret.x = int( (x / half_width + y / half_height) / 2) - 1;
 		ret.y = int( (y / half_height - (x / half_width)) / 2);
 	}
+	//
+
 	else
 	{
 		LOG("Unknown map type");
@@ -147,6 +171,9 @@ iPoint j1Map::WorldToMap(int x, int y) const
 	return ret;
 }
 
+// TODO 7: Create a method that receives a tile id and returns it's Rectfind the Rect associated with a specific tile id
+//Orthogonal: ret.x = x * tile_width   ret.y = y * tile_height
+//Isometric:  ret.x = (x - y) * (tile width * 0.5f)      ret.y = (x + y) * (tile_height * 0.5f)
 SDL_Rect TileSet::GetTileRect(int id) const
 {
 	int relative_id = id - firstgid;
@@ -157,8 +184,9 @@ SDL_Rect TileSet::GetTileRect(int id) const
 	rect.y = margin + ((rect.h + spacing) * (relative_id / num_tiles_width));
 	return rect;
 }
+//
 
-// Called before quitting
+// Called before quitting, Clean up all things
 bool j1Map::CleanUp()
 {
 	LOG("Unloading map");
@@ -242,7 +270,8 @@ bool j1Map::Load(const char* file_name)
 
 
 	// Load layer info ----------------------------------------------
-	//H4 HW 1 Load all Layers
+	//H5 TODO 4: Iterate all layers and load each of them
+	//Similar to Load tilesets
 	pugi::xml_node layer;
 	for (layer = map_file.child("map").child("layer"); layer && ret; layer = layer.next_sibling("layer"))
 	{
