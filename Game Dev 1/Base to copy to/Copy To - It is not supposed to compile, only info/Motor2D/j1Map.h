@@ -3,10 +3,12 @@
 
 #include "PugiXml/src/pugixml.hpp"
 #include "p2List.h"
+#include "p2Queue.h"
 #include "p2Point.h"
 #include "j1Module.h"
 
 // ----------------------------------------------------
+//H7 TODO 5: Create a generic structure to hold properties
 struct Properties
 {
 	struct Property
@@ -29,7 +31,9 @@ struct Properties
 		list.clear();
 	}
 
+	//H7 TODO 7
 	int Get(const char* name, int default_value = 0) const;
+	//
 
 	p2List<Property*>	list;
 };
@@ -133,6 +137,14 @@ public:
 	//
 
 	iPoint WorldToMap(int x, int y) const;
+
+	//H7.5 BFS
+	void PropagateBFS();
+	void DrawBFS();
+	bool IsWalkable(int x, int y) const;
+	void ResetBFS();
+
+
 	bool CreateWalkabilityMap(int& width, int& height, uchar** buffer) const;
 
 private:
@@ -159,6 +171,11 @@ private:
 	pugi::xml_document	map_file;
 	p2SString			folder;
 	bool				map_loaded;
+
+	/// BFS
+	p2Queue<iPoint>		frontier;
+	p2List<iPoint>		visited;
+
 };
 
 #endif // __j1MAP_H__

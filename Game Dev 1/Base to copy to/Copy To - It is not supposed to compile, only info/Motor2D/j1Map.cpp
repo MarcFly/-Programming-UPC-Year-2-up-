@@ -27,25 +27,71 @@ bool j1Map::Awake(pugi::xml_node& config)
 	return ret;
 }
 
+void j1Map::ResetBFS()
+{
+	frontier.Clear();
+	visited.clear();
+	frontier.Push(iPoint(19, 4));
+	visited.add(iPoint(19, 4));
+}
+
+void j1Map::PropagateBFS()
+{
+	//H7.5 TODO 1: If frontier queue contains elements
+	// pop the last one and calculate its 4 neighbors
+
+	//H7.5 TODO 2: For each neighbor, if not visited, add it
+	// to the frontier queue and visited list
+}
+
+void j1Map::DrawBFS()
+{
+	iPoint point;
+
+	// Draw visited
+	p2List_item<iPoint>* item = visited.start;
+
+	while (item)
+	{
+		point = item->data;
+		TileSet* tileset = GetTilesetFromTileId(26);
+
+		SDL_Rect r = tileset->GetTileRect(26);
+		iPoint pos = MapToWorld(point.x, point.y);
+
+		App->render->Blit(tileset->texture, pos.x, pos.y, &r);
+
+		item = item->next;
+	}
+
+	// Draw frontier
+	for (uint i = 0; i < frontier.Count(); ++i)
+	{
+		point = *(frontier.Peek(i));
+		TileSet* tileset = GetTilesetFromTileId(25);
+
+		SDL_Rect r = tileset->GetTileRect(25);
+		iPoint pos = MapToWorld(point.x, point.y);
+
+		App->render->Blit(tileset->texture, pos.x, pos.y, &r);
+	}
+}
+
+bool j1Map::IsWalkable(int x, int y) const
+{
+	//H7.5 TODO 3: return true only if x and y are within map limits
+	// and the tile is walkable (tile id 0 in the navigation layer)
+	return true;
+}
+
 void j1Map::Draw()
 {
 	if(map_loaded == false)
 		return;
 
-	
-	//H4 TODO 6: Iterate all tilesets and draw all their 
-	// images in 0,0 (you should have only one tileset for now)
-
-	//H5 TODO 5: Prepare the loop to draw all tilesets + Blit
-	// We draw 1 tile each time
-		// Each have a x, y
-		// We transform to 1 dimension
-		// Later we read tileset sprite id
-		// Then find out their tileset Rect
-		// Now find tile place in theworld
-		// Now we can Blit!
-
 	p2List_item<MapLayer*>* item = data.layers.start;
+
+	//H7 TODO 4: Make sure we draw all the layers and not just the first one
 
 	for(; item != NULL; item = item->next)
 	{
@@ -53,6 +99,12 @@ void j1Map::Draw()
 
 		if(layer->properties.Get("Nodraw") != 0)
 			continue;
+
+		//H4 TODO 6: Iterate all tilesets and draw all their 
+		// images in 0,0 (you should have only one tileset for now)
+
+		//H5 TODO 5: Prepare the loop to draw all tilesets + Blit
+		// We draw 1 tile each time
 
 		for(int y = 0; y < data.height; ++y)
 		{
@@ -77,6 +129,8 @@ void j1Map::Draw()
 	//
 }
 
+//H7 TODO 7: Our custom properties should have one method
+// to ask for the value of a custom property
 int Properties::Get(const char* value, int default_value) const
 {
 	p2List_item<Property*>* item = list.start;
@@ -93,12 +147,16 @@ int Properties::Get(const char* value, int default_value) const
 
 TileSet* j1Map::GetTilesetFromTileId(int id) const
 {
+
+	//H7 TODO 3: Complete this method so we pick the right
+	// Tileset based on a tile id
+
 	p2List_item<TileSet*>* item = data.tilesets.start;
 	TileSet* set = item->data;
 
 	while(item)
 	{
-		if(id < item->data->firstgid)
+		if(id < item->data->firstgid) //The attribute firstgid sets the first tile id that this tileset contains
 		{
 			set = item->prev->data;
 			break;
@@ -106,6 +164,8 @@ TileSet* j1Map::GetTilesetFromTileId(int id) const
 		set = item->data;
 		item = item->next;
 	}
+
+	//
 
 	return set;
 }
@@ -487,6 +547,8 @@ bool j1Map::LoadProperties(pugi::xml_node& node, Properties& properties)
 {
 	bool ret = false;
 
+	//H7 TODO 6: Fill in the method to fill the custom properties from an xml_node
+
 	pugi::xml_node data = node.child("properties");
 
 	if(data != NULL)
@@ -503,6 +565,7 @@ bool j1Map::LoadProperties(pugi::xml_node& node, Properties& properties)
 			properties.list.add(p);
 		}
 	}
+	//
 
 	return ret;
 }

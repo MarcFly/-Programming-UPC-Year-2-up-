@@ -128,7 +128,7 @@ bool j1Scene::Update(float dt)
 					map_coordinates.y);
 	//
 
-	//App->win->SetTitle(title.GetString()); // Ancient title?
+	App->win->SetTitle(title.GetString()); // Ancient title?
 
 	// Debug pathfinding ------------------------------
 	//int x, y;
