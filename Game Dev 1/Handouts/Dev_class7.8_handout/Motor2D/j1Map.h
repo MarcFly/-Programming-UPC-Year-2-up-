@@ -168,6 +168,12 @@ private:
 	uint				cost_so_far[COST_MAP][COST_MAP];
 	p2DynArray<iPoint>	path;
 	SDL_Texture*		tile_x = nullptr;
+
+public:
+	//Clear path from outside?
+	void ClearPath(){
+		path.Clear();
+	}
 };
 
 #endif // __j1MAP_H__

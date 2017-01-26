@@ -53,12 +53,12 @@ void j1Map::Path(int x, int y)
 		iPoint start(target.x, target.y);
 		// TODO 2: Follow the breadcrumps to goal back to the origin
 		// add each step into "path" dyn array (it will then draw automatically)
-		if (visited.find(goal) != -1) {
-			while (goal != start) {
-				path.PushBack(goal);
-				goal = breadcrumbs[visited.find(goal)];
+		if (visited.find(goal) != -1) { //makes sure the goal has been found
+			while (goal != start) { //conditional, goal is not start
+				path.PushBack(goal); //puts goal at the end of path 1st time, then puts more breadcrumbs
+				goal = breadcrumbs[visited.find(goal)]; //goal now is a breadcrumb in the direction of goal?
 			}
-			path.PushBack(goal);
+			path.PushBack(goal); //?????
 		}
 	} 
 	
@@ -70,11 +70,11 @@ void j1Map::PropagateDijkstra()
 	// use the 2 dimensional array "cost_so_far" to track the accumulated costs
 	// on each cell (is already reset to 0 automatically)
 	if (target_obt == true){
-	if (visited.find(target) == -1) {
+	if (visited.find(target) == -1) { //Target is new start, so it checks that it has been set somewhere
 		iPoint curr;
-		if (frontier.Pop(curr))
+		if (frontier.Pop(curr)) //Put actual frontier into curr, while it checks if there are frontiers left
 		{
-			iPoint neighbors[4];
+			iPoint neighbors[4]; //Create the 4 neighbours every tile has
 			neighbors[0].create(curr.x + 1, curr.y + 0);
 			neighbors[1].create(curr.x + 0, curr.y + 1);
 			neighbors[2].create(curr.x - 1, curr.y + 0);
@@ -82,14 +82,14 @@ void j1Map::PropagateDijkstra()
 
 			for (uint i = 0; i < 4; ++i)
 			{
-				if (MovementCost(neighbors[i].x, neighbors[i].y) != -1 && visited.find(neighbors[i]) == -1)
+				if (MovementCost(neighbors[i].x, neighbors[i].y) != -1 && visited.find(neighbors[i]) == -1) //checks if walkable and if visited
 				{
-					int new_cost = cost_so_far[curr.x][curr.y] + MovementCost(neighbors[i].x, neighbors[i].y);
-					if (cost_so_far[neighbors[i].x][neighbors[i].y] == 0 || new_cost < cost_so_far[neighbors[i].x][neighbors[i].y]) {
-						cost_so_far[neighbors[i].x][neighbors[i].y] = new_cost;
-						frontier.Push(neighbors[i], new_cost);
-						visited.add(neighbors[i]);
-						breadcrumbs.add(curr);
+					int new_cost = cost_so_far[curr.x][curr.y] + MovementCost(neighbors[i].x, neighbors[i].y); //Calculates new cost = cost before + added cost for that neighbour
+					if (cost_so_far[neighbors[i].x][neighbors[i].y] == 0 || new_cost < cost_so_far[neighbors[i].x][neighbors[i].y]) { //Checks that cost_so_far has been initialized, or that cost_so_far > new cost so that it is added (if cost is bigger, then it is not optimal?)
+						cost_so_far[neighbors[i].x][neighbors[i].y] = new_cost; //Puts new cost
+						frontier.Push(neighbors[i], new_cost); //Pushes the neighbor + cost from target to that neighbour, to be later calculated
+						visited.add(neighbors[i]); //adds neighbour
+						breadcrumbs.add(curr); //adds only current (why?)
 					}
 				}
 			}
@@ -153,7 +153,7 @@ int j1Map::MovementCost(int x, int y) const
 
 	if (x >= 0 && x < data.width && y >= 0 && y < data.height)
 	{
-		int id = data.layers.start->next->data->Get(x, y);
+		int id = data.layers.start->next->data->Get(x, y); //Get tile id (0 = not water?, or walkable meta layer?)
 
 		if (id == 0)
 			ret = 3;
@@ -169,10 +169,10 @@ void j1Map::PropagateBFS()
 	// TODO 1: Record the direction to the previous node 
 	// with the new list "breadcrumps"
 	if (target_obt == true) {
-		iPoint curr;
-		if (frontier.Pop(curr))
+		iPoint curr; //Base iPoint, where we are
+		if (frontier.Pop(curr)) //Put actual frontier into curr, while it checks if there are frontiers left
 		{
-			iPoint neighbors[4];
+			iPoint neighbors[4]; //Create the 4 neighbours every tile has
 			neighbors[0].create(curr.x + 1, curr.y + 0);
 			neighbors[1].create(curr.x + 0, curr.y + 1);
 			neighbors[2].create(curr.x - 1, curr.y + 0);
@@ -180,13 +180,13 @@ void j1Map::PropagateBFS()
 
 			for (uint i = 0; i < 4; ++i)
 			{
-				if (MovementCost(neighbors[i].x, neighbors[i].y) > 0)
+				if (MovementCost(neighbors[i].x, neighbors[i].y) > 0) //movement costs checks if it actually is a walkable tile
 				{
-					if (visited.find(neighbors[i]) == -1)
+					if (visited.find(neighbors[i]) == -1) //Checks for visited tiles (if visited they don't go in)
 					{
-						frontier.Push(neighbors[i], 0);
-						visited.add(neighbors[i]);
-						breadcrumbs.add(curr);
+						frontier.Push(neighbors[i], 0); //Add them as a frontier
+						visited.add(neighbors[i]); //Add as a neighbour, why?
+						breadcrumbs.add(curr); //Leave breadcrumb, to make path just gets the tiles you go through?
 					}
 				}
 			}
