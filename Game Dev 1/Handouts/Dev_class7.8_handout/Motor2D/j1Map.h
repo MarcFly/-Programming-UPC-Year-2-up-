@@ -136,6 +136,8 @@ public:
 	// Propagation style
 	void PropagateBFS();
 	void PropagateDijkstra();
+	// methods: 1 = manhattan 2 = sqrt 3 = no sqrt
+	void PropagateAStar(int method);
 
 private:
 
@@ -150,6 +152,8 @@ private:
 public:
 
 	MapData data;
+	iPoint target;
+	bool target_obt = false;
 
 private:
 

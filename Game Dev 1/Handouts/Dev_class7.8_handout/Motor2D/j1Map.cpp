@@ -39,19 +39,29 @@ void j1Map::ResetPath()
 	frontier.Clear();
 	visited.clear();
 	breadcrumbs.clear();
-	frontier.Push(iPoint(19, 4), 0);
-	visited.add(iPoint(19, 4));
-	breadcrumbs.add(iPoint(19, 4));
+	frontier.Push(iPoint(target.x, target.y), 0);
+	visited.add(iPoint(target.x, target.y));
+	breadcrumbs.add(iPoint(target.x, target.y));
 	memset(cost_so_far, 0, sizeof(uint) * COST_MAP * COST_MAP);
 }
 
 void j1Map::Path(int x, int y)
 {
 	path.Clear();
-	iPoint goal = WorldToMap(x, y);
-
-	// TODO 2: Follow the breadcrumps to goal back to the origin
-	// add each step into "path" dyn array (it will then draw automatically)
+	if (target_obt == true) {
+		iPoint goal = WorldToMap(x, y);
+		iPoint start(target.x, target.y);
+		// TODO 2: Follow the breadcrumps to goal back to the origin
+		// add each step into "path" dyn array (it will then draw automatically)
+		if (visited.find(goal) != -1) {
+			while (goal != start) {
+				path.PushBack(goal);
+				goal = breadcrumbs[visited.find(goal)];
+			}
+			path.PushBack(goal);
+		}
+	} 
+	
 }
 
 void j1Map::PropagateDijkstra()
@@ -59,6 +69,82 @@ void j1Map::PropagateDijkstra()
 	// TODO 3: Taking BFS as a reference, implement the Dijkstra algorithm
 	// use the 2 dimensional array "cost_so_far" to track the accumulated costs
 	// on each cell (is already reset to 0 automatically)
+	if (target_obt == true){
+	if (visited.find(target) == -1) {
+		iPoint curr;
+		if (frontier.Pop(curr))
+		{
+			iPoint neighbors[4];
+			neighbors[0].create(curr.x + 1, curr.y + 0);
+			neighbors[1].create(curr.x + 0, curr.y + 1);
+			neighbors[2].create(curr.x - 1, curr.y + 0);
+			neighbors[3].create(curr.x + 0, curr.y - 1);
+
+			for (uint i = 0; i < 4; ++i)
+			{
+				if (MovementCost(neighbors[i].x, neighbors[i].y) != -1 && visited.find(neighbors[i]) == -1)
+				{
+					int new_cost = cost_so_far[curr.x][curr.y] + MovementCost(neighbors[i].x, neighbors[i].y);
+					if (cost_so_far[neighbors[i].x][neighbors[i].y] == 0 || new_cost < cost_so_far[neighbors[i].x][neighbors[i].y]) {
+						cost_so_far[neighbors[i].x][neighbors[i].y] = new_cost;
+						frontier.Push(neighbors[i], new_cost);
+						visited.add(neighbors[i]);
+						breadcrumbs.add(curr);
+					}
+				}
+			}
+		}
+	}
+}
+}
+
+void j1Map::PropagateAStar(int method)
+{
+	// TODO 3: Taking BFS as a reference, implement the Dijkstra algorithm
+	// use the 2 dimensional array "cost_so_far" to track the accumulated costs
+	// on each cell (is already reset to 0 automatically)
+	if (target_obt == true) {
+		if (visited.find(target) == -1) {
+			iPoint curr;
+			if (frontier.Pop(curr))
+			{
+				iPoint neighbors[4];
+				neighbors[0].create(curr.x + 1, curr.y + 0);
+				neighbors[1].create(curr.x + 0, curr.y + 1);
+				neighbors[2].create(curr.x - 1, curr.y + 0);
+				neighbors[3].create(curr.x + 0, curr.y - 1);
+
+				for (uint i = 0; i < 4; ++i)
+				{
+					if (MovementCost(neighbors[i].x, neighbors[i].y) > 0 && visited.find(neighbors[i]) == -1)
+					{
+						int dist = 0;
+						switch (method)
+						{
+						case 1:
+							dist = neighbors[i].DistanceManhattan(target);
+							break;
+						case 2:
+							dist = neighbors[i].DistanceTo(target);
+							break;
+						case 3:
+							dist = neighbors[i].DistanceNoSqrt(target);
+							break;
+						default:
+							break;
+						}
+						int new_cost = cost_so_far[curr.x][curr.y] + MovementCost(neighbors[i].x, neighbors[i].y) + dist;
+						if (cost_so_far[neighbors[i].x][neighbors[i].y] == 0 || new_cost < cost_so_far[neighbors[i].x][neighbors[i].y]) {
+							cost_so_far[neighbors[i].x][neighbors[i].y] = new_cost;
+							frontier.Push(neighbors[i], new_cost);
+							visited.add(neighbors[i]);
+							breadcrumbs.add(curr);
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 int j1Map::MovementCost(int x, int y) const
@@ -82,23 +168,26 @@ void j1Map::PropagateBFS()
 {
 	// TODO 1: Record the direction to the previous node 
 	// with the new list "breadcrumps"
-	iPoint curr;
-	if (frontier.Pop(curr))
-	{
-		iPoint neighbors[4];
-		neighbors[0].create(curr.x + 1, curr.y + 0);
-		neighbors[1].create(curr.x + 0, curr.y + 1);
-		neighbors[2].create(curr.x - 1, curr.y + 0);
-		neighbors[3].create(curr.x + 0, curr.y - 1);
-
-		for (uint i = 0; i < 4; ++i)
+	if (target_obt == true) {
+		iPoint curr;
+		if (frontier.Pop(curr))
 		{
-			if (MovementCost(neighbors[i].x, neighbors[i].y) > 0)
+			iPoint neighbors[4];
+			neighbors[0].create(curr.x + 1, curr.y + 0);
+			neighbors[1].create(curr.x + 0, curr.y + 1);
+			neighbors[2].create(curr.x - 1, curr.y + 0);
+			neighbors[3].create(curr.x + 0, curr.y - 1);
+
+			for (uint i = 0; i < 4; ++i)
 			{
-				if (visited.find(neighbors[i]) == -1)
+				if (MovementCost(neighbors[i].x, neighbors[i].y) > 0)
 				{
-					frontier.Push(neighbors[i], 0);
-					visited.add(neighbors[i]);
+					if (visited.find(neighbors[i]) == -1)
+					{
+						frontier.Push(neighbors[i], 0);
+						visited.add(neighbors[i]);
+						breadcrumbs.add(curr);
+					}
 				}
 			}
 		}
@@ -107,64 +196,67 @@ void j1Map::PropagateBFS()
 
 void j1Map::DrawPath()
 {
-	iPoint point;
+	if (target_obt == true) {
+		iPoint point;
 
-	// Draw visited
-	p2List_item<iPoint>* item = visited.start;
+		// Draw visited
+		p2List_item<iPoint>* item = visited.start;
 
-	while(item)
-	{
-		point = item->data;
-		TileSet* tileset = GetTilesetFromTileId(26);
+		while (item)
+		{
+			point = item->data;
+			TileSet* tileset = GetTilesetFromTileId(26);
 
-		SDL_Rect r = tileset->GetTileRect(26);
-		iPoint pos = MapToWorld(point.x, point.y);
+			SDL_Rect r = tileset->GetTileRect(26);
+			iPoint pos = MapToWorld(point.x, point.y);
 
-		App->render->Blit(tileset->texture, pos.x, pos.y, &r);
+			App->render->Blit(tileset->texture, pos.x, pos.y, &r);
 
-		item = item->next;
-	}
+			item = item->next;
+		}
 
-	// Draw frontier
-	for (uint i = 0; i < frontier.Count(); ++i)
-	{
-		point = *(frontier.Peek(i));
-		TileSet* tileset = GetTilesetFromTileId(25);
+		// Draw frontier
+		for (uint i = 0; i < frontier.Count(); ++i)
+		{
+			point = *(frontier.Peek(i));
+			TileSet* tileset = GetTilesetFromTileId(25);
 
-		SDL_Rect r = tileset->GetTileRect(25);
-		iPoint pos = MapToWorld(point.x, point.y);
+			SDL_Rect r = tileset->GetTileRect(25);
+			iPoint pos = MapToWorld(point.x, point.y);
 
-		App->render->Blit(tileset->texture, pos.x, pos.y, &r);
-	}
+			App->render->Blit(tileset->texture, pos.x, pos.y, &r);
+		}
 
-	// Draw path
-	for (uint i = 0; i < path.Count(); ++i)
-	{
-		iPoint pos = MapToWorld(path[i].x, path[i].y);
-		App->render->Blit(tile_x, pos.x, pos.y);
+		// Draw path
+		for (uint i = 0; i < path.Count(); ++i)
+		{
+			iPoint pos = MapToWorld(path[i].x, path[i].y);
+			App->render->Blit(tile_x, pos.x, pos.y);
+		}
 	}
 }
 
 void j1Map::Draw()
 {
-	if(map_loaded == false)
+	
+	if (map_loaded == false)
 		return;
 
 	p2List_item<MapLayer*>* item = data.layers.start;
 
-	for(; item != NULL; item = item->next)
+	for (; item != NULL; item = item->next)
 	{
 		MapLayer* layer = item->data;
 
-		if(layer->properties.Get("Nodraw") != 0)
+		if (layer->properties.Get("Nodraw") != 0)
 			continue;
 
-		for(int y = 0; y < data.height; ++y)
+		for (int y = 0; y < data.height; ++y)
 		{
-			for(int x = 0; x < data.width; ++x)
+			for (int x = 0; x < data.width; ++x)
 			{
 				int tile_id = layer->Get(x, y);
-				if(tile_id > 0)
+				if (tile_id > 0)
 				{
 					TileSet* tileset = GetTilesetFromTileId(tile_id);
 
@@ -176,8 +268,14 @@ void j1Map::Draw()
 			}
 		}
 	}
-
+	
 	DrawPath();
+
+	//Draw target
+	if (target_obt == true) {
+		iPoint pos = MapToWorld(target.x, target.y);
+		App->render->Blit(tile_x, pos.x, pos.y);
+	}
 }
 
 int Properties::Get(const char* value, int default_value) const
