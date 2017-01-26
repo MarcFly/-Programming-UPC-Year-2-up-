@@ -126,6 +126,9 @@
     <ClInclude Include="p2Queue.h">
       <Filter>Programacio 2 ===========</Filter>
     </ClInclude>
+    <ClInclude Include="p2PQueue.h">
+      <Filter>Programacio 2 ===========</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Programacio 2 ===========">

@@ -724,7 +724,7 @@ bool j1Map::LoadProperties(pugi::xml_node& node, Properties& properties)
 	return ret;
 }
 
-/*
+
 
 bool j1Map::CreateWalkabilityMap(int& width, int& height, uchar** buffer) const
 {
@@ -758,7 +758,7 @@ bool j1Map::CreateWalkabilityMap(int& width, int& height, uchar** buffer) const
 					if(ts != NULL)
 					{
 						map[i] = ts->properties.Get("walkable", 1);
-					}
+					}*/
 				}
 			}
 		}
@@ -774,4 +774,3 @@ bool j1Map::CreateWalkabilityMap(int& width, int& height, uchar** buffer) const
 	return ret;
 }
 
-*/
