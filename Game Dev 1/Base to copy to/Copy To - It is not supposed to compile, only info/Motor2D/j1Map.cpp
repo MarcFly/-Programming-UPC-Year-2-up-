@@ -27,62 +27,216 @@ bool j1Map::Awake(pugi::xml_node& config)
 	return ret;
 }
 
-void j1Map::ResetBFS()
+bool j1Map::Start()
+{
+	tile_x = App->tex->Load("maps/x.png");
+	return true;
+}
+
+//H7.8 Map Exploration/Pathfinding
+
+void j1Map::ResetPath()
 {
 	frontier.Clear();
 	visited.clear();
-	frontier.Push(iPoint(19, 4));
-	visited.add(iPoint(19, 4));
+	breadcrumbs.clear();
+	frontier.Push(iPoint(target.x, target.y), 0);
+	visited.add(iPoint(target.x, target.y));
+	breadcrumbs.add(iPoint(target.x, target.y));
+	memset(cost_so_far, 0, sizeof(uint) * COST_MAP * COST_MAP);
+}
+
+void j1Map::Path(int x, int y)
+{
+	path.Clear();
+	if (target_obt == true) {
+		iPoint goal = WorldToMap(x, y);
+		iPoint start(target.x, target.y);
+		// TODO 2: Follow the breadcrumps to goal back to the origin
+		// add each step into "path" dyn array (it will then draw automatically)
+		if (visited.find(goal) != -1) { //makes sure the goal has been found
+			while (goal != start) { //conditional, goal is not start
+				path.PushBack(goal); //puts goal at the end of path 1st time, then puts more breadcrumbs
+				goal = breadcrumbs[visited.find(goal)]; //goal now is a breadcrumb in the direction of goal?
+			}
+			path.PushBack(goal); //?????
+		}
+	}
+
+}
+
+void j1Map::PropagateDijkstra()
+{
+	// TODO 3: Taking BFS as a reference, implement the Dijkstra algorithm
+	// use the 2 dimensional array "cost_so_far" to track the accumulated costs
+	// on each cell (is already reset to 0 automatically)
+	if (target_obt == true) {
+		if (visited.find(target) == -1) { //Target is new start, so it checks that it has been set somewhere
+			iPoint curr;
+			if (frontier.Pop(curr)) //Put actual frontier into curr, while it checks if there are frontiers left
+			{
+				iPoint neighbors[4]; //Create the 4 neighbours every tile has
+				neighbors[0].create(curr.x + 1, curr.y + 0);
+				neighbors[1].create(curr.x + 0, curr.y + 1);
+				neighbors[2].create(curr.x - 1, curr.y + 0);
+				neighbors[3].create(curr.x + 0, curr.y - 1);
+
+				for (uint i = 0; i < 4; ++i)
+				{
+					if (MovementCost(neighbors[i].x, neighbors[i].y) != -1 && visited.find(neighbors[i]) == -1) //checks if walkable and if visited
+					{
+						int new_cost = cost_so_far[curr.x][curr.y] + MovementCost(neighbors[i].x, neighbors[i].y); //Calculates new cost = cost before + added cost for that neighbour
+						if (cost_so_far[neighbors[i].x][neighbors[i].y] == 0 || new_cost < cost_so_far[neighbors[i].x][neighbors[i].y]) { //Checks that cost_so_far has been initialized, or that cost_so_far > new cost so that it is added (if cost is bigger, then it is not optimal?)
+							cost_so_far[neighbors[i].x][neighbors[i].y] = new_cost; //Puts new cost
+							frontier.Push(neighbors[i], new_cost); //Pushes the neighbor + cost from target to that neighbour, to be later calculated
+							visited.add(neighbors[i]); //adds neighbour
+							breadcrumbs.add(curr); //adds only current (why?)
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void j1Map::PropagateAStar(int method)
+{
+	// TODO 3: Taking BFS as a reference, implement the Dijkstra algorithm
+	// use the 2 dimensional array "cost_so_far" to track the accumulated costs
+	// on each cell (is already reset to 0 automatically)
+	if (target_obt == true) {
+		if (visited.find(target) == -1) {
+			iPoint curr;
+			if (frontier.Pop(curr))
+			{
+				iPoint neighbors[4];
+				neighbors[0].create(curr.x + 1, curr.y + 0);
+				neighbors[1].create(curr.x + 0, curr.y + 1);
+				neighbors[2].create(curr.x - 1, curr.y + 0);
+				neighbors[3].create(curr.x + 0, curr.y - 1);
+
+				for (uint i = 0; i < 4; ++i)
+				{
+					if (MovementCost(neighbors[i].x, neighbors[i].y) > 0 && visited.find(neighbors[i]) == -1)
+					{
+						int dist = 0;
+						switch (method)
+						{
+						case 1:
+							dist = neighbors[i].DistanceManhattan(target);
+							break;
+						case 2:
+							dist = neighbors[i].DistanceTo(target);
+							break;
+						case 3:
+							dist = neighbors[i].DistanceNoSqrt(target);
+							break;
+						default:
+							break;
+						}
+						int new_cost = cost_so_far[curr.x][curr.y] + MovementCost(neighbors[i].x, neighbors[i].y) + dist;
+						if (cost_so_far[neighbors[i].x][neighbors[i].y] == 0 || new_cost < cost_so_far[neighbors[i].x][neighbors[i].y]) {
+							cost_so_far[neighbors[i].x][neighbors[i].y] = new_cost;
+							frontier.Push(neighbors[i], new_cost);
+							visited.add(neighbors[i]);
+							breadcrumbs.add(curr);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+int j1Map::MovementCost(int x, int y) const
+{
+	int ret = -1;
+
+	if (x >= 0 && x < data.width && y >= 0 && y < data.height)
+	{
+		int id = data.layers.start->next->data->Get(x, y); //Get tile id (0 = not water?, or walkable meta layer?)
+
+		if (id == 0)
+			ret = 3;
+		else
+			ret = 0;
+	}
+
+	return ret;
 }
 
 void j1Map::PropagateBFS()
 {
-	//H7.5 TODO 1: If frontier queue contains elements
-	// pop the last one and calculate its 4 neighbors
+	// TODO 1: Record the direction to the previous node 
+	// with the new list "breadcrumps"
+	if (target_obt == true) {
+		iPoint curr; //Base iPoint, where we are
+		if (frontier.Pop(curr)) //Put actual frontier into curr, while it checks if there are frontiers left
+		{
+			iPoint neighbors[4]; //Create the 4 neighbours every tile has
+			neighbors[0].create(curr.x + 1, curr.y + 0);
+			neighbors[1].create(curr.x + 0, curr.y + 1);
+			neighbors[2].create(curr.x - 1, curr.y + 0);
+			neighbors[3].create(curr.x + 0, curr.y - 1);
 
-	//H7.5 TODO 2: For each neighbor, if not visited, add it
-	// to the frontier queue and visited list
-}
-
-void j1Map::DrawBFS()
-{
-	iPoint point;
-
-	// Draw visited
-	p2List_item<iPoint>* item = visited.start;
-
-	while (item)
-	{
-		point = item->data;
-		TileSet* tileset = GetTilesetFromTileId(26);
-
-		SDL_Rect r = tileset->GetTileRect(26);
-		iPoint pos = MapToWorld(point.x, point.y);
-
-		App->render->Blit(tileset->texture, pos.x, pos.y, &r);
-
-		item = item->next;
-	}
-
-	// Draw frontier
-	for (uint i = 0; i < frontier.Count(); ++i)
-	{
-		point = *(frontier.Peek(i));
-		TileSet* tileset = GetTilesetFromTileId(25);
-
-		SDL_Rect r = tileset->GetTileRect(25);
-		iPoint pos = MapToWorld(point.x, point.y);
-
-		App->render->Blit(tileset->texture, pos.x, pos.y, &r);
+			for (uint i = 0; i < 4; ++i)
+			{
+				if (MovementCost(neighbors[i].x, neighbors[i].y) > 0) //movement costs checks if it actually is a walkable tile
+				{
+					if (visited.find(neighbors[i]) == -1) //Checks for visited tiles (if visited they don't go in)
+					{
+						frontier.Push(neighbors[i], 0); //Add them as a frontier
+						visited.add(neighbors[i]); //Add as a neighbour, why?
+						breadcrumbs.add(curr); //Leave breadcrumb, to make path just gets the tiles you go through?
+					}
+				}
+			}
+		}
 	}
 }
 
-bool j1Map::IsWalkable(int x, int y) const
+void j1Map::DrawPath()
 {
-	//H7.5 TODO 3: return true only if x and y are within map limits
-	// and the tile is walkable (tile id 0 in the navigation layer)
-	return true;
+	if (target_obt == true) {
+		iPoint point;
+
+		// Draw visited
+		p2List_item<iPoint>* item = visited.start;
+
+		while (item)
+		{
+			point = item->data;
+			TileSet* tileset = GetTilesetFromTileId(26);
+
+			SDL_Rect r = tileset->GetTileRect(26);
+			iPoint pos = MapToWorld(point.x, point.y);
+
+			App->render->Blit(tileset->texture, pos.x, pos.y, &r);
+
+			item = item->next;
+		}
+
+		// Draw frontier
+		for (uint i = 0; i < frontier.Count(); ++i)
+		{
+			point = *(frontier.Peek(i));
+			TileSet* tileset = GetTilesetFromTileId(25);
+
+			SDL_Rect r = tileset->GetTileRect(25);
+			iPoint pos = MapToWorld(point.x, point.y);
+
+			App->render->Blit(tileset->texture, pos.x, pos.y, &r);
+		}
+
+		// Draw path
+		for (uint i = 0; i < path.Count(); ++i)
+		{
+			iPoint pos = MapToWorld(path[i].x, path[i].y);
+			App->render->Blit(tile_x, pos.x, pos.y);
+		}
+	}
 }
+//
 
 void j1Map::Draw()
 {
@@ -570,6 +724,8 @@ bool j1Map::LoadProperties(pugi::xml_node& node, Properties& properties)
 	return ret;
 }
 
+/*
+
 bool j1Map::CreateWalkabilityMap(int& width, int& height, uchar** buffer) const
 {
 	bool ret = false;
@@ -602,7 +758,7 @@ bool j1Map::CreateWalkabilityMap(int& width, int& height, uchar** buffer) const
 					if(ts != NULL)
 					{
 						map[i] = ts->properties.Get("walkable", 1);
-					}*/
+					}
 				}
 			}
 		}
@@ -617,3 +773,5 @@ bool j1Map::CreateWalkabilityMap(int& width, int& height, uchar** buffer) const
 
 	return ret;
 }
+
+*/

@@ -110,6 +110,49 @@ bool j1Scene::Update(float dt)
 	if(App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 		App->render->camera.x -= floor(200.0f * dt);
 
+	//H7.8 All pathfining related keys
+
+	if (App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN)
+		App->map->ResetPath();
+
+	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+		App->map->PropagateBFS();
+
+	if (App->input->GetKey(SDL_SCANCODE_M) == KEY_REPEAT)
+		App->map->PropagateBFS();
+
+	if (App->input->GetKey(SDL_SCANCODE_J) == KEY_DOWN)
+		App->map->PropagateDijkstra();
+
+	if (App->input->GetKey(SDL_SCANCODE_K) == KEY_REPEAT)
+		App->map->PropagateDijkstra();
+
+	if (App->input->GetMouseButtonDown(1) == KEY_DOWN)
+	{
+		iPoint p;
+		App->input->GetMousePosition(p.x, p.y);
+		App->map->Path(p.x - App->render->camera.x, p.y - App->render->camera.y);
+	}
+	if (App->input->GetMouseButtonDown(3) == KEY_DOWN)
+	{
+		App->map->ClearPath();
+		iPoint p;
+		App->input->GetMousePosition(p.x, p.y);
+		p = App->map->WorldToMap(p.x - App->render->camera.x, p.y - App->render->camera.y);
+		App->map->target.x = p.x;
+		App->map->target.y = p.y;
+
+		App->map->ResetPath();
+		App->map->target_obt = true;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_REPEAT)
+		App->map->PropagateAStar(1);
+	if (App->input->GetKey(SDL_SCANCODE_2) == KEY_REPEAT)
+		App->map->PropagateAStar(2);
+	if (App->input->GetKey(SDL_SCANCODE_3) == KEY_REPEAT)
+		App->map->PropagateAStar(3);
+	//
+
 	App->map->Draw();
 
 	int x, y;

@@ -122,6 +122,7 @@ public:
 
 	// Called before render is available
 	bool Awake(pugi::xml_node& conf);
+	bool Start();
 
 	// Called each loop iteration
 	void Draw();
@@ -138,11 +139,18 @@ public:
 
 	iPoint WorldToMap(int x, int y) const;
 
-	//H7.5 BFS
+	//H7.8 Map Exploration/Pathfinding Methods
+	// Pathfinding
+	int MovementCost(int x, int y) const;
+	void ResetPath();
+	void DrawPath();
+	void Path(int x, int y);
+
+	// Propagation style
 	void PropagateBFS();
-	void DrawBFS();
-	bool IsWalkable(int x, int y) const;
-	void ResetBFS();
+	void PropagateDijkstra();
+	// methods: 1 = manhattan 2 = sqrt 3 = no sqrt
+	void PropagateAStar(int method);
 
 
 	bool CreateWalkabilityMap(int& width, int& height, uchar** buffer) const;
@@ -165,6 +173,8 @@ private:
 public:
 
 	MapData data;
+	iPoint target;
+	bool target_obt = false;
 
 private:
 
@@ -172,9 +182,19 @@ private:
 	p2SString			folder;
 	bool				map_loaded;
 
-	/// BFS
-	p2Queue<iPoint>		frontier;
+	/// Map Exploration
+	p2PQueue<iPoint>	frontier;
 	p2List<iPoint>		visited;
+	p2List<iPoint>		breadcrumbs;
+	uint				cost_so_far[COST_MAP][COST_MAP];
+	p2DynArray<iPoint>	path;
+	SDL_Texture*		tile_x = nullptr;
+
+public:
+	//Clear path from outside?
+	void ClearPath() {
+		path.Clear();
+	}
 
 };
 

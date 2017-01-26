@@ -1,7 +1,94 @@
 ﻿  j1Scene.cpp
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(186): error C2143: syntax error: missing ';' before '<'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(186): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(186): error C2238: unexpected token(s) preceding ';'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(189): error C2065: 'COST_MAP': undeclared identifier
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(190): error C2143: syntax error: missing ';' before '<'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(190): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(190): error C2238: unexpected token(s) preceding ';'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(196): error C2065: 'path': undeclared identifier
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(196): error C2228: left of '.Clear' must have class/struct/union
+  d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(196): note: type is 'unknown-type'
 d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1scene.cpp(102): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
 d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1scene.cpp(105): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
 d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1scene.cpp(108): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
 d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1scene.cpp(111): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
-  Motor2D.vcxproj -> D:\Universitat\-Programming-\Game Dev 1\Base to copy to\Copy To - It is not supposed to compile, only info\Debug\Development - Class 11 Handout.exe
-  Motor2D.vcxproj -> D:\Universitat\-Programming-\Game Dev 1\Base to copy to\Copy To - It is not supposed to compile, only info\Debug\Development - Class 11 Handout.pdb (Full PDB)
+  j1Map.cpp
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(186): error C2143: syntax error: missing ';' before '<'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(186): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(186): error C2238: unexpected token(s) preceding ';'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(189): error C2065: 'COST_MAP': undeclared identifier
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(190): error C2143: syntax error: missing ';' before '<'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(190): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(190): error C2238: unexpected token(s) preceding ';'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(196): error C2065: 'path': undeclared identifier
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(196): error C2228: left of '.Clear' must have class/struct/union
+  d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(196): note: type is 'unknown-type'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(40): error C2065: 'frontier': undeclared identifier
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(40): error C2228: left of '.Clear' must have class/struct/union
+  d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(40): note: type is 'unknown-type'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(43): error C2065: 'frontier': undeclared identifier
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(43): error C2228: left of '.Push' must have class/struct/union
+  d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(43): note: type is 'unknown-type'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(46): error C2065: 'COST_MAP': undeclared identifier
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(46): error C2660: 'memset': function does not take 2 arguments
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(51): error C2065: 'path': undeclared identifier
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(51): error C2228: left of '.Clear' must have class/struct/union
+  d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(51): note: type is 'unknown-type'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(59): error C2065: 'path': undeclared identifier
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(59): error C2228: left of '.PushBack' must have class/struct/union
+  d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(59): note: type is 'unknown-type'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(62): error C2065: 'path': undeclared identifier
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(62): error C2228: left of '.PushBack' must have class/struct/union
+  d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(62): note: type is 'unknown-type'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(76): error C2065: 'frontier': undeclared identifier
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(76): error C2228: left of '.Pop' must have class/struct/union
+  d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(76): note: type is 'unknown-type'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(89): warning C4018: '<': signed/unsigned mismatch
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(91): error C2065: 'frontier': undeclared identifier
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(91): error C2228: left of '.Push' must have class/struct/union
+  d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(91): note: type is 'unknown-type'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(110): error C2065: 'frontier': undeclared identifier
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(110): error C2228: left of '.Pop' must have class/struct/union
+  d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(110): note: type is 'unknown-type'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(138): warning C4018: '<': signed/unsigned mismatch
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(140): error C2065: 'frontier': undeclared identifier
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(140): error C2228: left of '.Push' must have class/struct/union
+  d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(140): note: type is 'unknown-type'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(174): error C2065: 'frontier': undeclared identifier
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(174): error C2228: left of '.Pop' must have class/struct/union
+  d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(174): note: type is 'unknown-type'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(188): error C2065: 'frontier': undeclared identifier
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(188): error C2228: left of '.Push' must have class/struct/union
+  d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(188): note: type is 'unknown-type'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(220): error C2065: 'frontier': undeclared identifier
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(220): error C2228: left of '.Count' must have class/struct/union
+  d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(220): note: type is 'unknown-type'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(222): error C2065: 'frontier': undeclared identifier
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(222): error C2228: left of '.Peek' must have class/struct/union
+  d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(222): note: type is 'unknown-type'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(232): error C2065: 'path': undeclared identifier
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(232): error C2228: left of '.Count' must have class/struct/union
+  d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(232): note: type is 'unknown-type'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(234): error C2065: 'path': undeclared identifier
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(234): error C2228: left of '.x' must have class/struct/union
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(234): error C2228: left of '.y' must have class/struct/union
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(234): error C2660: 'j1Map::MapToWorld': function does not take 1 arguments
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(341): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.cpp(342): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+  j1App.cpp
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(186): error C2143: syntax error: missing ';' before '<'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(186): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(186): error C2238: unexpected token(s) preceding ';'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(189): error C2065: 'COST_MAP': undeclared identifier
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(190): error C2143: syntax error: missing ';' before '<'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(190): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(190): error C2238: unexpected token(s) preceding ';'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(196): error C2065: 'path': undeclared identifier
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(196): error C2228: left of '.Clear' must have class/struct/union
+  d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1map.h(196): note: type is 'unknown-type'
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1app.cpp(267): warning C4018: '<': signed/unsigned mismatch
+d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1app.cpp(263): warning C4477: 'sprintf_s' : format string '%lu' requires an argument of type 'unsigned long', but variadic argument 6 has type 'uint64'
+  d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1app.cpp(263): note: consider using '%llu' in the format string
+  d:\universitat\-programming-\game dev 1\base to copy to\copy to - it is not supposed to compile, only info\motor2d\j1app.cpp(263): note: consider using '%I64u' in the format string
+  Generating Code...
