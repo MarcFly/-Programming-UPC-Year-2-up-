@@ -5,6 +5,8 @@
 #include "p2Point.h"
 #include "j1Module.h"
 
+
+
 class j1Render : public j1Module
 {
 public:
@@ -15,7 +17,7 @@ public:
 	virtual ~j1Render();
 
 	// Called before render is available
-	bool Awake();
+	bool Awake(pugi::xml_node& config);
 
 	// Called before the first frame
 	bool Start();

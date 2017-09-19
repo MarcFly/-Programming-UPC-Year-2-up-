@@ -5,7 +5,6 @@
 #include "j1Module.h"
 #include "PugiXml\src\pugixml.hpp"
 
-using namespace pugi; //needed to write pugi files TODO 2.1
 
 // Modules
 class j1Window;
@@ -82,8 +81,8 @@ private:
 	// a xml_document to store the while config file and
 	// a xml_node to read specific branches of the xml
 public:
-	xml_document document;	//TODO 2.2 Doc
-	xml_node node;			//TODO 2.3 Node
+	pugi::xml_document document;	//TODO 2.2 Doc
+	pugi::xml_node root_node;		//TODO 2.3 Node
 
 private:
 	int					argc;

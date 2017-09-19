@@ -7,6 +7,8 @@
 #define NUM_MOUSE_BUTTONS 5
 #define LAST_KEYS_PRESSED_BUFFER 50
 
+
+
 struct SDL_Rect;
 
 enum j1EventWindow
@@ -36,7 +38,7 @@ public:
 	virtual ~j1Input();
 
 	// Called before render is available
-	bool Awake();
+	bool Awake(pugi::xml_node& config);
 
 	// Called before the first frame
 	bool Start();

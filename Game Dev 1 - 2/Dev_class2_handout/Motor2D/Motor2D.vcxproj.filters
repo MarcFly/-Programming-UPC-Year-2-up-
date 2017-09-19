@@ -29,7 +29,7 @@
       <Filter>Desenvolupament  ========\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="PugiXml\src\pugixml.cpp">
-      <Filter>Desenvolupament  ========\Tools\PuguiXML</Filter>
+      <Filter>Desenvolupament  ========\Tools\PugiXML</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -76,10 +76,10 @@
       <Filter>Desenvolupament  ========\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="PugiXml\src\pugiconfig.hpp">
-      <Filter>Desenvolupament  ========\Tools\PuguiXML</Filter>
+      <Filter>Desenvolupament  ========\Tools\PugiXML</Filter>
     </ClInclude>
     <ClInclude Include="PugiXml\src\pugixml.hpp">
-      <Filter>Desenvolupament  ========\Tools\PuguiXML</Filter>
+      <Filter>Desenvolupament  ========\Tools\PugiXML</Filter>
     </ClInclude>
     <ClInclude Include="Vec3.h">
       <Filter>Programacio 2 ===========</Filter>
@@ -101,7 +101,7 @@
     <Filter Include="Desenvolupament  ========\Modules">
       <UniqueIdentifier>{244722d1-90ce-423d-8e7a-556211865a32}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Desenvolupament  ========\Tools\PuguiXML">
+    <Filter Include="Desenvolupament  ========\Tools\PugiXML">
       <UniqueIdentifier>{7cb78d67-17cc-45eb-af97-e2106becce7b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>

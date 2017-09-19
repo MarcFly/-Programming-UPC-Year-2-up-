@@ -3,7 +3,7 @@
 <!-- Config file for the game -->
 <config>
   
-  <name>Game Dev 1 Config</name>
+  <name value="Game Dev 1 Config"/>
   
   <input>
     <num_keys value="352"/>
@@ -12,7 +12,13 @@
   </input>
 
   <window>
-    
+    <fullscreen value="false"/>
+    <borderless value="false"/>
+    <resizable value="false"/>
+    <fullscreen_window value="false"/>
+    <width value="1024"/>
+    <height value="768"/>
+    <scale value="1"/>
   </window>
 
   <renderer>

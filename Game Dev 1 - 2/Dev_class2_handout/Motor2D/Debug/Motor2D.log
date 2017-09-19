@@ -1,2 +1,13 @@
-﻿  Motor2D.vcxproj -> C:\Users\marctj1\Documents\GitHub\-Programming-UPC-Year-2-up-\Game Dev 1 - 2\Dev_class2_handout\Debug\Motor 2D.exe
-  Motor2D.vcxproj -> C:\Users\marctj1\Documents\GitHub\-Programming-UPC-Year-2-up-\Game Dev 1 - 2\Dev_class2_handout\Debug\Motor 2D.pdb (Full PDB)
+﻿  j1App.cpp
+c:\users\marctj1\documents\github\-programming-upc-year-2-up-\game dev 1 - 2\dev_class2_handout\motor2d\j1app.cpp(85): error C3867: 'p2SString::GetString': non-standard syntax; use '&' to create a pointer to member
+  Generating Code...
+  Compiling...
+  j1Audio.cpp
+  Generating Code...
+  Skipping... (no relevant changes detected)
+  j1Window.cpp
+  j1Textures.cpp
+  j1Scene.cpp
+  j1Render.cpp
+  j1Main.cpp
+  j1Input.cpp

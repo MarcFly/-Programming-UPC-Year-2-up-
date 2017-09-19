@@ -9,7 +9,7 @@
 #include "j1Scene.h"
 #include "j1App.h"
 
-using namespace pugi;
+
 
 // Constructor
 j1App::j1App(int argc, char* args[]) : argc(argc), args(args)
@@ -63,9 +63,9 @@ bool j1App::Awake()
 	// If everything goes well, load the top tag inside the xml_node property
 	// created in the last TODO
 
-	xml_parse_result result = document.load_file("config.xml");
+	pugi::xml_parse_result result = document.load_file("config.xml");
 	
-	node = document.child("config");
+	root_node = document.child("config");
 
 	//xml_parse_result result = node. = document.append_child("config").append_attribute("name");
 
@@ -74,13 +74,15 @@ bool j1App::Awake()
 	p2List_item<j1Module*>* item;
 	item = modules.start;
 
+	//pugi::xml_node next_node = root_node.child("something");
+
 	while(item != NULL && ret == true)
 	{
 		// TODO 7: Add a new argument to the Awake method to receive a pointer to a xml node.
 		// If the section with the module name exist in config.xml, fill the pointer with the address of a valid xml_node
 		// that can be used to read all variables from that section. Send nullptr if the section does not exist in config.xml
 
-		ret = item->data->Awake();
+		ret = item->data->Awake(&root_node.child(item->data->name.GetString));
 		item = item->next;
 	}
 

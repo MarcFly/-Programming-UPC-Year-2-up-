@@ -3,6 +3,8 @@
 
 #include "j1Module.h"
 
+
+
 struct SDL_Window;
 struct SDL_Surface;
 
@@ -16,7 +18,7 @@ public:
 	virtual ~j1Window();
 
 	// Called before render is available
-	bool Awake();
+	bool Awake(pugi::xml_node& config);
 
 	// Called before quitting
 	bool CleanUp();
