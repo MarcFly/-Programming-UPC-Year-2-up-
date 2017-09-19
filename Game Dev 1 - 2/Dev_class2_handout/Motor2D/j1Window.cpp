@@ -2,7 +2,7 @@
 #include "p2Log.h"
 #include "j1App.h"
 #include "j1Window.h"
-
+#include "Vec3.h"
 #include "SDL/include/SDL.h"
 
 using namespace pugi;
@@ -76,6 +76,20 @@ bool j1Window::Awake()
 		
 			SetTitle(App->node.child("name").child_value());
 
+
+			//Vec3 comprobations
+			Vec3<float> test = v1 + v2;
+			test += v1;
+			test = v1 - v2;
+			test -= v2;
+
+			bool test_equal = (v1 == v2);
+
+			test = v1.Normalized_Vec3();
+			v1.Normalize();
+			test_equal = test == v1;
+			
+			float distance = v1.distance_to(v2);
 		}
 	}
 
