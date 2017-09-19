@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- Config file for the game -->
+<config>
+  
+  <name>Game Dev 1 Config</name>
+  
+  <input>
+    <num_keys value="352"/>
+    <num_mouse_buttons value="5"/>
+    <last_keys_pressed_buffer value="50"/>
+  </input>
+
+  <window>
+    
+  </window>
+
+  <renderer>
+    
+  </renderer>
+
+  <textures>
+    
+  </textures>
+
+  <audio>
+    
+  </audio>
+
+  <scene>
+    
+  </scene>
+</config>
