@@ -54,8 +54,9 @@ bool j1Audio::Awake(pugi::xml_node* config)
 	}
 
 	//Set Volume?
-	Mix_Volume(-1, config->child("master_volume").attribute("value").as_int());
-	LOG("Average volume is %d\n", Mix_Volume(-1, -1));
+	Mix_VolumeMusic(config->child("master_volume").attribute("value").as_int());	//Use master volume fins que sapiga diferenciar fx i music
+
+	//LOG("Average volume is %d\n", Mix_Volume(-1, -1));
 	//Mix_Volume(0, config->child("music_volume").attribute("value").as_float());
 	//Mix_Volume(1,config->child("fx_volume").attribute("value").as_float());
 

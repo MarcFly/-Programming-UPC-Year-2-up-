@@ -2,9 +2,7 @@
 
 <!-- Config file for the game -->
 <config>
-  
-  
-  
+
   <input>
     <num_keys value="352"/>
     <num_mouse_buttons value="5"/>
@@ -23,7 +21,7 @@
   </window>
 
   <renderer>
-    
+    <camera x="0" y="0"/>
   </renderer>
 
   <textures>

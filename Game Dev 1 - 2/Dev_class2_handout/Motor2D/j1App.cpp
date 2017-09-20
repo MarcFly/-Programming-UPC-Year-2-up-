@@ -64,10 +64,9 @@ bool j1App::Awake()
 	// created in the last TODO
 
 	pugi::xml_parse_result result = document.load_file("config.xml");
-	
-	root_node = document.child("config");
+	//LOG("%b", result);
 
-	//xml_parse_result result = node. = document.append_child("config").append_attribute("name");
+	root_node = document.child("config");
 
 	bool ret = true;
 

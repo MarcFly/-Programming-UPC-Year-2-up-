@@ -78,7 +78,7 @@ bool j1Window::Awake(pugi::xml_node* config)
 
 
 			//Vec3 comprobations
-			Vec3<float> test = v1 + v2;
+			/*Vec3<float> test = v1 + v2;
 			test += v1;
 			test = v1 - v2;
 			test -= v2;
@@ -89,7 +89,7 @@ bool j1Window::Awake(pugi::xml_node* config)
 			v1.Normalize();
 			test_equal = test == v1;
 			
-			float distance = v1.distance_to(v2);
+			float distance = v1.distance_to(v2);*/
 		}
 	}
 
