@@ -21,7 +21,7 @@ j1Audio::~j1Audio()
 {}
 
 // Called before render is available
-bool j1Audio::Awake(pugi::xml_node& config)
+bool j1Audio::Awake(pugi::xml_node* config)
 {
 	LOG("Loading Audio Mixer");
 	bool ret = true;
@@ -34,7 +34,7 @@ bool j1Audio::Awake(pugi::xml_node& config)
 		ret = true;
 	}
 
-	// load support for the JPG and PNG image formats
+	// load support for the OGG audio formats
 	int flags = MIX_INIT_OGG;
 	int init = Mix_Init(flags);
 
@@ -52,6 +52,12 @@ bool j1Audio::Awake(pugi::xml_node& config)
 		active = false;
 		ret = true;
 	}
+
+	//Set Volume?
+	Mix_Volume(-1, config->child("master_volume").attribute("value").as_int());
+	LOG("Average volume is %d\n", Mix_Volume(-1, -1));
+	//Mix_Volume(0, config->child("music_volume").attribute("value").as_float());
+	//Mix_Volume(1,config->child("fx_volume").attribute("value").as_float());
 
 	return ret;
 }

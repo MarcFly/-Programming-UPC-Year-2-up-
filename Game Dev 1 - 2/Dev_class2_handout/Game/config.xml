@@ -3,7 +3,7 @@
 <!-- Config file for the game -->
 <config>
   
-  <name value="Game Dev 1 Config"/>
+  
   
   <input>
     <num_keys value="352"/>
@@ -19,6 +19,7 @@
     <width value="1024"/>
     <height value="768"/>
     <scale value="1"/>
+    <name value="Game Dev 1 Config"/>
   </window>
 
   <renderer>
@@ -30,7 +31,11 @@
   </textures>
 
   <audio>
-    
+    <master_volume value="64"/>"
+    <music_volume value="1"/>
+    <fx_volume value="1"/>
+    <fade_time value="2"/>
+    <repeat value="0"/>
   </audio>
 
   <scene>

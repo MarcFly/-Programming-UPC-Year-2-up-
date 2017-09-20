@@ -83,6 +83,7 @@ private:
 public:
 	pugi::xml_document document;	//TODO 2.2 Doc
 	pugi::xml_node root_node;		//TODO 2.3 Node
+	pugi::xml_node temp;
 
 private:
 	int					argc;

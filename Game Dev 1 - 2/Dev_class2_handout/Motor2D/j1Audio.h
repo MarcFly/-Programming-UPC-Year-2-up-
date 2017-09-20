@@ -20,13 +20,13 @@ public:
 	virtual ~j1Audio();
 
 	// Called before render is available
-	bool Awake(pugi::xml_node& config);
+	bool Awake(pugi::xml_node* config);
 
 	// Called before quitting
 	bool CleanUp();
 
 	// Play a music file
-	bool PlayMusic(const char* path, float fade_time = DEFAULT_MUSIC_FADE_TIME);
+	bool PlayMusic(const char* path, float fade_time = 2.0f);
 
 	// Load a WAV in memory
 	unsigned int LoadFx(const char* path);

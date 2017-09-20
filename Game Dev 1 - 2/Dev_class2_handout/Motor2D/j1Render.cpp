@@ -22,7 +22,7 @@ j1Render::~j1Render()
 {}
 
 // Called before render is available
-bool j1Render::Awake(pugi::xml_node& config)
+bool j1Render::Awake(pugi::xml_node* config)
 {
 	LOG("Create SDL rendering context");
 	bool ret = true;
