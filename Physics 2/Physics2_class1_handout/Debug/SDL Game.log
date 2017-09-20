@@ -1,0 +1,4 @@
+﻿  ModulePhysics.cpp
+c:\program files (x86)\microsoft visual studio 14.0\vc\include\limits(210): warning C4577: 'noexcept' used with no exception handling mode specified; termination on exception is not guaranteed. Specify /EHsc
+  SDL Game.vcxproj -> C:\Users\marctj1\Documents\GitHub\-Programming-UPC-Year-2-up-\Physics 2\Physics2_class1_handout\Debug\Physics 2 Class 1 Handout.exe
+  SDL Game.vcxproj -> C:\Users\marctj1\Documents\GitHub\-Programming-UPC-Year-2-up-\Physics 2\Physics2_class1_handout\Debug\Physics 2 Class 1 Handout.pdb (Full PDB)
