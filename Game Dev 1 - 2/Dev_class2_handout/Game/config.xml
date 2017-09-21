@@ -25,7 +25,7 @@
   </window>
 
   <renderer>
-    <camera x="0" y="0"/>
+    <camera x="200" y="0"/>
   </renderer>
 
   <textures>

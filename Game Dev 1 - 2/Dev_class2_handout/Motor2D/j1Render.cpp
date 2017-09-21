@@ -77,6 +77,29 @@ bool j1Render::PostUpdate()
 	return true;
 }
 
+// Called when triggered
+bool j1Render::Load(pugi::xml_node* savegame) 
+{
+	bool ret = true;
+	if (savegame != nullptr) {
+		camera.x = savegame->child("camera").attribute("x").as_int();
+		camera.y = savegame->child("camera").attribute("y").as_int();
+	}
+	else
+		ret = false;
+
+	return ret;
+}
+
+bool j1Render::Save(pugi::xml_node* savegame)
+{
+	
+	savegame->child("camera").append_attribute("x") = camera.x;
+	savegame->child("camera").append_attribute("y") = camera.y;
+
+	return true;
+}
+
 // Called before quitting
 bool j1Render::CleanUp()
 {

@@ -142,6 +142,16 @@ bool j1App::LoadConfig()
 		app_config = root_node.child("app");
 	}
 
+	result = savegame_doc.load_file("savegame.xml");
+	//LOG("%b", result);
+
+	if (result == NULL) { //Check that it loaded
+		LOG("Could not load map xml file savegame.xml. pugi error: %s", result.description());
+		ret = false;
+	}
+	else {
+		root_savegame_node = savegame_doc.child("savegame");
+	}
 	return ret;
 }
 
@@ -282,6 +292,22 @@ const char* j1App::GetOrganization() const
 bool j1App::Load() {
 	bool ret = true;
 	LOG("EYYYY LOADING BOYA/n");
+
+	p2List_item<j1Module*>* item;
+	item = modules.start;
+	j1Module* pModule = NULL;
+
+	for (item = modules.start; item != NULL && ret == true; item = item->next)
+	{
+		pModule = item->data;
+
+		if (pModule->active == false) {
+			continue;
+		}
+
+		ret = item->data->Load(&root_savegame_node.child(pModule->name.GetString()));
+	}
+
 	return ret;
 }
 
@@ -289,6 +315,24 @@ bool j1App::Load() {
 const bool j1App::Save() {
 	bool ret = true;
 	LOG("EYYYYY SAVING BOYA/n");
+
+	p2List_item<j1Module*>* item;
+	item = modules.start;
+	j1Module* pModule = NULL;
+
+	for (item = modules.start ; item != NULL && ret == true; item = item->next)
+	{
+		pModule = item->data;
+
+		if (pModule->active == false) {
+			continue;
+		}
+
+		ret = item->data->Save(&root_savegame_node.child(pModule->name.GetString()));
+	}
+
+	savegame_doc.save_file("savegame.xml");
+
 	return ret;
 }
 
