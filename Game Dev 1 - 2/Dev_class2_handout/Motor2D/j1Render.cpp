@@ -92,24 +92,11 @@ bool j1Render::Load(pugi::xml_node* savegame)
 }
 
 bool j1Render::Save(pugi::xml_node* savegame)
-{
-	// Delete the Attributes
-	//savegame->remove_child("camera");
-
-
-	// ReWrithe the Childs in order to reinitialize
+{	
+	//Save Camera Position
 	//savegame->append_child("camera");
-
-
-	// ReWrite the Attributes with new values
-	savegame->child("camera").remove_attribute("x");
-	savegame->child("camera").remove_attribute("y");
-	savegame->child("camera").append_attribute("x") = camera.x;
+	savegame->append_child("camera").append_attribute("x") = camera.x;
 	savegame->child("camera").append_attribute("y") = camera.y;
-
-	//savegame->child("camera").attribute("x").set_value(camera.x);
-	//savegame->child("camera").attribute("y").set_value(camera.y);
-
 
 	return true;
 }

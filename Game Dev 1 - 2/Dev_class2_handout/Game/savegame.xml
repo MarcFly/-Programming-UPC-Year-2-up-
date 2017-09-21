@@ -1,16 +1,13 @@
 <?xml version="1.0"?>
 <savegame>
-	<app />
 	<input />
 	<window />
-	<renderer>
-		<camera x="310" y="90" />
-	</renderer>
 	<textures />
-	<audio>"
-    <music_volume value="1" />
-		<fx_volume value="1" />
+	<audio>
 		<master_volume value="0" />
 	</audio>
 	<scene />
+	<renderer>
+		<camera x="70" y="220" />
+	</renderer>
 </savegame>

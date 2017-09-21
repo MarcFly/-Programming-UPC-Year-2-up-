@@ -139,8 +139,13 @@ bool j1App::LoadConfig()
 		app_config = root_node.child("app");
 	}
 
-	// TODO 2.3 Load savegame document and nodes
+	/*// TODO 2.3 Load savegame document and nodes
+	pugi::xml_document savegame_doc;
+
 	result = savegame_doc.load_file("savegame.xml");
+
+	pugi::xml_node root_savegame_node = savegame_doc.child("savegame");
+
 	//LOG("%b", result);
 
 	if (result == NULL) { //Check that it loaded
@@ -149,7 +154,7 @@ bool j1App::LoadConfig()
 	}
 	else {
 		root_savegame_node = savegame_doc.child("savegame");
-	}
+	}*/
 	return ret;
 }
 
@@ -291,6 +296,12 @@ bool j1App::Load() {
 	bool ret = true;
 	LOG("EYYYY LOADING BOYA/n");
 
+	pugi::xml_document savegame_doc;
+
+	pugi::xml_parse_result result = savegame_doc.load_file("savegame.xml");
+
+	pugi::xml_node root_savegame_node = savegame_doc.child("savegame");
+
 	p2List_item<j1Module*>* item;
 	item = modules.start;
 	j1Module* pModule = NULL;
@@ -314,19 +325,19 @@ const bool j1App::Save() {
 	bool ret = true;
 	LOG("EYYYYY SAVING BOYA/n");
 
+
+	pugi::xml_document	savegame_doc;
+	savegame_doc.append_child("savegame");
+	pugi::xml_node		root_savegame_node = savegame_doc.child("savegame");
+
 	p2List_item<j1Module*>* item;
 	item = modules.start;
 	j1Module* pModule = NULL;
 
 	for (item = modules.start ; item != NULL && ret == true; item = item->next)
 	{
-		pModule = item->data;
-
-		if (pModule->active == false) {
-			continue;
-		}
-
-		ret = item->data->Save(&root_savegame_node.child(pModule->name.GetString()));
+		root_savegame_node.append_child(item->data->name.GetString());
+		ret = item->data->Save(&root_savegame_node.child(item->data->name.GetString()));
 	}
 
 	savegame_doc.save_file("savegame.xml");

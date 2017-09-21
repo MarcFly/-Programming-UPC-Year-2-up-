@@ -39,12 +39,13 @@ public:
 		return ret;
 	}
 
-	void operator +=(const Vec3 other) {
+	Vec3& operator +=(const Vec3 other) {
 
 		x += other.x;
 		y += other.y;
 		z += other.z;
 
+		return *this;
 	}
 
 	Vec3& operator -(const Vec3 other) {
@@ -57,12 +58,13 @@ public:
 		return ret;
 	}
 
-	void operator -=(const Vec3 other) {
+	Vec3& operator -=(const Vec3 other) {
 
 			x -= other.x;
 			y -= other.y;
 			z -= other.z;
 
+		return *this;
 	}
 
 	bool operator ==(const Vec3 other){
@@ -85,11 +87,13 @@ public:
 
 	//Operations
 
-	void Normalize() {
+	Vec3& Normalize() {
 		float module = sqrt(x*x + y*y + z*z);
 		x /= module;
 		y /= module;
 		z /= module;
+
+		return *this;
 	}
 
 	Vec3 Normalized_Vec3() {
@@ -103,10 +107,12 @@ public:
 		return ret;
 	}
 
-	void Zero() {
+	Vec3& Zero() {
 		x = 0;
 		y = 0;
 		z = 0;
+
+		return *this;
 	}
 
 	bool isZero() {
