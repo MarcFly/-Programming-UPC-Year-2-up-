@@ -42,8 +42,28 @@ public:
 	// Exposing some properties for reading
 	int GetArgc() const;
 	const char* GetArgv(int index) const;
+	const char* GetTitle() const;
+	const char* GetOrganization() const;
+
+	// TODO 1: Create methods to save and load
+	// that can be called anytime, even if they 
+	// will one execute by the very end of the frame
+	// Load / Save
+	void Trigger_Load() 
+	{
+		trigger_load_module = true;
+	};
+
+	void Trigger_Save() 
+	{
+		trigger_save_module = true;
+	};
 
 private:
+
+	// Load config file
+	// Don't load in awake, that not organized
+	bool LoadConfig();
 
 	// Call modules before each loop iteration
 	void PrepareUpdate();
@@ -59,6 +79,11 @@ private:
 
 	// Call modules after each loop iteration
 	bool PostUpdate();
+
+	// Call for the save/load modules if triggered
+	bool Load();
+
+	const bool Save();
 
 public:
 
@@ -77,17 +102,23 @@ private:
 	uint				frames;
 	float				dt;
 
-	// TODO 2: Create two new variables from pugui namespace:
+	// TODO 1.2: Create two new variables from pugui namespace:
 	// a xml_document to store the while config file and
 	// a xml_node to read specific branches of the xml
 private:
-	pugi::xml_document document;	//TODO 2.2 Doc
-	pugi::xml_node root_node;		//TODO 2.3 Node
-	pugi::xml_node temp;
+	pugi::xml_document	document;	//TODO 1.2.2 Doc
+	pugi::xml_node		root_node;		//TODO 1.2.3 Node
+	pugi::xml_node		app_config;		//TODO 1.2.4 To get access to jsut app specific config
 
 private:
 	int					argc;
 	char**				args;
+
+	p2SString			title;
+	p2SString			organization;
+
+	bool				trigger_load_module;
+	bool				trigger_save_module;
 };
 
 extern j1App* App; // No student is asking me about that ... odd :-S

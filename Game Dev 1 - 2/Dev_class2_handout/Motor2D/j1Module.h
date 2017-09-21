@@ -59,10 +59,24 @@ public:
 		return true;
 	}
 
+	// TODDO 2.1: Create new virtual methods to load and save
+	//	Load
+	virtual bool Load(pugi::xml_node* savegame) {
+		return true;
+	}
+
+	//	Save
+	virtual bool Save(pugi::xml_node* savegame) {
+		return true;
+	}
+
 public:
 
 	p2SString	name;
 	bool		active;
+
+	bool		trigger_load;
+	bool		trigger_save;
 
 };
 

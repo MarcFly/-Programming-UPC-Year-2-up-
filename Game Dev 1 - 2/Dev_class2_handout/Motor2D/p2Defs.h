@@ -51,7 +51,7 @@ template <class VALUE_TYPE> void SWAP(VALUE_TYPE& a, VALUE_TYPE& b)
 #define MID_STR		255
 #define HUGE_STR	8192
 
-// TODO 6: Improve config.xml to store all configuration variables that we have as macros
+// TODO 1.6: Improve config.xml to store all configuration variables that we have as macros
 // Use a section with the name of each module (see Module::name)
 
 

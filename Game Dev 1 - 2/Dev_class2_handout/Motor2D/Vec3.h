@@ -1,11 +1,18 @@
 template <class TYPE>
 class Vec3 {
-private:
-	TYPE x, y, z;
+
+//Variables
+//private: 
+	
 
 public:
+	TYPE x, y, z;
 
-private:
+
+
+
+//Methods
+//private:
 	
 
 public:
@@ -18,6 +25,9 @@ public:
 
 	//Destructor
 	~Vec3() {};
+
+
+	//Operators
 
 	Vec3& operator +(const Vec3 other) {
 		Vec3 ret = {
@@ -57,6 +67,7 @@ public:
 
 	bool operator ==(const Vec3 other){
 		bool ret;
+
 		if (x == other.x)
 			if (y == other.y)
 				if (z == other.z)
@@ -71,6 +82,8 @@ public:
 		return ret;
 	}
 
+
+	//Operations
 
 	void Normalize() {
 		float module = sqrt(x*x + y*y + z*z);

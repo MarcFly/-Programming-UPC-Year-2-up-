@@ -59,16 +59,10 @@ void j1App::AddModule(j1Module* module)
 // Called before render is available
 bool j1App::Awake()
 {
-	// TODO 3: Load config.xml file using load_file() method from the xml_document class.
-	// If everything goes well, load the top tag inside the xml_node property
-	// created in the last TODO
-
-	pugi::xml_parse_result result = document.load_file("config.xml");
-	//LOG("%b", result);
-
-	root_node = document.child("config");
 
 	bool ret = true;
+
+	ret = LoadConfig();
 
 	p2List_item<j1Module*>* item;
 	item = modules.start;
@@ -79,7 +73,7 @@ bool j1App::Awake()
 
 	while(item != NULL && ret == true)
 	{
-		// TODO 7: Add a new argument to the Awake method to receive a pointer to a xml node.
+		// TODO 1.7: Add a new argument to the Awake method to receive a pointer to a xml node.
 		// If the section with the module name exist in config.xml, fill the pointer with the address of a valid xml_node
 		// that can be used to read all variables from that section. Send nullptr if the section does not exist in config.xml
 	
@@ -128,6 +122,29 @@ bool j1App::Update()
 	return ret;
 }
 
+//----------------------------------------------
+// TODO 1.3: Load config.xml file using load_file() method from the xml_document class.
+// If everything goes well, load the top tag inside the xml_node property
+// created in the last TODO
+bool j1App::LoadConfig()
+{
+	bool ret = true;
+
+	pugi::xml_parse_result result = document.load_file("config.xml");
+	//LOG("%b", result);
+
+	if (result == NULL){ //Check that it loaded
+		LOG("Could not load map xml file config.xml. pugi error: %s", result.description());
+		ret = false;
+	}
+	else {
+		root_node = document.child("config");
+		app_config = root_node.child("app");
+	}
+
+	return ret;
+}
+
 // ---------------------------------------------
 void j1App::PrepareUpdate()
 {
@@ -136,6 +153,16 @@ void j1App::PrepareUpdate()
 // ---------------------------------------------
 void j1App::FinishUpdate()
 {
+	// TODO 2.1: This is a good place to call load / Save functions
+	if (trigger_save_module == true)
+		Save();
+
+	if (trigger_load_module == true)
+		Load();
+	
+	trigger_load_module = false;
+	trigger_save_module = false;
+	
 }
 
 // Call modules before each loop iteration
@@ -233,3 +260,37 @@ const char* j1App::GetArgv(int index) const
 	else
 		return NULL;
 }
+
+// ---------------------------------------
+const char* j1App::GetTitle() const
+{
+	return title.GetString();
+}
+
+// ---------------------------------------
+const char* j1App::GetOrganization() const
+{
+	return organization.GetString();
+}
+
+
+// TODO 2.3: Create a simulation of the xml file to read 
+
+// TODO 2.4: Create a method to actually load an xml file
+// then call all the modules to load themselves
+
+bool j1App::Load() {
+	bool ret = true;
+	LOG("EYYYY LOADING BOYA/n");
+	return ret;
+}
+
+// TODO 2.7: Create a method to save the current state
+const bool j1App::Save() {
+	bool ret = true;
+	LOG("EYYYYY SAVING BOYA/n");
+	return ret;
+}
+
+
+

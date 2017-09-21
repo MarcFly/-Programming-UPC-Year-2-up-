@@ -3,6 +3,10 @@
 <!-- Config file for the game -->
 <config>
 
+  <app>
+    
+  </app>
+  
   <input>
     <num_keys value="352"/>
     <num_mouse_buttons value="5"/>

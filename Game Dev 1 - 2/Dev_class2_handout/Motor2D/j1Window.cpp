@@ -71,25 +71,11 @@ bool j1Window::Awake(pugi::xml_node* config)
 			//Get window surface
 			screen_surface = SDL_GetWindowSurface(window);
 
-			// TODO 4: Read the title of the app from the XML
+			// TODO 1.4: Read the title of the app from the XML
 			// and set directly the window title using SetTitle()
-			//App->node = App->document.child("config");
+			
 			SetTitle(config->child("name").attribute("value").as_string());
 
-
-			//Vec3 comprobations
-			/*Vec3<float> test = v1 + v2;
-			test += v1;
-			test = v1 - v2;
-			test -= v2;
-
-			bool test_equal = (v1 == v2);
-
-			test = v1.Normalized_Vec3();
-			v1.Normalize();
-			test_equal = test == v1;
-			
-			float distance = v1.distance_to(v2);*/
 		}
 	}
 

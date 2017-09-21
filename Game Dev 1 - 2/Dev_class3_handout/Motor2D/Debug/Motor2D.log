@@ -1,0 +1,13 @@
+﻿  pugixml.cpp
+  j1Window.cpp
+  j1Textures.cpp
+  j1Render.cpp
+  p2Log.cpp
+  j1Scene.cpp
+  j1Input.cpp
+  j1Audio.cpp
+  j1App.cpp
+  j1Main.cpp
+  Generating Code...
+  Motor2D.vcxproj -> C:\Users\marctj1\Documents\GitHub\-Programming-UPC-Year-2-up-\Game Dev 1 - 2\Dev_class3_handout\Debug\Motor 2D.exe
+  Motor2D.vcxproj -> C:\Users\marctj1\Documents\GitHub\-Programming-UPC-Year-2-up-\Game Dev 1 - 2\Dev_class3_handout\Debug\Motor 2D.pdb (Full PDB)

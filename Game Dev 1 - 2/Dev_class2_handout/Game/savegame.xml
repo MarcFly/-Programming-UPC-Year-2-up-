@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- Save file for the game -->
+<config>
+
+  <app>
+
+  </app>
+
+  <input>
+    
+  </input>
+
+  <window>
+    
+  </window>
+
+  <renderer>
+    <camera x="0" y="0"/>
+  </renderer>
+
+  <textures>
+
+  </textures>
+
+  <audio>
+    <master_volume value="64"/>"
+    <music_volume value="1"/>
+    <fx_volume value="1"/>
+  </audio>
+
+  <scene>
+
+  </scene>
+</config>
