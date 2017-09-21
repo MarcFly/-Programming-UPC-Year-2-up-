@@ -53,6 +53,14 @@ bool j1Scene::Update(float dt)
 	if (App->input->GetKey(SDL_SCANCODE_S) == KEY_DOWN)
 		App->Trigger_Save();
 
+	// TODO 2.Homework Allow for change in volume
+	if (App->input->GetKey(SDL_SCANCODE_KP_PLUS) == KEY_REPEAT) {
+		App->audio->Increase_Master();
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_KP_MINUS) == KEY_REPEAT) {
+		App->audio->Decrease_Master();
+	}
 
 	// Camera movement Inputs
 

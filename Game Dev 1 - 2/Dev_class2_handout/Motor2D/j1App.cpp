@@ -67,9 +67,6 @@ bool j1App::Awake()
 	p2List_item<j1Module*>* item;
 	item = modules.start;
 
-	//pugi::xml_node next_node = root_node.child("something");
-
-	//temp = new pugi::xml_node;
 
 	while(item != NULL && ret == true)
 	{
@@ -142,6 +139,7 @@ bool j1App::LoadConfig()
 		app_config = root_node.child("app");
 	}
 
+	// TODO 2.3 Load savegame document and nodes
 	result = savegame_doc.load_file("savegame.xml");
 	//LOG("%b", result);
 

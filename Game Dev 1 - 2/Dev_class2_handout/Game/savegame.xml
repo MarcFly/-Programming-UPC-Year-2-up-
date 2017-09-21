@@ -4,13 +4,13 @@
 	<input />
 	<window />
 	<renderer>
-		<camera x="0" y="200" />
+		<camera x="310" y="90" />
 	</renderer>
 	<textures />
-	<audio>
-		<master_volume value="64" />"
+	<audio>"
     <music_volume value="1" />
 		<fx_volume value="1" />
+		<master_volume value="0" />
 	</audio>
 	<scene />
 </savegame>

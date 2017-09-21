@@ -54,13 +54,17 @@ bool j1Audio::Awake(pugi::xml_node* config)
 	}
 
 	//Set Volume?
-	Mix_VolumeMusic(config->child("master_volume").attribute("value").as_int());	//Use master volume fins que sapiga diferenciar fx i music
+	master_volume = config->child("master_volume").attribute("value").as_int();
 
-	//LOG("Average volume is %d\n", Mix_Volume(-1, -1));
-	//Mix_Volume(0, config->child("music_volume").attribute("value").as_float());
-	//Mix_Volume(1,config->child("fx_volume").attribute("value").as_float());
 
 	return ret;
+}
+
+// Called each loop iteration
+bool j1Audio::PreUpdate() {
+	Mix_VolumeMusic(master_volume);	//Use master volume fins que sapiga diferenciar fx i music
+
+	return true;
 }
 
 // Called before quitting
@@ -139,6 +143,8 @@ bool j1Audio::PlayMusic(const char* path, float fade_time)
 		}
 	}
 
+	
+
 	LOG("Successfully playing %s", path);
 	return ret;
 }
@@ -178,6 +184,33 @@ bool j1Audio::PlayFx(unsigned int id, int repeat)
 	{
 		Mix_PlayChannel(-1, fx[id - 1], repeat);
 	}
+
+	return ret;
+}
+
+bool j1Audio::Load(pugi::xml_node* savegame) {
+	bool ret = true;
+
+	master_volume = savegame->child("master_value").attribute("value").as_int();
+
+	return ret;
+}
+
+bool j1Audio::Save(pugi::xml_node* savegame) {
+	bool ret = true;
+
+	// Delete the Attributes
+	savegame->remove_child("master_volume");
+
+
+	// ReWrithe the Childs in order to reinitialize
+	savegame->append_child("master_volume");
+
+
+	// ReWrite the Attributes with new values
+	savegame->child("master_volume").append_attribute("value") = master_volume;
+
+	//savegame->child("master_volume").attribute("value").set_value(master_volume)
 
 	return ret;
 }
