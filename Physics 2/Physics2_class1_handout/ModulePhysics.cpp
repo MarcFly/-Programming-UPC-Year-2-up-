@@ -36,15 +36,27 @@ bool ModulePhysics::Start()
 	// - You need to send it a default gravity
 	// - You need init the world in the constructor
 	// - Remember to destroy the world after using it
-	b2Vec2 temp_grav = { 0, -9.8f };
+	b2Vec2 temp_grav = { 0.0f, -9.8f };
 
 	world->SetGravity(temp_grav);
 
 	// TODO 4: Create a a big static circle as "ground"
-	Circle_Base.position.Set(200, 300);
-	b2Body* groundBody = world->CreateBody(&Circle_Base);
-	b2CircleShape groundCircle;
+	Circle_Base.position.Set(4000, 5000);
+	groundBody = world->CreateBody(&Circle_Base);
+	groundBody->SetType(b2_staticBody);
 	
+	
+
+	groundCircle.m_p.Set(0,0);
+
+	groundCircle.m_radius = 3000;
+	
+	b2FixtureDef CircleFixture;
+	CircleFixture.shape = &groundCircle;
+	CircleFixture.density = 1;
+
+	groundBody->CreateFixture(&CircleFixture);
+
 	return true;
 }
 
@@ -63,15 +75,18 @@ update_status ModulePhysics::PostUpdate()
 	// TODO 5: On space bar press, create a circle on mouse position
 	// - You need to transform the position / radius
 
-	if(App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
+	/*if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+		debug = !debug;
+		*/
+	/*if(App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 		debug = !debug;
 
 	if(!debug)
-		return UPDATE_CONTINUE;
+		return UPDATE_CONTINUE;*/
 
 	// Bonus code: this will iterate all objects in the world and draw the circles
 	// You need to provide your own macro to translate meters to pixels
-	/*
+	
 	for(b2Body* b = world->GetBodyList(); b; b = b->GetNext())
 	{
 		for(b2Fixture* f = b->GetFixtureList(); f; f = f->GetNext())
@@ -89,7 +104,7 @@ update_status ModulePhysics::PostUpdate()
 				// You will have to add more cases to draw boxes, edges, and polygons ...
 			}
 		}
-	}*/
+	}
 
 	return UPDATE_CONTINUE;
 }
