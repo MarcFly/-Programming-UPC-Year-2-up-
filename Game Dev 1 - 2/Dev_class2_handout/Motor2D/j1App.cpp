@@ -308,13 +308,7 @@ bool j1App::Load() {
 
 	for (item = modules.start; item != NULL && ret == true; item = item->next)
 	{
-		pModule = item->data;
-
-		if (pModule->active == false) {
-			continue;
-		}
-
-		ret = item->data->Load(&root_savegame_node.child(pModule->name.GetString()));
+		ret = item->data->Load(&root_savegame_node.child(item->data->name.GetString()));
 	}
 
 	return ret;
@@ -326,21 +320,22 @@ const bool j1App::Save() {
 	LOG("EYYYYY SAVING BOYA/n");
 
 
-	pugi::xml_document	savegame_doc;
-	savegame_doc.append_child("savegame");
-	pugi::xml_node		root_savegame_node = savegame_doc.child("savegame");
+	pugi::xml_document	savegame_doc;	//Crees el document en local
+	savegame_doc.append_child("savegame");	//Crees el fill que sera desde el que s'accedeix a altres fills
+	pugi::xml_node	root_savegame_node = savegame_doc.child("savegame");	//Converteixes el fill creat en el root node
 
+	//	Iterem per tota la llista de moduls
 	p2List_item<j1Module*>* item;
 	item = modules.start;
 	j1Module* pModule = NULL;
 
 	for (item = modules.start ; item != NULL && ret == true; item = item->next)
 	{
-		root_savegame_node.append_child(item->data->name.GetString());
-		ret = item->data->Save(&root_savegame_node.child(item->data->name.GetString()));
+		root_savegame_node.append_child(item->data->name.GetString());	//Creem el fill del modul al que estem, des del node arrel
+		ret = item->data->Save(&root_savegame_node.child(item->data->name.GetString()));	//Cridem la funcio
 	}
 
-	savegame_doc.save_file("savegame.xml");
+	savegame_doc.save_file("savegame.xml");	//Guardem el arxiu sencer, com a nou xml que sobreescriura el xml anterior (a menys que fem un sistema de noms per saves)
 
 	return ret;
 }

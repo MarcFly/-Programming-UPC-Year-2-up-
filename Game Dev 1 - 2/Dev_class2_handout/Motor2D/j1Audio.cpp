@@ -191,7 +191,7 @@ bool j1Audio::PlayFx(unsigned int id, int repeat)
 bool j1Audio::Load(pugi::xml_node* savegame) {
 	bool ret = true;
 
-	master_volume = savegame->child("master_value").attribute("value").as_int();
+	master_volume = savegame->child("master_volume").attribute("value").as_int();
 
 	return ret;
 }
@@ -201,7 +201,9 @@ bool j1Audio::Save(pugi::xml_node* savegame) {
 	
 	//Save Master Volume
 	//savegame->append_child("master_volume");
-	savegame->append_child("master_volume").append_attribute("value") = master_volume;
+	savegame->append_child("master_volume");
+	savegame->child("master_volume").append_attribute("value") = master_volume;
+	
 
 	return ret;
 }

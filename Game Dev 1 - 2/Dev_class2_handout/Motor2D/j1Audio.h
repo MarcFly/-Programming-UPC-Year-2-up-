@@ -55,6 +55,7 @@ private:
 public:
 	void Increase_Master() { master_volume += 2; if (master_volume > 128) master_volume = 128; }
 	void Decrease_Master() { master_volume -= 2; if (master_volume < 0)   master_volume = 0; }
+	void SetMaster(int volume) { master_volume = volume; }
 };
 
 #endif // __j1AUDIO_H__

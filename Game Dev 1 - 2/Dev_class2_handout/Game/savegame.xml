@@ -4,10 +4,10 @@
 	<window />
 	<textures />
 	<audio>
-		<master_volume value="0" />
+		<master_volume value="64" />
 	</audio>
 	<scene />
 	<renderer>
-		<camera x="70" y="220" />
+		<camera x="200" y="0" />
 	</renderer>
 </savegame>
