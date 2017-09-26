@@ -6,6 +6,7 @@
 #include "j1Audio.h"
 #include "j1Render.h"
 #include "j1Window.h"
+#include "j1Map.h"
 #include "j1Scene.h"
 
 j1Scene::j1Scene() : j1Module()
@@ -29,7 +30,8 @@ bool j1Scene::Awake()
 // Called before the first frame
 bool j1Scene::Start()
 {
-	img = App->tex->Load("textures/test.png");
+	//img = App->tex->Load("textures/test.png");
+	App->map->Load("hello.tmx");
 	App->audio->PlayMusic("audio/music/music_sadpiano.ogg");
 	return true;
 }
@@ -75,7 +77,16 @@ bool j1Scene::Update(float dt)
 	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 		App->render->camera.x += 10;
 
-	App->render->Blit(img, 0, 0);
+	//App->render->Blit(img, 0, 0);
+	App->map->Draw();
+
+	// TODO 3.7: Set the window title like
+	// "Map:%dx%d Tiles:%dx%d Tilesets:%d"
+	p2SString title("Map:%dx%d Tiles:%dx%d Tilesets:%d",
+		0, 0,
+		0, 0,
+		0);
+
 	return true;
 }
 

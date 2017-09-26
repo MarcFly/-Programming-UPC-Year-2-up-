@@ -13,6 +13,7 @@ class j1Render;
 class j1Textures;
 class j1Audio;
 class j1Scene;
+class j1Map;
 
 class j1App
 {
@@ -94,6 +95,7 @@ public:
 	j1Textures*			tex;
 	j1Audio*			audio;
 	j1Scene*			scene;
+	j1Map*				map;
 
 
 private:

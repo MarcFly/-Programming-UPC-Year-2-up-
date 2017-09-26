@@ -8,6 +8,6 @@
 	</audio>
 	<scene />
 	<renderer>
-		<camera x="200" y="0" />
+		<camera x="370" y="160" />
 	</renderer>
 </savegame>
