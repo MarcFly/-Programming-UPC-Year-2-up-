@@ -5,6 +5,7 @@
 #include "p2List.h"
 #include "p2Point.h"
 #include "j1Module.h"
+#include "j1Textures.h"
 
 // TODO 3.2: Create a struct to hold information for a TileSet
 // Ignore Terrain Types and Tile Types for now, but we want the image!
@@ -23,7 +24,8 @@ struct tileset_info {
 	uint columns;
 
 	// Image
-	p2SString	image_source;
+	SDL_Texture* tex;
+	const char*	image_source;
 	uint		image_width;
 	uint		image_height;
 };
@@ -53,7 +55,8 @@ struct Map_info {
 
 	uint	nextobjectid;
 
-	p2List<tileset_info>* tilesets;
+	p2List<tileset_info*> tilesets;
+	
 };
 
 // ----------------------------------------------------
@@ -78,16 +81,24 @@ public:
 	// Load new map
 	bool Load(const char* path);
 
+	// Add a new map to list
+	void AddMap(Map_info* name);
+
 private:
 
 	// TODO 3.3.2 Functions/Methods to load map data
-	bool LoadMapData(const char* path);
-	bool LoadTilesetData(pugi::xml_node* data_node);
+	bool LoadMapData(const char* path, p2List_item<Map_info*>* item,pugi::xml_node* root_node);
+	bool LoadTilesetData(pugi::xml_node* data_node, p2List_item<tileset_info*>* item_tileset);
+
 
 public:
 
 	// TODO 3.1: Add your struct for map info as public for now
-	Map_info Map_A;
+	p2List<Map_info*> Maps;
+
+	// MAPS that will be loaded
+	Map_info*	hello;
+	Map_info*	Hello2;
 
 private:
 

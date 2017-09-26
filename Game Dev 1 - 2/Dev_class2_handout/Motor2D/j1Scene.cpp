@@ -31,7 +31,7 @@ bool j1Scene::Awake()
 bool j1Scene::Start()
 {
 	//img = App->tex->Load("textures/test.png");
-	App->map->Load("hello.tmx");
+	App->map->Load("TMX tests/hello.tmx");
 	App->audio->PlayMusic("audio/music/music_sadpiano.ogg");
 	return true;
 }
