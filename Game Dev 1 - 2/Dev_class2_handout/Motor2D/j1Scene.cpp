@@ -30,10 +30,12 @@ bool j1Scene::Awake()
 // Called before the first frame
 bool j1Scene::Start()
 {
+	bool ret = true;
 	//img = App->tex->Load("textures/test.png");
-	App->map->Load("TMX tests/hello.tmx");
-	App->audio->PlayMusic("audio/music/music_sadpiano.ogg");
-	return true;
+	ret = App->map->Load("TMX tests/hello.tmx");
+	if(ret == true) ret = App->audio->PlayMusic("audio/music/music_sadpiano.ogg");
+	
+	return ret;
 }
 
 // Called each loop iteration
