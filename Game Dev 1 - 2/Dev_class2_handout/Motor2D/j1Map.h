@@ -9,7 +9,7 @@
 
 // TODO 3.Homework
 // Do layer printing
-struct properties {
+/*struct properties {
 	
 	struct property
 	{
@@ -19,18 +19,10 @@ struct properties {
 
 	p2List<property*> porperty_list;
 
-};
+};*/
 
-struct layer_info {
-	p2SString	name;
-	uint		width;
-	uint		height;
-	uint*		data;
-	properties	properties;
-};
-
-enum tile_types {
-	unknown__ = -1,
+enum walk_types {
+	unknown___ = -1,
 	walkable,
 	unwalkable,
 	water,
@@ -38,15 +30,38 @@ enum tile_types {
 	//keep adding types as you encounter them
 };
 
-struct tile_info{
-	properties properties;
+struct map_tile_info {
+	//properties properties;
 	int id;
-	tile_types type;
+	walk_types type;
+};
+
+struct layer_info {
+	p2SString	name;
+	uint		width;
+	uint		height;
+
+	p2List<map_tile_info*> tiles;
+	//uint*		data;
+	//properties	properties;
+};
+
+struct tileset_tile_info {
+	int id;
+	p2SString terrain;
+};
+
+enum terrain_types {
+	unknown__ = -1,
+	Blocks,
+	Cobblestone,
+	Cracking_Sand,
+	Sand
 };
 
 struct terrain_info {
-	p2SString name;
-	int tile;
+	int tile_check;
+	terrain_types type;
 };
 
 // TODO 3.2: Create a struct to hold information for a TileSet
@@ -145,12 +160,17 @@ public:
 private:
 
 	// TODO 3.3.2 Functions/Methods to load map data
-	bool LoadMapData(const char* path, Map_info* item,pugi::xml_node* root_node);
+	bool LoadMapData(Map_info* item,pugi::xml_node* root_node);
 	bool LoadTilesetData(pugi::xml_node* data_node, tileset_info* item_tileset);
 
 	// Load Terrains
-	bool j1Map::LoadTerrainData(pugi::xml_node* terrain_node, terrain_info* item_terrain);
+	bool LoadTerrainData(pugi::xml_node* terrain_node, terrain_info* item_terrain);
 
+	// Load Layers
+	bool LoadLayerData(pugi::xml_node* layer_node, layer_info* item_layer);
+
+	// Load Tiles
+	bool LoadTileData(pugi::xml_node* tile_node, map_tile_info* item_tile);
 
 public:
 
