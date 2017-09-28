@@ -106,7 +106,7 @@
     <ClInclude Include="p2SString.h" />
     <ClInclude Include="PugiXml\src\pugiconfig.hpp" />
     <ClInclude Include="PugiXml\src\pugixml.hpp" />
-    <ClInclude Include="Vec3.h" />
+    <ClInclude Include="p2Vec3.h" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="..\Game\config.xml">

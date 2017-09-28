@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="15" tilewidth="32" tileheight="32" nextobjectid="1">
+<map version="1.0" orientation="isometric" renderorder="right-down" width="50" height="15" tilewidth="32" tileheight="32" nextobjectid="1">
  <tileset firstgid="1" name="tmw_desert_spacing" tilewidth="32" tileheight="32" spacing="1" margin="1" tilecount="48" columns="8">
   <image source="TMX tests/tmw_desert_spacing.png" width="265" height="199"/>
   <terraintypes>
@@ -49,9 +49,9 @@
   <tile id="43" terrain="1,3,1,1"/>
   <tile id="44" terrain="3,1,1,1"/>
  </tileset>
- <tileset firstgid="49" name="buch-outdoor" tilewidth="32" tileheight="32" spacing="1" margin="1" tilecount="55" columns="11">
-  <image source="TMX tests/buch-outdoor.png" width="384" height="192"/>
- </tileset>
+  <tileset firstgid="49" name="buch-outdoor" tilewidth="32" tileheight="32" spacing="1" margin="1" tilecount="55" columns="11">
+    <image source="TMX tests/buch-outdoor.png" width="384" height="192"/>
+  </tileset>
  <layer name="Capa de Patrones 1" width="50" height="15">
   <data>
    <tile gid="30"/>

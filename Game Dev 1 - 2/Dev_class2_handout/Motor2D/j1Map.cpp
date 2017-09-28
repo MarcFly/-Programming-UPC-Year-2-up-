@@ -6,6 +6,7 @@
 #include "j1Textures.h"
 #include "j1Map.h"
 #include <math.h>
+#include <string.h>
 
 struct SDL_Texture;
 
@@ -41,20 +42,25 @@ void j1Map::Draw()
 	if (map_loaded == false)
 		return;
 
+	//SDL_SetRenderDrawBlendMode
+	//SDL_SetRenderDrawColor
+
 	// TODO 3.6: Iterate all tilesets and draw all their 
 	// images in 0,0 (you should have only one tileset for now)
 	p2List_item<Map_info*>* item_map = Maps.start;
-	p2List_item<tileset_info*>* item_tileset = Maps.start->data->tilesets.start;
+	
+	iPoint pos = { 0,0 };
 
 	while (item_map != nullptr) {
 
-		//item_tileset = item_map->data->tilesets.start;
+		p2List_item<tileset_info*>* item_tileset = Maps.start->data->tilesets.start;
 
 		while (item_tileset != nullptr) {
 
-			App->render->Blit(item_tileset->data->tex, 0, 0);
+			App->render->Blit(item_tileset->data->image.tex, pos.x, pos.y);
 			item_tileset = item_tileset->next;
 
+			pos.y += 100;
 		}
 
 		item_map = item_map->next;
@@ -96,22 +102,12 @@ bool j1Map::Load(const char* file_name)
 	{
 		// TODO 3.3: Create and call a private function to load and fill
 		// all your map data
-		//pugi::xml_document new_map;
-
-		//pugi::xml_parse_result result = map_file.load(file_name);
-
-		//Map_info* tmp = new Map_info;
-		//if (result.description() != nullptr)
-		//p2List_item<Map_info*> tmp = new Map_info;
-
 		pugi::xml_node root_node = check_doc.child("map");
 		Map_info* item = new Map_info();
-		//p2List_item<Map_info*>* item_map = Maps.start;
 
 		LoadMapData(file_name, item, &root_node);
 		Maps.add(item);
 
-		//delete item;
 	}
 
 	// TODO 3.4: Create and call a private function to load a tileset
@@ -137,6 +133,21 @@ bool j1Map::LoadMapData(const char* path, Map_info* item_map, pugi::xml_node* ma
 	bool ret = true;
 
 	//pugi::xml_node map_node = root_node->child("map");
+	const pugi::char_t* cmp = map_node->attribute("orientation").as_string();
+	
+	// Orientation
+	if (strcmp(cmp, "orthogonal")) item_map->map_type = orthogonal;
+	if (strcmp(cmp, "isometric")) item_map->map_type = isometric;
+	if (strcmp(cmp, "staggered")) item_map->map_type = staggered;
+	if (strcmp(cmp, "hexagonal")) item_map->map_type = hexagonal;
+	else item_map->map_type = unknown_;
+
+	// Renderorder
+	if (strcmp(cmp, "right-down")) item_map->renderorder = right_down;
+	if (strcmp(cmp, "right-up")) item_map->renderorder = right_up;
+	if (strcmp(cmp, "left-down")) item_map->renderorder = left_down;
+	if (strcmp(cmp, "left-up")) item_map->renderorder = left_up;
+	else item_map->renderorder = unknown;
 
 	item_map->width = map_node->attribute("width").as_uint();
 	item_map->height = map_node->attribute("height").as_uint();
@@ -148,10 +159,12 @@ bool j1Map::LoadMapData(const char* path, Map_info* item_map, pugi::xml_node* ma
 
 	if (map_node->child("tileset").attribute("firstgid").as_uint() == map_node->attribute("nextobjectid").as_uint()) {
 
-		tileset_info* item_tileset = new tileset_info;
+		
 		pugi::xml_node tileset_node = map_node->child("tileset");
 
 		while (tileset_node.attribute("firstgid").as_int() > 0) {
+
+			tileset_info* item_tileset = new tileset_info;
 
 			LoadTilesetData(&tileset_node, item_tileset);
 
@@ -170,30 +183,54 @@ bool j1Map::LoadMapData(const char* path, Map_info* item_map, pugi::xml_node* ma
 	return ret;
 }
 
-bool j1Map::LoadTilesetData(pugi::xml_node* data_node, tileset_info* item_tileset) {
+bool j1Map::LoadTilesetData(pugi::xml_node* tileset_node, tileset_info* item_tileset) {
 	bool ret = true;
 
-	item_tileset->firstgid = data_node->attribute("firstgid").as_uint();
-	item_tileset->name = data_node->attribute("name").as_uint();
-	item_tileset->tilewidth = data_node->attribute("tilewidth").as_uint();
-	item_tileset->tileheight = data_node->attribute("tileheight").as_uint();
-	item_tileset->spacing = data_node->attribute("spacing").as_uint();
-	item_tileset->margin = data_node->attribute("margin").as_uint();
+	// Tileset info
+	item_tileset->firstgid = tileset_node->attribute("firstgid").as_uint();
+	item_tileset->name = tileset_node->attribute("name").as_uint();
+	item_tileset->tilewidth = tileset_node->attribute("tilewidth").as_uint();
+	item_tileset->tileheight = tileset_node->attribute("tileheight").as_uint();
+	item_tileset->spacing = tileset_node->attribute("spacing").as_uint();
+	item_tileset->margin = tileset_node->attribute("margin").as_uint();
 
-	item_tileset->tilecount = data_node->attribute("tilecount").as_uint();
+	item_tileset->tilecount = tileset_node->attribute("tilecount").as_uint();
 
-	item_tileset->columns = data_node->attribute("columns").as_uint();
+	item_tileset->columns = tileset_node->attribute("columns").as_uint();
 
 
 	// Image info
-	*data_node = data_node->child("image");
+	*tileset_node = tileset_node->child("image");
 
-	item_tileset->image_source = data_node->attribute("source").as_string();
-	item_tileset->image_width = data_node->attribute("width").as_uint();
-	item_tileset->image_height = data_node->attribute("height").as_uint();
+	item_tileset->image.image_source = tileset_node->attribute("source").as_string();
+	item_tileset->image.image_width = tileset_node->attribute("width").as_uint();
+	item_tileset->image.image_height = tileset_node->attribute("height").as_uint();
 	
-	//item_tileset->tex = new SDL_Texture;
-	item_tileset->tex = App->tex->Load(item_tileset->image_source);
+	item_tileset->image.tex = App->tex->Load(item_tileset->image.image_source);
+
+	pugi::xml_node terrain_node = tileset_node->parent().child("terraintype").child("terrain");
+
+	while (terrain_node.attribute("tile").as_int() == -1) {
+
+		terrain_info* item_terrain = new terrain_info;
+
+		LoadTerrainData(&terrain_node, item_terrain);
+
+		terrain_node = terrain_node.parent().next_sibling("terrain");
+
+		item_tileset->terrains.add(item_terrain);
+
+	}
+
+
+	return ret;
+}
+
+bool j1Map::LoadTerrainData(pugi::xml_node* terrain_node, terrain_info* item_terrain) {
+	bool ret = true;
+
+	item_terrain->name = terrain_node->attribute("name").as_string();
+	item_terrain->tile = terrain_node->attribute("tile").as_int();
 
 	return ret;
 }

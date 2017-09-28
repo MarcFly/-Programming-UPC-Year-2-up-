@@ -2,7 +2,7 @@
 #include "p2Log.h"
 #include "j1App.h"
 #include "j1Window.h"
-#include "Vec3.h"
+#include "p2Vec3.h"
 #include "SDL/include/SDL.h"
 
 

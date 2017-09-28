@@ -7,7 +7,9 @@
 #include "j1Module.h"
 #include "j1Textures.h"
 
-/*struct properties {
+// TODO 3.Homework
+// Do layer printing
+struct properties {
 	
 	struct property
 	{
@@ -15,18 +17,8 @@
 		bool value;
 	};
 
-	p2List<property*> list;
+	p2List<property*> porperty_list;
 
-	~properties()
-	{
-		p2List_item<property*>* item = list.start;
-
-		while (item != list.end) {
-			RELEASE(*item);
-			item++;
-		}
-		
-	}
 };
 
 struct layer_info {
@@ -34,18 +26,11 @@ struct layer_info {
 	uint		width;
 	uint		height;
 	uint*		data;
-	properties properties;
-
-	layer_info() : data(NULL) {}
-
-	~layer_info() { RELEASE(data); }
-
-	inline uint Get(int x, int y) const { return data[(y*width) + x]; }
-
+	properties	properties;
 };
 
 enum tile_types {
-	unknown = -1,
+	unknown__ = -1,
 	walkable,
 	unwalkable,
 	water,
@@ -57,11 +42,22 @@ struct tile_info{
 	properties properties;
 	int id;
 	tile_types type;
-};*/
+};
+
+struct terrain_info {
+	p2SString name;
+	int tile;
+};
 
 // TODO 3.2: Create a struct to hold information for a TileSet
 // Ignore Terrain Types and Tile Types for now, but we want the image!
 // ----------------------------------------------------
+struct Image {
+	SDL_Texture*	tex;
+	const char*		image_source;
+	uint			image_width;
+	uint			image_height;
+};
 
 struct tileset_info {
 	uint		firstgid;
@@ -75,12 +71,9 @@ struct tileset_info {
 	uint tilecount;
 	uint columns;
 
-	// Image
-	
-	SDL_Texture*	tex;
-	const char*		image_source;
-	uint			image_width;
-	uint			image_height;
+	Image image;
+
+	p2List<terrain_info*> terrains;
 
 	//SDL_Rect GetTileRect(int id) const;
 	//tile_info* GetTileType(int tile_id) const {};
@@ -88,15 +81,16 @@ struct tileset_info {
 
 // TODO 3.1: Create a struct needed to hold the information to Map node
 enum orientation {
-	unknown = -1,
-	orthogonal = 0,
+	unknown_ = -1,
+	orthogonal,
 	isometric,
 	staggered,
 	hexagonal
 };
 
 enum renderorder {
-	right_down = 0,
+	unknown = -1,
+	right_down,
 	right_up,
 	left_down,
 	left_up
@@ -106,7 +100,7 @@ struct Map_info {
 	pugi::xml_document map_file;
 
 	orientation	map_type;
-	//uint		renderorder;
+	uint		renderorder;
 	SDL_Color	bg_color;
 
 	uint		width;
@@ -117,7 +111,7 @@ struct Map_info {
 	uint	nextobjectid;
 
 	p2List<tileset_info*> tilesets;
-	//p2List<layer_info*> layers;
+	p2List<layer_info*> layers;
 
 	//Map_info() {};
 	
@@ -153,6 +147,9 @@ private:
 	// TODO 3.3.2 Functions/Methods to load map data
 	bool LoadMapData(const char* path, Map_info* item,pugi::xml_node* root_node);
 	bool LoadTilesetData(pugi::xml_node* data_node, tileset_info* item_tileset);
+
+	// Load Terrains
+	bool j1Map::LoadTerrainData(pugi::xml_node* terrain_node, terrain_info* item_terrain);
 
 
 public:

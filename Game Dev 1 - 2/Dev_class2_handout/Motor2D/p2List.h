@@ -83,7 +83,7 @@ public:
 			p_data_item->prev = end;
 			end->next = p_data_item;
 			end = p_data_item;
-			p_data_item->prev->next = p_data_item;
+			//p_data_item->prev->next = p_data_item;
 		}
 
 		++size;

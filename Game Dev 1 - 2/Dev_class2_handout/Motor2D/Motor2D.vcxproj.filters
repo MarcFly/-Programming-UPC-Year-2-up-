@@ -84,11 +84,11 @@
     <ClInclude Include="PugiXml\src\pugixml.hpp">
       <Filter>Desenvolupament  ========\Tools\PugiXML</Filter>
     </ClInclude>
-    <ClInclude Include="Vec3.h">
-      <Filter>Programacio 2 ===========</Filter>
-    </ClInclude>
     <ClInclude Include="j1Map.h">
       <Filter>Desenvolupament  ========\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="p2Vec3.h">
+      <Filter>Programacio 2 ===========</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
