@@ -7,15 +7,14 @@
 //class b2World;
 //struct b2BodyDef;
 
-#define METERS_TO_PIXELS 0.1*
-#define PIXELS_TO_METERS 10*
+#define METERS_TO_PIXELS 100*
+#define PIXELS_TO_METERS 0.01*
 
 class ModulePhysics : public Module
 {
 public:
-	b2BodyDef Circle_Base;
-	b2Body* groundBody;
-	b2CircleShape groundCircle;
+	//b2BodyDef Circle_Base;
+	//b2CircleShape groundCircle;
 
 private:
 	b2World* world;	//Game Physical World
@@ -29,6 +28,9 @@ public:
 	update_status PreUpdate();
 	update_status PostUpdate();
 	bool CleanUp();
+
+	//TODO 5 Function to create circle
+	void RandomCircle(iPoint pos);
 
 private:
 

@@ -2,6 +2,9 @@
 #include "Application.h"
 #include "ModulePhysics.h"
 #include "math.h"
+#include <time.h>
+
+
 
 // TODO 1: Include Box 2 header and library
 //#include "Box2D\Box2D\Box2D.h"
@@ -30,32 +33,33 @@ ModulePhysics::~ModulePhysics()
 
 bool ModulePhysics::Start()
 {
+	srand(time(NULL));
+
 	LOG("Creating Physics 2D environment");
 
 	// TODO 2: Create a private variable for the world
 	// - You need to send it a default gravity
 	// - You need init the world in the constructor
 	// - Remember to destroy the world after using it
-	b2Vec2 temp_grav = { 0.0f, -9.8f };
+	b2Vec2 temp_grav = { 0.0f, 9.8f };
 
-	world->SetGravity(temp_grav);
+	world = new b2World(temp_grav);
 
 	// TODO 4: Create a a big static circle as "ground"
-	Circle_Base.position.Set(4000, 5000);
-	groundBody = world->CreateBody(&Circle_Base);
-	groundBody->SetType(b2_staticBody);
+	b2BodyDef Circle_Base;
+	Circle_Base.position.Set(5.0f, 4.5f);
+	Circle_Base.type = b2_staticBody;
 	
-	
-
-	groundCircle.m_p.Set(0,0);
-
-	groundCircle.m_radius = 3000;
+	b2CircleShape groundCircle;
+	groundCircle.m_radius = 1.5f;
 	
 	b2FixtureDef CircleFixture;
 	CircleFixture.shape = &groundCircle;
-	CircleFixture.density = 1;
+	//CircleFixture.density = 1;
 
+	b2Body* groundBody = world->CreateBody(&Circle_Base);
 	groundBody->CreateFixture(&CircleFixture);
+	//groundBody->SetType(b2_staticBody);
 
 	return true;
 }
@@ -64,7 +68,7 @@ bool ModulePhysics::Start()
 update_status ModulePhysics::PreUpdate()
 {
 	// TODO 3: Update the simulation ("step" the world)
-	world->Step(1.0f/60.0f, 6, 2);	//Time Step (using 60fps), velocity of iterations (8 better, 6 bit more optimal), position iterations (3 better, 2 more optimal)
+	world->Step(1.0f/60.0f, 8, 3);	//Time Step (using 60fps), velocity of iterations (8 better, 6 bit more optimal), position iterations (3 better, 2 more optimal)
 									//Basically the iterations (vel and pos) are for accuracy purposes, more iterations more accuracy less performance
 	return UPDATE_CONTINUE;
 }
@@ -74,10 +78,10 @@ update_status ModulePhysics::PostUpdate()
 {
 	// TODO 5: On space bar press, create a circle on mouse position
 	// - You need to transform the position / radius
-
-	/*if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
-		debug = !debug;
-		*/
+	//iPoint pos = { groundCircle.m_p.x, groundCircle.m_p.y - 1000 };
+	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+		RandomCircle({App->input->GetMouseX(), App->input->GetMouseY()});
+		
 	/*if(App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 		debug = !debug;
 
@@ -119,4 +123,27 @@ bool ModulePhysics::CleanUp()
 	delete world;
 
 	return true;
+}
+
+void ModulePhysics::RandomCircle(iPoint pos) {
+
+	
+
+	b2BodyDef bodydef;
+	bodydef.type = b2_dynamicBody;
+	bodydef.position.Set(PIXELS_TO_METERS pos.x,PIXELS_TO_METERS pos.y);
+
+	
+
+	b2CircleShape Rnd;
+	//int sth = groundCircle.m_radius;
+	Rnd.m_radius = 0.1 + rand()%1;
+
+	b2FixtureDef fixt;
+	fixt.shape = &Rnd;
+	//fixt.density = 500;
+
+	b2Body* body = world->CreateBody(&bodydef);
+	body->CreateFixture(&fixt);
+
 }
