@@ -5,13 +5,6 @@
 #include "j1Module.h"
 #include "PugiXml\src\pugixml.hpp"
 
-// Draw Modes
-enum DrawMode {
-	standard = 0,
-	debug,
-	only_collisions
-};
-
 // Modules
 class j1Window;
 class j1Input;
@@ -52,25 +45,14 @@ public:
 	const char* GetTitle() const;
 	const char* GetOrganization() const;
 
-	// TODO 1: Create methods to save and load
-	// that can be called anytime, even if they 
-	// will one execute by the very end of the frame
-	// Load / Save
-	void Trigger_Load() 
-	{
-		trigger_load_module = true;
-	};
-
-	void Trigger_Save() 
-	{
-		trigger_save_module = true;
-	};
+	void LoadGame();
+	void SaveGame() const;
+	void GetSaveGames(p2List<p2SString>& list_to_fill) const;
 
 private:
 
 	// Load config file
-	// Don't load in awake, that not organized
-	bool LoadConfig();
+	pugi::xml_node LoadConfig(pugi::xml_document&) const;
 
 	// Call modules before each loop iteration
 	void PrepareUpdate();
@@ -87,10 +69,9 @@ private:
 	// Call modules after each loop iteration
 	bool PostUpdate();
 
-	// Call for the save/load modules if triggered
-	bool Load();
-
-	const bool Save();
+	// Load / Save
+	bool LoadGameNow();
+	bool SavegameNow() const;
 
 public:
 
@@ -103,31 +84,21 @@ public:
 	j1Scene*			scene;
 	j1Map*				map;
 
-
 private:
 
 	p2List<j1Module*>	modules;
 	uint				frames;
 	float				dt;
-
-	// TODO 1.2: Create two new variables from pugui namespace:
-	// a xml_document to store the while config file and
-	// a xml_node to read specific branches of the xml
-private:
-	pugi::xml_document	document;		//TODO 1.2.2 Doc
-	pugi::xml_node		root_node;		//TODO 1.2.3 Node
-	pugi::xml_node		app_config;		//TODO 1.2.4 To get access to jsut app specific config
-
-
-private:
 	int					argc;
 	char**				args;
 
 	p2SString			title;
 	p2SString			organization;
 
-	bool				trigger_load_module;
-	bool				trigger_save_module;
+	mutable bool		want_to_save;
+	bool				want_to_load;
+	p2SString			load_game;
+	mutable p2SString	save_game;
 };
 
 extern j1App* App; // No student is asking me about that ... odd :-S

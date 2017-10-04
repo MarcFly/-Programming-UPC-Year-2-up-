@@ -27,13 +27,6 @@ bool j1Map::Awake(pugi::xml_node& config)
 
 	folder.create(config.child("folder").child_value());
 
-	// Add Maps to the list
-	hello = new Map_info;
-	Hello2 = new Map_info;
-
-	//AddMap(hello);
-	//AddMap(Hello2);
-
 	return ret;
 }
 
@@ -42,26 +35,46 @@ void j1Map::Draw()
 	if (map_loaded == false)
 		return;
 
-	//SDL_SetRenderDrawBlendMode
-	//SDL_SetRenderDrawColor
+	/// TODO 3.6: Iterate all tilesets and draw all their 
+	/// images in 0,0 (you should have only one tileset for now)
 
-	// TODO 3.6: Iterate all tilesets and draw all their 
-	// images in 0,0 (you should have only one tileset for now)
+	// TODO 4.5 Loop to draw all tilesets + Blit
+	// TODO 4.9 Complete draw function for layers and tiles
 	p2List_item<Map_info*>* item_map = Maps.start;
-	
+
 	iPoint pos = { 0,0 };
 
-	while (item_map != nullptr) {
+	while (item_map != nullptr) { //Check there is a map
+		
+		p2List_item<tileset_info*>* item_tileset = item_map->data->tilesets.start; //Start tileset list
 
-		p2List_item<tileset_info*>* item_tileset = Maps.start->data->tilesets.start;
+		p2List_item<layer_info*>* item_layer = item_map->data->layers.start; //Start layer
 
-		while (item_tileset != nullptr) {
+		while (item_layer != nullptr) { //Check there are layers
 
-			App->render->Blit(item_tileset->data->image.tex, pos.x, pos.y);
-			item_tileset = item_tileset->next;
+			p2List_item<map_tile_info*>* item_tile = item_layer->data->tiles.start; //Start tiles
 
-			pos.y += 100;
+			while (item_tile != nullptr) { //Check tere is tiles and 
+			
+				if (item_tile->data->id != 0) { //don't blit id 0 tiles
+					item_tileset = item_map->data->tilesets.start; //Restart tilesets
+
+					while (item_tileset->data->firstgid - 1 >= item_tile->data->id || item_tileset->data->firstgid + item_tileset->data->tilecount < item_tile->data->id) //Check tileset is the correct one for the id, else go to it
+						item_tileset = item_tileset->next;
+
+					pos = item_layer->data->GetMapPos(item_tile->data->nid);
+
+					App->render->Blit(item_tileset->data->image.tex, pos.x, pos.y, &item_tileset->data->GetRect(item_tile->data->id)); //Blit
+
+				}
+
+
+				item_tile = item_tile->next; //go to next tile
+			}
+			item_layer = item_layer->next;
 		}
+			
+		
 
 		item_map = item_map->next;
 	}
@@ -125,10 +138,6 @@ bool j1Map::Load(const char* file_name)
 	return ret;
 }
 
-void j1Map::AddMap(Map_info* name) {
-	//Maps.add(name);
-}
-
 bool j1Map::LoadMapData(Map_info* item_map, pugi::xml_node* map_node) {
 	bool ret = true;
 
@@ -182,7 +191,7 @@ bool j1Map::LoadMapData(Map_info* item_map, pugi::xml_node* map_node) {
 
 		while (layer_node.attribute("name").as_string() != "") {
 			layer_info* item_layer = new layer_info;
-			LoadLayerData(&layer_node, item_layer);
+			LoadLayerData(&layer_node, item_layer, item_map);
 			layer_node = layer_node.next_sibling("layer");
 			item_map->layers.add(item_layer);
 		}
@@ -196,7 +205,7 @@ bool j1Map::LoadTilesetData(pugi::xml_node* tileset_node, tileset_info* item_til
 
 	// Tileset info
 	item_tileset->firstgid = tileset_node->attribute("firstgid").as_uint();
-	item_tileset->name = tileset_node->attribute("name").as_uint();
+	item_tileset->name = tileset_node->attribute("name").as_string();
 	item_tileset->tilewidth = tileset_node->attribute("tilewidth").as_uint();
 	item_tileset->tileheight = tileset_node->attribute("tileheight").as_uint();
 	item_tileset->spacing = tileset_node->attribute("spacing").as_uint();
@@ -207,18 +216,10 @@ bool j1Map::LoadTilesetData(pugi::xml_node* tileset_node, tileset_info* item_til
 	item_tileset->columns = tileset_node->attribute("columns").as_uint();
 
 	// Load terrains
-	pugi::xml_node terrain_node = tileset_node->child("terraintypes").child("terrain");
-
-	if (terrain_node.attribute("tile").as_int() != -1) LOG("There are no terrains, RETARD ARTIST!!!!\n");
-
-	while (terrain_node.attribute("tile").as_int() == -1) {
+	for (int i = 1; i <= item_tileset->tilecount; i++) {
 
 		terrain_info* item_terrain = new terrain_info;
-
-		LoadTerrainData(&terrain_node, item_terrain);
-		
-		terrain_node = terrain_node.next_sibling("terrain");
-
+		LoadTerrainData(i, item_terrain, item_tileset);
 		item_tileset->terrains.add(item_terrain);
 
 	}
@@ -235,51 +236,58 @@ bool j1Map::LoadTilesetData(pugi::xml_node* tileset_node, tileset_info* item_til
 	return ret;
 }
 
-bool j1Map::LoadTerrainData(pugi::xml_node* terrain_node, terrain_info* item_terrain) {
+// Load Terrain Data-----------------------------------------------------------------------------------------------------------
+bool j1Map::LoadTerrainData(const int& id, terrain_info* item_terrain, tileset_info* item_tileset) {
+	
+	item_terrain->id = id;
 
-	const pugi::char_t* cmp = terrain_node->attribute("name").as_string();
+	item_terrain->Tex_Pos = new SDL_Rect(item_tileset->GetRect(item_terrain->id));
 
-	if (strcmp(cmp, "Blocks")) item_terrain->type = Blocks;
-	if (strcmp(cmp, "Cobblestone")) item_terrain->type = Cobblestone;
-	if (strcmp(cmp, "Cracking Sand")) item_terrain->type = Cracking_Sand;
-	if (strcmp(cmp, "Sand")) item_terrain->type = Sand;
-	else item_terrain->type = unknown__;
-
-	item_terrain->tile_check = terrain_node->attribute("tile").as_int();
-
+	// Create a switch depending on Id to create later collision data for later creation
+	
 	return true;
 }
 
-bool j1Map::LoadLayerData(pugi::xml_node* layer_node, layer_info* item_layer) {
+// Load Layer Data-----------------------------------------------------------------------------------------------------------
+bool j1Map::LoadLayerData(pugi::xml_node* layer_node, layer_info* item_layer, Map_info* item_map) {
 	
 	item_layer->name = layer_node->attribute("name").as_string();
 	item_layer->width = layer_node->attribute("width").as_uint();
 	item_layer->height = layer_node->attribute("height").as_uint();
 
+	item_layer->draw = (DrawMode)layer_node->attribute("Draw Mode").as_int();
+
+	item_layer->tile_width = item_map->tilewidth;
+	item_layer->tile_height = item_map->tileheight;
+
 	//Load all tiles in layer data
 	pugi::xml_node tile_node = layer_node->child("data").child("tile");
 	pugi::xml_node gid_check = layer_node->previous_sibling("tileset").previous_sibling("tileset").last_child();
-	int gid_check_test = gid_check.attribute("id").as_int();
-	int node_gid = tile_node.attribute("gid").as_int();
+	
 
-	if (tile_node.attribute("gid").as_int() <= -1) LOG("There are no valid tiles, RETARD ARTIST!!!!\n");
+	if (tile_node.attribute("gid").as_int() <= -1) LOG("There are no valid tiles, RETARDTIST!!!!\n");
+
+	int nid = 0;
 
 	while (item_layer->tiles.count() < item_layer->width * item_layer->height) {
-
+		
 		map_tile_info* item_tile = new map_tile_info;
 	
-		LoadTileData(&tile_node, item_tile);
+		LoadTileData(&tile_node, item_tile, nid);
 	
 		tile_node = tile_node.next_sibling("tile");
 
 		item_layer->tiles.add(item_tile);
 
+		nid++;
 	}
 
 	return true;
 }
 
-bool j1Map::LoadTileData(pugi::xml_node* tile_node, map_tile_info* item_tile) {
+bool j1Map::LoadTileData(pugi::xml_node* tile_node, map_tile_info* item_tile, const int& nid) {
+	
+	item_tile->nid = nid;
 
 	if (tile_node->attribute("gid").as_int() > -1)
 		item_tile->id = tile_node->attribute("gid").as_int();
@@ -288,4 +296,8 @@ bool j1Map::LoadTileData(pugi::xml_node* tile_node, map_tile_info* item_tile) {
 		item_tile->type = (walk_types)tile_node->attribute("walk_type").as_int();
 	
 	return true;
+}
+
+iPoint j1Map::MapToWorld(int x, int y) const {
+
 }
