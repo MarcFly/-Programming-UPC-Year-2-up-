@@ -29,8 +29,14 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 
-	//TODO 5 Function to create circle
+	//P2 TODO 1.5 Function to create circle
 	void RandomCircle(iPoint pos);
+
+	//P2 TODO 2.1 Function to create box
+	void RandomBox(iPoint pos);
+
+	//P2 TODO 2.3 Function to create chains given points
+	void GivenChain(const int* points, iPoint pos, int size);
 
 private:
 
