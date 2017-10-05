@@ -29,13 +29,6 @@ enum walk_types {
 	jumpable
 	//keep adding types as you encounter them
 };
-/*
-struct map_tile_info {
-	//properties properties;
-	uint nid;
-	uint id;
-	walk_types type;
-};*/
 
 // TODO 4.1 Create a struct for map layer
 struct layer_info {
@@ -43,19 +36,15 @@ struct layer_info {
 	uint		width;	// Width in tiles of the layer
 	uint		height;	// Height in tiles of layer
 	uint		tilecount;
-	uint		tile_height;
-	uint		tile_width;
 
 	//DrawMode	draw_sth;
-
-	//p2List<map_tile_info*> tiles;
 
 	// Data storing Tiles system
 	uint*	data = nullptr;
 	uint	size = 0;
 
 	//TODO 4.6 Return X,Y of tile in tileset
-	iPoint GetMapPos(int nid) {
+	iPoint GetMapPos(int nid, int tile_width, int tile_height) {
 		return { (int)(tile_width * ((nid) - (width*(nid / width)))), (int)(tile_height * (nid / width))};
 	}
 
@@ -155,7 +144,6 @@ struct Map_info {
 		tilesets.clear();
 		layers.clear();
 	}
-	//Map_info() {};
 	
 };
 
@@ -195,10 +183,9 @@ private:
 	bool LoadTerrainData(const int& id, terrain_info* item_terrain, tileset_info* item_tileset);
 
 	// TODO 4.3 Load Layers
-	bool LoadLayerData(pugi::xml_node* layer_node, layer_info* item_layer, Map_info* item_map);
+	bool LoadLayerData(pugi::xml_node* layer_node, layer_info* item_layer);
 
-	// Load Tiles
-	//bool LoadTileData(pugi::xml_node* tile_node, map_tile_info* item_tile, const int& nid);
+
 
 public:
 
