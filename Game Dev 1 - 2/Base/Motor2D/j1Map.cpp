@@ -58,7 +58,11 @@ void j1Map::Draw()
 
 			for (int i = 0; i < item_layer->data->height; i++) {
 				for (int j = 0; j < item_layer->data->width; j++) {
-					App->render->Blit(item_tileset->data->image.tex, j * item_map->data->tilewidth, i * item_map->data->tileheight, &item_tileset->data->GetRect(*p));
+					App->render->Blit(
+						item_tileset->data->image.tex, 
+						j * item_map->data->tilewidth, 
+						i * item_map->data->tileheight, 
+						&item_tileset->data->GetRect(*p));
 					p++;
 				}
 			}
@@ -77,15 +81,10 @@ bool j1Map::CleanUp()
 
 	// TODO 3.2: Make sure you clean up any memory allocated
 	// from tilesets / map
-	//Maps.clear();
 	for (int i = 0; i < Maps.count(); i++)
 		delete Maps[i];
 
 	Maps.clear();
-	/*while (Maps.start != nullptr)
-		Maps.end->~p2List_item();*/
-
-	//map_file.reset();
 
 	return true;
 }
@@ -115,7 +114,7 @@ bool j1Map::Load(const char* file_name)
 		pugi::xml_node root_node = check_doc.child("map");
 		Map_info* item = new Map_info();
 
-		LoadMapData(item, &root_node);
+		LoadMapData(root_node, *item);
 		Maps.add(item);
 	}
 
@@ -131,7 +130,7 @@ bool j1Map::Load(const char* file_name)
 				
 
 				tileset_info* item_tileset = new tileset_info;
-				ret = LoadTilesetData(&tileset_node, item_tileset);
+				ret = LoadTilesetData(tileset_node, *item_tileset);
 				tileset_node = tileset_node.parent().next_sibling("tileset");
 
 			
@@ -154,13 +153,11 @@ bool j1Map::Load(const char* file_name)
 
 		while (layer_node.attribute("name").as_string() != "") {
 			layer_info* item_layer = new layer_info;
-			ret = LoadLayerData(&layer_node, item_layer);
+			ret = LoadLayerData(layer_node, *item_layer);
 			layer_node = layer_node.next_sibling("layer");
 			Maps.end->data->layers.add(item_layer);
 
 		}
-		
-
 	}
 
 	if (ret == true)
@@ -174,32 +171,32 @@ bool j1Map::Load(const char* file_name)
 	return ret;
 }
 
-bool j1Map::LoadMapData(Map_info* item_map, pugi::xml_node* map_node) {
+bool j1Map::LoadMapData(const pugi::xml_node& map_node, Map_info& item_map) {
 	bool ret = true;
 
 	// Orientation
-	const pugi::char_t* cmp = map_node->attribute("orientation").as_string();
+	const pugi::char_t* cmp = map_node.attribute("orientation").as_string();
 
-	if (strcmp(cmp, "orthogonal")) item_map->map_type = orthogonal;
-	if (strcmp(cmp, "isometric")) item_map->map_type = isometric;
-	if (strcmp(cmp, "staggered")) item_map->map_type = staggered;
-	if (strcmp(cmp, "hexagonal")) item_map->map_type = hexagonal;
-	else item_map->map_type = unknown_;
+	if (strcmp(cmp, "orthogonal")) item_map.map_type = orthogonal;
+	if (strcmp(cmp, "isometric")) item_map.map_type = isometric;
+	if (strcmp(cmp, "staggered")) item_map.map_type = staggered;
+	if (strcmp(cmp, "hexagonal")) item_map.map_type = hexagonal;
+	else item_map.map_type = unknown_;
 
 	// Renderorder
-	cmp = map_node->attribute("renderorder").as_string();
+	cmp = map_node.attribute("renderorder").as_string();
 
-	if (strcmp(cmp, "right-down")) item_map->renderorder = right_down;
-	if (strcmp(cmp, "right-up")) item_map->renderorder = right_up;
-	if (strcmp(cmp, "left-down")) item_map->renderorder = left_down;
-	if (strcmp(cmp, "left-up")) item_map->renderorder = left_up;
-	else item_map->renderorder = unknown;
+	if (strcmp(cmp, "right-down")) item_map.renderorder = right_down;
+	if (strcmp(cmp, "right-up")) item_map.renderorder = right_up;
+	if (strcmp(cmp, "left-down")) item_map.renderorder = left_down;
+	if (strcmp(cmp, "left-up")) item_map.renderorder = left_up;
+	else item_map.renderorder = unknown;
 
-	item_map->width = map_node->attribute("width").as_uint();
-	item_map->height = map_node->attribute("height").as_uint();
-	item_map->tilewidth = map_node->attribute("tilewidth").as_uint();
-	item_map->tileheight = map_node->attribute("tileheight").as_uint();
-	item_map->nextobjectid = map_node->attribute("nextobjectid").as_uint();
+	item_map.width = map_node.attribute("width").as_uint();
+	item_map.height = map_node.attribute("height").as_uint();
+	item_map.tilewidth = map_node.attribute("tilewidth").as_uint();
+	item_map.tileheight = map_node.attribute("tileheight").as_uint();
+	item_map.nextobjectid = map_node.attribute("nextobjectid").as_uint();
 
 	// Load Tilesets
 	/*
@@ -237,75 +234,78 @@ bool j1Map::LoadMapData(Map_info* item_map, pugi::xml_node* map_node) {
 	return ret;
 }
 
-bool j1Map::LoadTilesetData(pugi::xml_node* tileset_node, tileset_info* item_tileset) {
+bool j1Map::LoadTilesetData(const pugi::xml_node& tileset_node, tileset_info& item_tileset) {
 	bool ret = true;
 
 	// Tileset info
-	item_tileset->firstgid = tileset_node->attribute("firstgid").as_uint();
-	item_tileset->name = tileset_node->attribute("name").as_string();
-	item_tileset->tilewidth = tileset_node->attribute("tilewidth").as_uint();
-	item_tileset->tileheight = tileset_node->attribute("tileheight").as_uint();
-	item_tileset->spacing = tileset_node->attribute("spacing").as_uint();
-	item_tileset->margin = tileset_node->attribute("margin").as_uint();
+	item_tileset.firstgid = tileset_node.attribute("firstgid").as_uint();
+	item_tileset.name = tileset_node.attribute("name").as_string();
+	item_tileset.tilewidth = tileset_node.attribute("tilewidth").as_uint();
+	item_tileset.tileheight = tileset_node.attribute("tileheight").as_uint();
+	item_tileset.spacing = tileset_node.attribute("spacing").as_uint();
+	item_tileset.margin = tileset_node.attribute("margin").as_uint();
 
-	item_tileset->tilecount = tileset_node->attribute("tilecount").as_uint();
+	item_tileset.tilecount = tileset_node.attribute("tilecount").as_uint();
 
-	item_tileset->columns = tileset_node->attribute("columns").as_uint();
+	item_tileset.columns = tileset_node.attribute("columns").as_uint();
 
 	// Load terrains
-	for (int i = 1; i <= item_tileset->tilecount; i++) {
+	for (int i = 1; i <= item_tileset.tilecount; i++) {
 
 		terrain_info* item_terrain = new terrain_info;
-		ret = LoadTerrainData(i, item_terrain, item_tileset);
-		item_tileset->terrains.add(item_terrain);
+		ret = LoadTerrainData(tileset_node, i, *item_terrain, item_tileset);
+		item_tileset.terrains.add(item_terrain);
 
 	}
 
 	// Image info
-	*tileset_node = tileset_node->child("image");
-
-	item_tileset->image.image_source = tileset_node->attribute("source").as_string();
-	item_tileset->image.image_width = tileset_node->attribute("width").as_uint();
-	item_tileset->image.image_height = tileset_node->attribute("height").as_uint();
+	item_tileset.image.image_source = tileset_node.child("image").attribute("source").as_string();
+	item_tileset.image.image_width = tileset_node.child("image").attribute("width").as_uint();
+	item_tileset.image.image_height = tileset_node.child("image").attribute("height").as_uint();
 	
-	item_tileset->image.tex = App->tex->Load(item_tileset->image.image_source.GetString());
+	item_tileset.image.tex = App->tex->Load(item_tileset.image.image_source.GetString());
 
 	return ret;
 }
 
 // Load Terrain Data-----------------------------------------------------------------------------------------------------------
-bool j1Map::LoadTerrainData(const int& id, terrain_info* item_terrain, tileset_info* item_tileset) {
+bool j1Map::LoadTerrainData(const pugi::xml_node& tileset_node, const int& id, terrain_info& item_terrain, tileset_info& item_tileset) {
 	
-	item_terrain->id = id;
+	item_terrain.id = id;
 
-	item_terrain->Tex_Pos = new SDL_Rect(item_tileset->GetRect(item_terrain->id));
+	item_terrain.Tex_Pos = new SDL_Rect(item_tileset.GetRect(item_terrain.id));
 
 	// Create a switch depending on Id to create later collision data for later creation
-	
+	// There should be a way of detecting which type of layer we are in, and then load properties, no matter what type it is
+	// Then load different properties depending on it, how tho?
+	// Recommended with an int and just do a switch to choose laoding functions, no enum needed (you can comment what type of layer it is)
+	// Or do with string and cmp (more memory tho)
+	// switch(
+	//pugi::xpath_node_set terrain_node = tileset_node.select_node("/tile[@id='%d']", id); Test the select node method to load a specific node instead of iterating to find
 	return true;
 }
 
 // Load Layer Data-----------------------------------------------------------------------------------------------------------
-bool j1Map::LoadLayerData(pugi::xml_node* layer_node, layer_info* item_layer) {
+bool j1Map::LoadLayerData(const pugi::xml_node& layer_node, layer_info& item_layer) {
 	
-	item_layer->name = layer_node->attribute("name").as_string();
-	item_layer->width = layer_node->attribute("width").as_uint();
-	item_layer->height = layer_node->attribute("height").as_uint();
+	item_layer.name = layer_node.attribute("name").as_string();
+	item_layer.width = layer_node.attribute("width").as_uint();
+	item_layer.height = layer_node.attribute("height").as_uint();
 
 	//item_layer->draw_sth = (DrawMode)layer_node->attribute("Draw Mode").as_int();
 
 	//Load all tiles in layer data
-	pugi::xml_node tile_node = layer_node->child("data").child("tile");
-	pugi::xml_node gid_check = layer_node->previous_sibling("tileset").previous_sibling("tileset").last_child();
+	pugi::xml_node tile_node = layer_node.child("data").child("tile");
+	pugi::xml_node gid_check = layer_node.previous_sibling("tileset").previous_sibling("tileset").last_child();
 	
 
 	if (tile_node.attribute("gid").as_int() <= -1) LOG("There are no valid tiles, RETARDTIST!!!!\n");
 
-	item_layer->size = item_layer->width * item_layer->height;
-	item_layer->data = new uint[item_layer->size];
+	item_layer.size = item_layer.width * item_layer.height;
+	item_layer.data = new uint[item_layer.size];
 	
-	uint* p = item_layer->data; // TO go through a "pointer" list you have to go through while going in another pointer so you are not changing where its pointing to the original one but giving the value
-	for (int i = 0; i < item_layer->size; i++) {
+	uint* p = item_layer.data; // TO go through a "pointer" list you have to go through while going in another pointer so you are not changing where its pointing to the original one but giving the value
+	for (int i = 0; i < item_layer.size; i++) {
 		*p = tile_node.attribute("gid").as_uint();
 		tile_node = tile_node.next_sibling("tile");
 		p++;

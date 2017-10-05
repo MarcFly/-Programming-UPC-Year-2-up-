@@ -48,8 +48,9 @@ struct layer_info {
 		return { (int)(tile_width * ((nid) - (width*(nid / width)))), (int)(tile_height * (nid / width))};
 	}
 
+	inline int Get(const int& x, const int& y) { return y*width + x; }
+
 	~layer_info() {
-		//tiles.clear();
 		delete[] data;
 	}
 };
@@ -88,13 +89,13 @@ struct tileset_info {
 	p2List<terrain_info*> terrains;
 
 	// TODO 4.7 Method that gives the Rect given gid
-	SDL_Rect GetRect(int gid) {
-		int x = margin + (((gid - 1 - (columns * ((gid - 1) / columns)))*(tilewidth + spacing)));
+	inline SDL_Rect GetRect(int gid) const{
+		int x = spacing + (((gid - 1 - (columns * ((gid - 1) / columns)))*(tilewidth + spacing)));
 		// Given Tileset starts at margin, we count from 0 because calculus
 		// There are certain amount of columns that decide how many tiles occupy a row, so every X tiles (gid-1) it creates a new row -> (gid - 1) / Colums -> represent which row it belongs
 		// - (columns*row) calculates how many tiles you have to go back to calculate from X = 0 for the X displacement in that row, for GID = 40 Columns = 8, GID is row 4, it will return 36 to wich it will calculate X offset for 3
 		// (gid - 1 - (colums * row)) -> base tile to calculate X displacement in a row * (tilewidth + spacing) to measure in pixels where in the tileset it belongs
-		int y = margin + (((gid - 1) / columns)*(tileheight + spacing)); //Calculate row and just add height and spacing repending on row (row 1 -> + 1 * (tileheight + spacing))
+		int y = spacing + (((gid - 1) / columns)*(tileheight + spacing)); //Calculate row and just add height and spacing repending on row (row 1 -> + 1 * (tileheight + spacing))
 		int w = tilewidth;
 		int h = tileheight;
 
@@ -104,6 +105,7 @@ struct tileset_info {
 	~tileset_info() {
 		for (int i = 0; i < terrains.count(); i++)
 			delete terrains[i];
+		terrains.clear();
 	}
 };
 
@@ -144,9 +146,11 @@ struct Map_info {
 	~Map_info() {
 		for (int i = 0; i < tilesets.count(); i++)
 			delete tilesets[i];
+		tilesets.clear();
 
 		for (int i = 0; i < layers.count(); i++)
 			delete layers[i];
+		layers.clear();
 	}
 
 	
@@ -180,15 +184,15 @@ public:
 private:
 
 	// TODO 3.3.2 Functions/Methods to load map data
-	bool LoadMapData(Map_info* item,pugi::xml_node* root_node);
-	bool LoadTilesetData(pugi::xml_node* data_node, tileset_info* item_tileset);
+	bool LoadMapData(const pugi::xml_node& root_node, Map_info& item);
+	bool LoadTilesetData(const pugi::xml_node& data_node, tileset_info& item_tileset);
 
 	// TODO 3.Homework Load terrains
 	// Load Terrains
-	bool LoadTerrainData(const int& id, terrain_info* item_terrain, tileset_info* item_tileset);
+	bool LoadTerrainData(const pugi::xml_node& tileset_node, const int& id, terrain_info& item_terrain, tileset_info& item_tileset);
 
 	// TODO 4.3 Load Layers
-	bool LoadLayerData(pugi::xml_node* layer_node, layer_info* item_layer);
+	bool LoadLayerData(const pugi::xml_node& layer_node, layer_info& item_layer);
 
 
 
