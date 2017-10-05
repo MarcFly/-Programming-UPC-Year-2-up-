@@ -102,7 +102,8 @@ struct tileset_info {
 	}
 
 	~tileset_info() {
-		terrains.clear();
+		for (int i = 0; i < terrains.count(); i++)
+			delete terrains[i];
 	}
 };
 
@@ -141,9 +142,13 @@ struct Map_info {
 	p2List<layer_info*> layers; // TODO 4.2 Layers list
 
 	~Map_info() {
-		tilesets.clear();
-		layers.clear();
+		for (int i = 0; i < tilesets.count(); i++)
+			delete tilesets[i];
+
+		for (int i = 0; i < layers.count(); i++)
+			delete layers[i];
 	}
+
 	
 };
 

@@ -33,12 +33,12 @@ bool j1Scene::Start()
 	bool ret = true;
 	//img = App->tex->Load("textures/test.png");
 	// LOAD MAPS AND MUSIC HERE
-	ret = App->map->Load("TMX tests/hexagonal-mini.tmx");
-	//ret = App->map->Load("TMX tests/isometric_grass_and_water.tmx");
-	ret = App->map->Load("TMX tests/orthogonal-outside.tmx");
-	//ret = App->map->Load("TMX tests/sewers.tmx");
-	//ret = App->map->Load("TMX tests/Trial.tmx");
-	if(ret == true) ret = App->audio->PlayMusic("audio/music/music_sadpiano.ogg");
+	if (ret == true) ret = App->map->Load("TMX tests/hexagonal-mini.tmx");
+	if (ret == true) ret = App->map->Load("TMX tests/isometric_grass_and_water.tmx");
+	if (ret == true) ret = App->map->Load("TMX tests/orthogonal-outside.tmx");
+	if (ret == true) ret = App->map->Load("TMX tests/sewers.tmx");
+	if (ret == true) ret = App->map->Load("TMX tests/Trial.tmx");
+	if (ret == true) ret = App->audio->PlayMusic("audio/music/music_sadpiano.ogg");
 	
 	return ret;
 }

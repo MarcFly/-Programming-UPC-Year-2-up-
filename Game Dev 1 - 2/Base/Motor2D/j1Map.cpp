@@ -77,7 +77,13 @@ bool j1Map::CleanUp()
 
 	// TODO 3.2: Make sure you clean up any memory allocated
 	// from tilesets / map
+	//Maps.clear();
+	for (int i = 0; i < Maps.count(); i++)
+		delete Maps[i];
+
 	Maps.clear();
+	/*while (Maps.start != nullptr)
+		Maps.end->~p2List_item();*/
 
 	//map_file.reset();
 
@@ -111,7 +117,6 @@ bool j1Map::Load(const char* file_name)
 
 		LoadMapData(item, &root_node);
 		Maps.add(item);
-		item_map = Maps.end;
 	}
 
 	// TODO 3.4: Create and call a private function to load a tileset
@@ -129,9 +134,10 @@ bool j1Map::Load(const char* file_name)
 				ret = LoadTilesetData(&tileset_node, item_tileset);
 				tileset_node = tileset_node.parent().next_sibling("tileset");
 
-				item_map->data->tilesets.add(item_tileset);
+			
+				Maps.end->data->tilesets.add(item_tileset);
 
-				delete item_tileset;
+
 			}
 
 			map_loaded = true;
@@ -150,9 +156,8 @@ bool j1Map::Load(const char* file_name)
 			layer_info* item_layer = new layer_info;
 			ret = LoadLayerData(&layer_node, item_layer);
 			layer_node = layer_node.next_sibling("layer");
-			item_map->data->layers.add(item_layer);
+			Maps.end->data->layers.add(item_layer);
 
-			delete item_layer;
 		}
 		
 
