@@ -33,7 +33,11 @@ bool j1Scene::Start()
 	bool ret = true;
 	//img = App->tex->Load("textures/test.png");
 	// LOAD MAPS AND MUSIC HERE
-	ret = App->map->Load("TMX tests/hello.tmx");
+	ret = App->map->Load("TMX tests/hexagonal-mini.tmx");
+	//ret = App->map->Load("TMX tests/isometric_grass_and_water.tmx");
+	ret = App->map->Load("TMX tests/orthogonal-outside.tmx");
+	//ret = App->map->Load("TMX tests/sewers.tmx");
+	//ret = App->map->Load("TMX tests/Trial.tmx");
 	if(ret == true) ret = App->audio->PlayMusic("audio/music/music_sadpiano.ogg");
 	
 	return ret;
@@ -86,16 +90,16 @@ bool j1Scene::Update(float dt)
 	// TODO 3.7: Set the window title like
 	// "Map:%dx%d Tiles:%dx%d Tilesets:%d"
 	p2List_item<Map_info*>* tmp_map = App->map->Maps.start;
-	p2SString title("Maps:%d MapSize:%dx%d TileSize:%dx%d Tilesets:%d Layers:%d Tiles:%d",
+	/*p2SString title("Maps:%d MapSize:%dx%d TileSize:%dx%d Tilesets:%d Layers:%d Tiles:%d",
 		App->map->Maps.count(),
 		tmp_map->data->width, tmp_map->data->height,
 		tmp_map->data->tilewidth, tmp_map->data->tileheight,
 		tmp_map->data->tilesets.count(),
 		tmp_map->data->layers.count(),
-		tmp_map->data->layers.start->data->tiles.count());
-
-	App->win->SetTitle(title.GetString());
-
+		tmp_map->data->layers.start->data->size);
+	*/
+	//App->win->SetTitle(title.GetString());
+	
 	return true;
 }
 

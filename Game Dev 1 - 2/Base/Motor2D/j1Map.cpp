@@ -51,32 +51,18 @@ void j1Map::Draw()
 		p2List_item<layer_info*>* item_layer = item_map->data->layers.start; //Start layer
 
 		while (item_layer != nullptr) { //Check there are layers
+			uint* p = item_layer->data->data; // reset data pointing to data[0]
 
-			p2List_item<map_tile_info*>* item_tile = item_layer->data->tiles.start; //Start tiles
-
-			while (item_tile != nullptr) { //Check tere is tiles and 
-			
-				if (item_tile->data->id != 0) { //don't blit id 0 tiles
-					item_tileset = item_map->data->tilesets.start; //Restart tilesets
-
-					while (item_tileset->data->firstgid - 1 >= item_tile->data->id || item_tileset->data->firstgid + item_tileset->data->tilecount < item_tile->data->id) //Check tileset is the correct one for the id, else go to it
-						item_tileset = item_tileset->next;
-
-					pos = item_layer->data->GetMapPos(item_tile->data->nid);
-
-					App->render->Blit(item_tileset->data->image.tex, pos.x, pos.y, &item_tileset->data->GetRect(item_tile->data->id)); //Blit
-
+			for (int i = 0; i < item_layer->data->height; i++) {
+				for (int j = 0; j < item_layer->data->width; j++) {
+					App->render->Blit(item_tileset->data->image.tex, j * item_layer->data->tile_width, i * item_layer->data->tile_height, &item_tileset->data->GetRect(*p));
+					p++;
 				}
-
-
-				item_tile = item_tile->next; //go to next tile
 			}
-			item_layer = item_layer->next;
-		}
-			
-		
 
-		item_map = item_map->next;
+		item_layer = item_layer->next;
+		}
+	item_map = item_map->next;
 	}
 	
 }
@@ -166,7 +152,7 @@ bool j1Map::LoadMapData(Map_info* item_map, pugi::xml_node* map_node) {
 	item_map->nextobjectid = map_node->attribute("nextobjectid").as_uint();
 
 	// Load Tilesets
-	if (map_node->child("tileset").attribute("firstgid").as_uint() == map_node->attribute("nextobjectid").as_uint()) {
+	if (map_node->child("tileset").attribute("firstgid").as_uint() != 0) {
 	
 		pugi::xml_node tileset_node = map_node->child("tileset");
 
@@ -231,7 +217,7 @@ bool j1Map::LoadTilesetData(pugi::xml_node* tileset_node, tileset_info* item_til
 	item_tileset->image.image_width = tileset_node->attribute("width").as_uint();
 	item_tileset->image.image_height = tileset_node->attribute("height").as_uint();
 	
-	item_tileset->image.tex = App->tex->Load(item_tileset->image.image_source);
+	item_tileset->image.tex = App->tex->Load(item_tileset->image.image_source.GetString());
 
 	return ret;
 }
@@ -255,7 +241,7 @@ bool j1Map::LoadLayerData(pugi::xml_node* layer_node, layer_info* item_layer, Ma
 	item_layer->width = layer_node->attribute("width").as_uint();
 	item_layer->height = layer_node->attribute("height").as_uint();
 
-	item_layer->draw = (DrawMode)layer_node->attribute("Draw Mode").as_int();
+	//item_layer->draw_sth = (DrawMode)layer_node->attribute("Draw Mode").as_int();
 
 	item_layer->tile_width = item_map->tilewidth;
 	item_layer->tile_height = item_map->tileheight;
@@ -267,9 +253,9 @@ bool j1Map::LoadLayerData(pugi::xml_node* layer_node, layer_info* item_layer, Ma
 
 	if (tile_node.attribute("gid").as_int() <= -1) LOG("There are no valid tiles, RETARDTIST!!!!\n");
 
-	int nid = 0;
+	//int nid = 0;
 
-	while (item_layer->tiles.count() < item_layer->width * item_layer->height) {
+	/*while (item_layer->tiles.count() < item_layer->width * item_layer->height) {
 		
 		map_tile_info* item_tile = new map_tile_info;
 	
@@ -280,12 +266,22 @@ bool j1Map::LoadLayerData(pugi::xml_node* layer_node, layer_info* item_layer, Ma
 		item_layer->tiles.add(item_tile);
 
 		nid++;
+	}*/
+
+	item_layer->size = item_layer->width * item_layer->height;
+	item_layer->data = new uint[item_layer->size];
+	
+	uint* p = item_layer->data; // TO go through a "pointer" list you have to go through while going in another pointer so you are not changing where its pointing to the original one but giving the value
+	for (int i = 0; i < item_layer->size; i++) {
+		*p = tile_node.attribute("gid").as_uint();
+		tile_node = tile_node.next_sibling("tile");
+		p++;
 	}
 
 	return true;
 }
 
-bool j1Map::LoadTileData(pugi::xml_node* tile_node, map_tile_info* item_tile, const int& nid) {
+/*bool j1Map::LoadTileData(pugi::xml_node* tile_node, map_tile_info* item_tile, const int& nid) {
 	
 	item_tile->nid = nid;
 
@@ -296,8 +292,9 @@ bool j1Map::LoadTileData(pugi::xml_node* tile_node, map_tile_info* item_tile, co
 		item_tile->type = (walk_types)tile_node->attribute("walk_type").as_int();
 	
 	return true;
-}
+}*/
 
 iPoint j1Map::MapToWorld(int x, int y) const {
 
+	return { 0,0 };
 }

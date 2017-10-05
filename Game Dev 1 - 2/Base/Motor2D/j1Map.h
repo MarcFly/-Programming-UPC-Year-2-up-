@@ -29,26 +29,30 @@ enum walk_types {
 	jumpable
 	//keep adding types as you encounter them
 };
-
+/*
 struct map_tile_info {
 	//properties properties;
 	uint nid;
 	uint id;
 	walk_types type;
-};
+};*/
 
 // TODO 4.1 Create a struct for map layer
 struct layer_info {
 	p2SString	name;
 	uint		width;	// Width in tiles of the layer
 	uint		height;	// Height in tiles of layer
-
+	uint		tilecount;
 	uint		tile_height;
 	uint		tile_width;
 
-	DrawMode	draw;
+	//DrawMode	draw_sth;
 
-	p2List<map_tile_info*> tiles;
+	//p2List<map_tile_info*> tiles;
+
+	// Data storing Tiles system
+	uint*	data = nullptr;
+	uint	size = 0;
 
 	//TODO 4.6 Return X,Y of tile in tileset
 	iPoint GetMapPos(int nid) {
@@ -56,7 +60,8 @@ struct layer_info {
 	}
 
 	~layer_info() {
-		tiles.clear();
+		//tiles.clear();
+		delete[] data;
 	}
 };
 
@@ -72,7 +77,7 @@ struct terrain_info {
 // ----------------------------------------------------
 struct Image {
 	SDL_Texture*	tex;
-	const char*		image_source;
+	p2SString		image_source;
 	uint			image_width;
 	uint			image_height;
 };
@@ -193,16 +198,12 @@ private:
 	bool LoadLayerData(pugi::xml_node* layer_node, layer_info* item_layer, Map_info* item_map);
 
 	// Load Tiles
-	bool LoadTileData(pugi::xml_node* tile_node, map_tile_info* item_tile, const int& nid);
+	//bool LoadTileData(pugi::xml_node* tile_node, map_tile_info* item_tile, const int& nid);
 
 public:
 
 	// TODO 3.1: Add your struct for map info as public for now
 	p2List<Map_info*> Maps;
-
-	// MAPS that will be loaded
-	Map_info*	hello;
-	Map_info*	Hello2;
 
 private:
 
