@@ -33,11 +33,11 @@ bool j1Scene::Start()
 	bool ret = true;
 	//img = App->tex->Load("textures/test.png");
 	// LOAD MAPS AND MUSIC HERE
-	if (ret == true) ret = App->map->Load("TMX tests/hexagonal-mini.tmx");
+	//if (ret == true) ret = App->map->Load("TMX tests/hexagonal-mini.tmx");
 	if (ret == true) ret = App->map->Load("TMX tests/isometric_grass_and_water.tmx");
-	if (ret == true) ret = App->map->Load("TMX tests/orthogonal-outside.tmx");
-	if (ret == true) ret = App->map->Load("TMX tests/sewers.tmx");
-	if (ret == true) ret = App->map->Load("TMX tests/Trial.tmx");
+	//if (ret == true) ret = App->map->Load("TMX tests/orthogonal-outside.tmx");
+	//if (ret == true) ret = App->map->Load("TMX tests/sewers.tmx");
+	//if (ret == true) ret = App->map->Load("TMX tests/Trial.tmx");
 	if (ret == true) ret = App->audio->PlayMusic("audio/music/music_sadpiano.ogg");
 	
 	return ret;
@@ -89,16 +89,19 @@ bool j1Scene::Update(float dt)
 
 	// TODO 3.7: Set the window title like
 	// "Map:%dx%d Tiles:%dx%d Tilesets:%d"
-	p2List_item<Map_info*>* tmp_map = App->map->Maps.start;
-	/*p2SString title("Maps:%d MapSize:%dx%d TileSize:%dx%d Tilesets:%d Layers:%d Tiles:%d",
-		App->map->Maps.count(),
-		tmp_map->data->width, tmp_map->data->height,
-		tmp_map->data->tilewidth, tmp_map->data->tileheight,
-		tmp_map->data->tilesets.count(),
-		tmp_map->data->layers.count(),
-		tmp_map->data->layers.start->data->size);
-	*/
-	//App->win->SetTitle(title.GetString());
+	iPoint pos; 
+	App->input->GetMousePosition(pos.x, pos.y);
+	pos = App->map->WorldToMap(pos.x, pos.y, App->map->Maps->tilewidth, App->map->Maps->tileheight);
+	p2SString title("MapSize:%dx%d TileSize:%dx%d Tilesets:%d Layers:%d Tiles:%d Position:%d %d",
+		App->map->Maps->width, App->map->Maps->height,
+		App->map->Maps->tilewidth, App->map->Maps->tileheight,
+		App->map->Maps->tilesets.count(),
+		App->map->Maps->layers.count(),
+		App->map->Maps->layers.start->data->size,
+		pos.x,pos.y
+		);
+	
+	App->win->SetTitle(title.GetString());
 	
 	return true;
 }

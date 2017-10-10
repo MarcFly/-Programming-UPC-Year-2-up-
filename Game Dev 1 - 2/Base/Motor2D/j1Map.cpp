@@ -40,17 +40,16 @@ void j1Map::Draw()
 
 	// TODO 4.5 Loop to draw all tilesets + Blit
 	// TODO 4.9 Complete draw function for layers and tiles
-	p2List_item<Map_info*>* item_map = Maps.start;
 
 	iPoint pos = { 0,0 };
 
-	while (item_map != nullptr) { //Check there is a map
+	if (Maps != nullptr) { //Check there is a map
 		
-		p2List_item<tileset_info*>* item_tileset = item_map->data->tilesets.start; //Start tileset list
+		p2List_item<tileset_info*>* item_tileset = Maps->tilesets.start; //Start tileset list
 	
-		p2List_item<layer_info*>* item_layer = item_map->data->layers.start; //Start layer
+		p2List_item<layer_info*>* item_layer = Maps->layers.start; //Start layer
 
-		while (item_map->data->tilesets.count() > 1 && (*item_layer->data->data < item_tileset->data->firstgid || *item_layer->data->data > item_tileset->data->firstgid + item_tileset->data->tilecount)) 
+		while (Maps->tilesets.count() > 1 && (*item_layer->data->data < item_tileset->data->firstgid || *item_layer->data->data > item_tileset->data->firstgid + item_tileset->data->tilecount)) 
 			item_tileset = item_tileset->next; // This only works if layer only works over 1 tileset, if multiple tilesets in a layer, you have to do it before every blit?
 
 		while (item_layer != nullptr) { //Check there are layers
@@ -58,10 +57,12 @@ void j1Map::Draw()
 
 			for (int i = 0; i < item_layer->data->height; i++) {
 				for (int j = 0; j < item_layer->data->width; j++) {
+					iPoint pos = MapToWorld(j, i, item_tileset->data->tilewidth, item_tileset->data->tileheight);
+
 					App->render->Blit(
 						item_tileset->data->image.tex, 
-						j * item_map->data->tilewidth, 
-						i * item_map->data->tileheight, 
+						pos.x , 
+						pos.y - i * Maps->tileheight / 2 - j * Maps->tilewidth / 4, 
 						&item_tileset->data->GetRect(*p));
 					p++;
 				}
@@ -69,7 +70,7 @@ void j1Map::Draw()
 
 		item_layer = item_layer->next;
 		}
-	item_map = item_map->next;
+	
 	}
 	
 }
@@ -81,10 +82,7 @@ bool j1Map::CleanUp()
 
 	// TODO 3.2: Make sure you clean up any memory allocated
 	// from tilesets / map
-	for (int i = 0; i < Maps.count(); i++)
-		delete Maps[i];
-
-	Maps.clear();
+	delete Maps;
 
 	return true;
 }
@@ -112,10 +110,9 @@ bool j1Map::Load(const char* file_name)
 		// TODO 3.3: Create and call a private function to load and fill
 		// all your map data
 		pugi::xml_node root_node = check_doc.child("map");
-		Map_info* item = new Map_info();
+		Maps = new Map_info();
 
-		LoadMapData(root_node, *item);
-		Maps.add(item);
+		LoadMapData(root_node, *Maps);
 	}
 
 	// TODO 3.4: Create and call a private function to load a tileset
@@ -134,7 +131,7 @@ bool j1Map::Load(const char* file_name)
 				tileset_node = tileset_node.parent().next_sibling("tileset");
 
 			
-				Maps.end->data->tilesets.add(item_tileset);
+				Maps->tilesets.add(item_tileset);
 
 
 			}
@@ -155,7 +152,7 @@ bool j1Map::Load(const char* file_name)
 			layer_info* item_layer = new layer_info;
 			ret = LoadLayerData(layer_node, *item_layer);
 			layer_node = layer_node.next_sibling("layer");
-			Maps.end->data->layers.add(item_layer);
+			Maps->layers.add(item_layer);
 
 		}
 	}
@@ -175,21 +172,23 @@ bool j1Map::LoadMapData(const pugi::xml_node& map_node, Map_info& item_map) {
 	bool ret = true;
 
 	// Orientation
-	const pugi::char_t* cmp = map_node.attribute("orientation").as_string();
+	p2SString cmp;
+	cmp.create(map_node.attribute("orientation").as_string());
 
-	if (strcmp(cmp, "orthogonal")) item_map.map_type = orthogonal;
-	if (strcmp(cmp, "isometric")) item_map.map_type = isometric;
-	if (strcmp(cmp, "staggered")) item_map.map_type = staggered;
-	if (strcmp(cmp, "hexagonal")) item_map.map_type = hexagonal;
+	if (cmp == "orthogonal") item_map.map_type = orthogonal;
+	else if (cmp == "isometric") item_map.map_type = isometric;
+	else if (cmp == "staggered") item_map.map_type = staggered;
+	else if (cmp == "hexagonal") item_map.map_type = hexagonal;
 	else item_map.map_type = unknown_;
 
 	// Renderorder
-	cmp = map_node.attribute("renderorder").as_string();
+	cmp.Clear();
+	cmp.create(map_node.attribute("renderorder").as_string());
 
-	if (strcmp(cmp, "right-down")) item_map.renderorder = right_down;
-	if (strcmp(cmp, "right-up")) item_map.renderorder = right_up;
-	if (strcmp(cmp, "left-down")) item_map.renderorder = left_down;
-	if (strcmp(cmp, "left-up")) item_map.renderorder = left_up;
+	if (cmp == "right-down") item_map.renderorder = right_down;
+	else if (cmp == "right-up") item_map.renderorder = right_up;
+	else if (cmp == "left-down") item_map.renderorder = left_down;
+	else if (cmp == "left-up") item_map.renderorder = left_up;
 	else item_map.renderorder = unknown;
 
 	item_map.width = map_node.attribute("width").as_uint();
@@ -197,39 +196,6 @@ bool j1Map::LoadMapData(const pugi::xml_node& map_node, Map_info& item_map) {
 	item_map.tilewidth = map_node.attribute("tilewidth").as_uint();
 	item_map.tileheight = map_node.attribute("tileheight").as_uint();
 	item_map.nextobjectid = map_node.attribute("nextobjectid").as_uint();
-
-	// Load Tilesets
-	/*
-	if (map_node->child("tileset").attribute("firstgid").as_uint() != 0) {
-	
-		pugi::xml_node tileset_node = map_node->child("tileset");
-
-		while (tileset_node.attribute("firstgid").as_int() > 0) {
-
-			tileset_info* item_tileset = new tileset_info;
-			LoadTilesetData(&tileset_node, item_tileset);
-			tileset_node = tileset_node.parent().next_sibling("tileset");
-			item_map->tilesets.add(item_tileset);
-		}
-
-		map_loaded = true;
-	}
-	else {
-		map_loaded = false;
-		LOG("There is no tileset!/n");
-	}
-
-	// Load Layers
-	if (map_loaded) {
-		pugi::xml_node layer_node = map_node->child("layer");
-
-		while (layer_node.attribute("name").as_string() != "") {
-			layer_info* item_layer = new layer_info;
-			LoadLayerData(&layer_node, item_layer);
-			layer_node = layer_node.next_sibling("layer");
-			item_map->layers.add(item_layer);
-		}
-	}*/
 
 	return ret;
 }
@@ -314,7 +280,39 @@ bool j1Map::LoadLayerData(const pugi::xml_node& layer_node, layer_info& item_lay
 	return true;
 }
 
-iPoint j1Map::MapToWorld(int x, int y) const {
+iPoint j1Map::MapToWorld(int x, int y, int t_width, int t_height) const {
 
-	return { 0,0 };
+	if (Maps->map_type == orthogonal) {
+		return { 
+			x * t_width, 
+			y * t_height 
+		};
+	}
+	else if (Maps->map_type == isometric) {
+		return{ 
+			((int)Maps->width * (int)(Maps->tilewidth) / 2) + ((x - y) * (t_width / 2)),
+			abs(x + y) * (t_height / 2)
+		};
+	}
+	else
+		return { 0,0 };
 }
+
+iPoint j1Map::WorldToMap(int rx, int ry, int t_width, int t_height) const {
+
+	if (Maps->map_type == orthogonal) {
+		return { 
+			rx / t_width,
+			ry / t_height 
+		};
+	}
+	else if (Maps->map_type == isometric) {
+		return{ 
+			(2*rx/t_width) + abs((ry / t_height) - (rx / t_width)),
+			abs((ry / t_height) - (rx / t_width)) 
+		};
+	}
+	else
+		return { 0,0 };
+}
+

@@ -179,7 +179,10 @@ public:
 	bool Load(const char* path);
 
 	// TODO 4.8 Method to translate map to world coordinates?
-	iPoint MapToWorld(int x, int y) const;
+	iPoint MapToWorld(int x, int y, int t_width, int t_height) const;
+
+	// TODO 4.9? Translate world to map coordinates
+	iPoint WorldToMap(int rx, int ry, int t_width, int t_height) const;
 
 private:
 
@@ -194,12 +197,13 @@ private:
 	// TODO 4.3 Load Layers
 	bool LoadLayerData(const pugi::xml_node& layer_node, layer_info& item_layer);
 
-
+	//void CreateCollider(layer_info& item_layer, tileset_info& item_tileset, int y, int x);
 
 public:
 
 	// TODO 3.1: Add your struct for map info as public for now
-	p2List<Map_info*> Maps;
+	Map_info* Maps;
+	bool first_loop = true;
 
 private:
 

@@ -34,6 +34,8 @@ public:
 
 private:
 	SDL_Texture* img;
+
+	p2List<p2SString*> Map_list;
 };
 
 #endif // __j1SCENE_H__
