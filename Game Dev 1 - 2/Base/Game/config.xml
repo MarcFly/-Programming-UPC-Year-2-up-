@@ -40,6 +40,9 @@
     <repeat value="0"/>
   </audio>
 
+  <map>
+	<folder>TMX tests/</folder>
+  </map>
   <scene>
     
   </scene>

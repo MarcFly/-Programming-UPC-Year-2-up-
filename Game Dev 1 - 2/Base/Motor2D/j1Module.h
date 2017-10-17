@@ -24,7 +24,7 @@ public:
 	}
 
 	// Called before render is available
-	virtual bool Awake(pugi::xml_node* config)
+	virtual bool Awake(const pugi::xml_node& config)
 	{
 		return true;
 	}
@@ -61,12 +61,12 @@ public:
 
 	// TODDO 2.1: Create new virtual methods to load and save
 	//	Load
-	virtual bool Load(pugi::xml_node* savegame) {
+	virtual bool Load(const pugi::xml_node& savegame) {
 		return true;
 	}
 
 	//	Save
-	virtual bool Save(pugi::xml_node* savegame) {
+	virtual bool Save(pugi::xml_node& savegame) {
 		return true;
 	}
 

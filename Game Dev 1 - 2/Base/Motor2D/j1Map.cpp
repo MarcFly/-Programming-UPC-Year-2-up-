@@ -208,12 +208,20 @@ bool j1Map::LoadTilesetData(const pugi::xml_node& tileset_node, tileset_info& it
 	item_tileset.name = tileset_node.attribute("name").as_string();
 	item_tileset.tilewidth = tileset_node.attribute("tilewidth").as_uint();
 	item_tileset.tileheight = tileset_node.attribute("tileheight").as_uint();
-	item_tileset.spacing = tileset_node.attribute("spacing").as_uint();
+	item_tileset.spacing.x = tileset_node.child("tileoffset").attribute("x").as_uint();
+	item_tileset.spacing.y = tileset_node.child("tileoffset").attribute("y").as_uint();
 	item_tileset.margin = tileset_node.attribute("margin").as_uint();
 
 	item_tileset.tilecount = tileset_node.attribute("tilecount").as_uint();
 
-	item_tileset.columns = tileset_node.attribute("columns").as_uint();
+	// Image info
+	item_tileset.image.image_source = tileset_node.child("image").attribute("source").as_string();
+	item_tileset.image.image_width = tileset_node.child("image").attribute("width").as_uint();
+	item_tileset.image.image_height = tileset_node.child("image").attribute("height").as_uint();
+
+	item_tileset.image.tex = App->tex->Load(item_tileset.image.image_source.GetString());
+
+	item_tileset.columns = item_tileset.image.image_width / item_tileset.tilewidth;
 
 	// Load terrains
 	for (int i = 1; i <= item_tileset.tilecount; i++) {
@@ -223,13 +231,6 @@ bool j1Map::LoadTilesetData(const pugi::xml_node& tileset_node, tileset_info& it
 		item_tileset.terrains.add(item_terrain);
 
 	}
-
-	// Image info
-	item_tileset.image.image_source = tileset_node.child("image").attribute("source").as_string();
-	item_tileset.image.image_width = tileset_node.child("image").attribute("width").as_uint();
-	item_tileset.image.image_height = tileset_node.child("image").attribute("height").as_uint();
-	
-	item_tileset.image.tex = App->tex->Load(item_tileset.image.image_source.GetString());
 
 	return ret;
 }

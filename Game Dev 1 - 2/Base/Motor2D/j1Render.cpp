@@ -22,7 +22,7 @@ j1Render::~j1Render()
 {}
 
 // Called before render is available
-bool j1Render::Awake(pugi::xml_node* config)
+bool j1Render::Awake(const pugi::xml_node& config)
 {
 	LOG("Create SDL rendering context");
 	bool ret = true;
@@ -42,8 +42,8 @@ bool j1Render::Awake(pugi::xml_node* config)
 	{
 		camera.w = App->win->screen_surface->w;
 		camera.h = App->win->screen_surface->h;
-		camera.x = config->child("camera").attribute("x").as_int();
-		camera.y = config->child("camera").attribute("y").as_int();
+		camera.x = config.child("camera").attribute("x").as_int();
+		camera.y = config.child("camera").attribute("y").as_int();
 	}
 
 	return ret;
@@ -78,12 +78,12 @@ bool j1Render::PostUpdate()
 }
 
 // Called when triggered
-bool j1Render::Load(pugi::xml_node* savegame) 
+bool j1Render::Load(const pugi::xml_node& savegame) 
 {
 	bool ret = true;
 	if (savegame != nullptr) {
-		camera.x = savegame->child("camera").attribute("x").as_int();
-		camera.y = savegame->child("camera").attribute("y").as_int();
+		camera.x = savegame.child("camera").attribute("x").as_int();
+		camera.y = savegame.child("camera").attribute("y").as_int();
 	}
 	else
 		ret = false;
@@ -91,12 +91,12 @@ bool j1Render::Load(pugi::xml_node* savegame)
 	return ret;
 }
 
-bool j1Render::Save(pugi::xml_node* savegame)
+bool j1Render::Save(pugi::xml_node& savegame)
 {	
 	//Save Camera Position
 	//savegame->append_child("camera");
-	savegame->append_child("camera").append_attribute("x") = camera.x;
-	savegame->child("camera").append_attribute("y") = camera.y;
+	savegame.append_child("camera").append_attribute("x") = camera.x;
+	savegame.child("camera").append_attribute("y") = camera.y;
 
 	return true;
 }

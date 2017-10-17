@@ -20,7 +20,7 @@ public:
 	virtual ~j1Audio();
 
 	// Called before render is available
-	bool Awake(pugi::xml_node* config);
+	bool Awake(const pugi::xml_node& config);
 
 	// Called each loop iteration
 	bool PreUpdate();
@@ -38,9 +38,9 @@ public:
 	bool PlayFx(unsigned int fx, int repeat = 0);
 
 	// Called when triggered
-	bool Load(pugi::xml_node* savegame);
+	bool Load(const pugi::xml_node& savegame);
 
-	bool Save(pugi::xml_node* savegame);
+	bool Save(pugi::xml_node& savegame);
 
 private:
 

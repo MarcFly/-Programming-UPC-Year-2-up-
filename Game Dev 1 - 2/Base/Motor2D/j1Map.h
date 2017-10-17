@@ -78,7 +78,7 @@ struct tileset_info {
 	
 	uint tilewidth;
 	uint tileheight;
-	uint spacing;
+	iPoint spacing;
 	uint margin;
 	
 	uint tilecount;
@@ -90,12 +90,12 @@ struct tileset_info {
 
 	// TODO 4.7 Method that gives the Rect given gid
 	inline SDL_Rect GetRect(int gid) const{
-		int x = spacing + (((gid - 1 - (columns * ((gid - 1) / columns)))*(tilewidth + spacing)));
+		int x = spacing.y + (((gid - 1 - (columns * ((gid - 1) / columns)))*(tilewidth + spacing.x)));
 		// Given Tileset starts at margin, we count from 0 because calculus
 		// There are certain amount of columns that decide how many tiles occupy a row, so every X tiles (gid-1) it creates a new row -> (gid - 1) / Colums -> represent which row it belongs
 		// - (columns*row) calculates how many tiles you have to go back to calculate from X = 0 for the X displacement in that row, for GID = 40 Columns = 8, GID is row 4, it will return 36 to wich it will calculate X offset for 3
 		// (gid - 1 - (colums * row)) -> base tile to calculate X displacement in a row * (tilewidth + spacing) to measure in pixels where in the tileset it belongs
-		int y = spacing + (((gid - 1) / columns)*(tileheight + spacing)); //Calculate row and just add height and spacing repending on row (row 1 -> + 1 * (tileheight + spacing))
+		int y = spacing.y + (((gid - 1) / columns)*(tileheight + spacing.y)); //Calculate row and just add height and spacing repending on row (row 1 -> + 1 * (tileheight + spacing))
 		int w = tilewidth;
 		int h = tileheight;
 

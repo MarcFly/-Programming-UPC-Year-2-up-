@@ -17,7 +17,7 @@ public:
 	virtual ~j1Render();
 
 	// Called before render is available
-	bool Awake(pugi::xml_node* config);
+	bool Awake(const pugi::xml_node& config);
 
 	// Called before the first frame
 	bool Start();
@@ -28,9 +28,9 @@ public:
 	bool PostUpdate();
 
 	// Called when triggered
-	bool Load(pugi::xml_node* savegame);
+	bool Load(const pugi::xml_node& savegame);
 
-	bool Save(pugi::xml_node* savegame);
+	bool Save(pugi::xml_node& savegame);
 
 
 	// Called before quitting
