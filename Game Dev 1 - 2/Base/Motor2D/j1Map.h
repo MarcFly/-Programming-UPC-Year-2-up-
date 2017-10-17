@@ -6,6 +6,7 @@
 #include "p2Point.h"
 #include "j1Module.h"
 #include "j1Textures.h"
+#include "p2Queue.h"
 
 // TODO 3.Homework
 // Do layer printing
@@ -21,15 +22,6 @@
 
 };*/
 
-enum walk_types {
-	unknown___ = -1,
-	walkable,
-	unwalkable,
-	water,
-	jumpable
-	//keep adding types as you encounter them
-};
-
 // TODO 4.1 Create a struct for map layer
 struct layer_info {
 	p2SString	name;
@@ -37,7 +29,7 @@ struct layer_info {
 	uint		height;	// Height in tiles of layer
 	uint		tilecount;
 
-	//DrawMode	draw_sth;
+	int draw_mode; // 0 = Default, 1 = Collisions, 2 = Navigation
 
 	// Data storing Tiles system
 	uint*	data = nullptr;
@@ -78,7 +70,8 @@ struct tileset_info {
 	
 	uint tilewidth;
 	uint tileheight;
-	iPoint spacing;
+	iPoint tileoffset = { 0,0 }; //Specific spacing declared in tiled
+	uint spacing = 0; //Global spacing that applies to H and W
 	uint margin;
 	
 	uint tilecount;
@@ -89,17 +82,22 @@ struct tileset_info {
 	p2List<terrain_info*> terrains;
 
 	// TODO 4.7 Method that gives the Rect given gid
-	inline SDL_Rect GetRect(int gid) const{
-		int x = spacing.y + (((gid - 1 - (columns * ((gid - 1) / columns)))*(tilewidth + spacing.x)));
-		// Given Tileset starts at margin, we count from 0 because calculus
-		// There are certain amount of columns that decide how many tiles occupy a row, so every X tiles (gid-1) it creates a new row -> (gid - 1) / Colums -> represent which row it belongs
-		// - (columns*row) calculates how many tiles you have to go back to calculate from X = 0 for the X displacement in that row, for GID = 40 Columns = 8, GID is row 4, it will return 36 to wich it will calculate X offset for 3
-		// (gid - 1 - (colums * row)) -> base tile to calculate X displacement in a row * (tilewidth + spacing) to measure in pixels where in the tileset it belongs
-		int y = spacing.y + (((gid - 1) / columns)*(tileheight + spacing.y)); //Calculate row and just add height and spacing repending on row (row 1 -> + 1 * (tileheight + spacing))
+	SDL_Rect CreateRect(int gid) const {
+		int x = spacing + tileoffset.x + (((gid - firstgid - (columns * ((gid - firstgid) / columns)))*(tilewidth + spacing)));
+		int y = spacing + (((gid - firstgid) / columns)*(tileheight + spacing));
 		int w = tilewidth;
 		int h = tileheight;
 
 		return { x,y,w,h };
+	}
+
+	inline SDL_Rect FindRect(int gid) const {
+		p2List_item<terrain_info*>* item = terrains.start;
+
+		while (item->data->id != gid)
+			item = item->next;
+
+		return *item->data->Tex_Pos;
 	}
 
 	~tileset_info() {
@@ -167,7 +165,7 @@ public:
 	virtual ~j1Map();
 
 	// Called before render is available
-	bool Awake(pugi::xml_node& conf);
+	bool Awake(const pugi::xml_node& conf);
 
 	// Called each loop iteration
 	void Draw();
@@ -179,10 +177,16 @@ public:
 	bool Load(const char* path);
 
 	// TODO 4.8 Method to translate map to world coordinates?
-	iPoint MapToWorld(int x, int y, int t_width, int t_height) const;
+	iPoint MapToWorld(int x, int y) const;
 
 	// TODO 4.9? Translate world to map coordinates
-	iPoint WorldToMap(int rx, int ry, int t_width, int t_height) const;
+	iPoint WorldToMap(int rx, int ry) const;
+
+	// BFS
+	void PropagateBFS();
+	void DrawBFS();
+	bool IsWalkable(int x, int y) const;
+	void ResetBFS();
 
 private:
 
@@ -196,7 +200,7 @@ private:
 
 	// TODO 4.3 Load Layers
 	bool LoadLayerData(const pugi::xml_node& layer_node, layer_info& item_layer);
-
+	
 	//void CreateCollider(layer_info& item_layer, tileset_info& item_tileset, int y, int x);
 
 public:
@@ -210,6 +214,10 @@ private:
 	//pugi::xml_document	map_file;
 	p2SString			folder;
 	bool				map_loaded;
+
+	//BFS
+	p2Queue<iPoint>		frontier;
+	p2List<iPoint>		visited;
 };
 
 #endif // __j1MAP_H__

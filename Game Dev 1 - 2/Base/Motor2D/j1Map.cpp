@@ -20,7 +20,7 @@ j1Map::~j1Map()
 {}
 
 // Called before render is available
-bool j1Map::Awake(pugi::xml_node& config)
+bool j1Map::Awake(const pugi::xml_node& config)
 {
 	LOG("Loading Map Parser");
 	bool ret = true;
@@ -49,21 +49,24 @@ void j1Map::Draw()
 	
 		p2List_item<layer_info*>* item_layer = Maps->layers.start; //Start layer
 
-		while (Maps->tilesets.count() > 1 && (*item_layer->data->data < item_tileset->data->firstgid || *item_layer->data->data > item_tileset->data->firstgid + item_tileset->data->tilecount)) 
-			item_tileset = item_tileset->next; // This only works if layer only works over 1 tileset, if multiple tilesets in a layer, you have to do it before every blit?
-
 		while (item_layer != nullptr) { //Check there are layers
+
+			while (Maps->tilesets.count() > 1 && (*item_layer->data->data < item_tileset->data->firstgid || *item_layer->data->data >= item_tileset->data->firstgid + item_tileset->data->tilecount))
+				item_tileset = item_tileset->next; // This only works if layer only works over 1 tileset, if multiple tilesets in a layer, you have to do it before every blit?
+
 			uint* p = item_layer->data->data; // reset data pointing to data[0]
 
 			for (int i = 0; i < item_layer->data->height; i++) {
 				for (int j = 0; j < item_layer->data->width; j++) {
-					iPoint pos = MapToWorld(j, i, item_tileset->data->tilewidth, item_tileset->data->tileheight);
+					if (*p != 0) {
+						iPoint pos = MapToWorld(j, i);
 
-					App->render->Blit(
-						item_tileset->data->image.tex, 
-						pos.x , 
-						pos.y - i * Maps->tileheight / 2 - j * Maps->tilewidth / 4, 
-						&item_tileset->data->GetRect(*p));
+						App->render->Blit(
+							item_tileset->data->image.tex,
+							pos.x - item_tileset->data->tileoffset.x,
+							pos.y- item_tileset->data->tileoffset.y,
+							&item_tileset->data->FindRect(*p));
+					}
 					p++;
 				}
 			}
@@ -97,8 +100,6 @@ bool j1Map::Load(const char* file_name)
 
 	pugi::xml_parse_result result =  check_doc.load_file(tmp.GetString());
 
-	p2List_item<Map_info*>* item_map;
-
 	if (result == NULL)
 	{
 		LOG("Could not load map xml file %s. pugi error: %s", file_name, result.description());
@@ -128,7 +129,7 @@ bool j1Map::Load(const char* file_name)
 
 				tileset_info* item_tileset = new tileset_info;
 				ret = LoadTilesetData(tileset_node, *item_tileset);
-				tileset_node = tileset_node.parent().next_sibling("tileset");
+				tileset_node = tileset_node.next_sibling("tileset");
 
 			
 				Maps->tilesets.add(item_tileset);
@@ -208,14 +209,15 @@ bool j1Map::LoadTilesetData(const pugi::xml_node& tileset_node, tileset_info& it
 	item_tileset.name = tileset_node.attribute("name").as_string();
 	item_tileset.tilewidth = tileset_node.attribute("tilewidth").as_uint();
 	item_tileset.tileheight = tileset_node.attribute("tileheight").as_uint();
-	item_tileset.spacing.x = tileset_node.child("tileoffset").attribute("x").as_uint();
-	item_tileset.spacing.y = tileset_node.child("tileoffset").attribute("y").as_uint();
+	item_tileset.spacing = tileset_node.attribute("spacing").as_uint();
+	item_tileset.tileoffset.x = tileset_node.child("tileoffset").attribute("x").as_uint();
+	item_tileset.tileoffset.y = tileset_node.child("tileoffset").attribute("y").as_uint();
 	item_tileset.margin = tileset_node.attribute("margin").as_uint();
 
 	item_tileset.tilecount = tileset_node.attribute("tilecount").as_uint();
 
 	// Image info
-	item_tileset.image.image_source = tileset_node.child("image").attribute("source").as_string();
+	item_tileset.image.image_source.create("%s%s",folder.GetString(), tileset_node.child("image").attribute("source").as_string());
 	item_tileset.image.image_width = tileset_node.child("image").attribute("width").as_uint();
 	item_tileset.image.image_height = tileset_node.child("image").attribute("height").as_uint();
 
@@ -224,7 +226,7 @@ bool j1Map::LoadTilesetData(const pugi::xml_node& tileset_node, tileset_info& it
 	item_tileset.columns = item_tileset.image.image_width / item_tileset.tilewidth;
 
 	// Load terrains
-	for (int i = 1; i <= item_tileset.tilecount; i++) {
+	for (int i = item_tileset.firstgid; i <= item_tileset.firstgid  + item_tileset.tilecount; i++) {
 
 		terrain_info* item_terrain = new terrain_info;
 		ret = LoadTerrainData(tileset_node, i, *item_terrain, item_tileset);
@@ -240,7 +242,7 @@ bool j1Map::LoadTerrainData(const pugi::xml_node& tileset_node, const int& id, t
 	
 	item_terrain.id = id;
 
-	item_terrain.Tex_Pos = new SDL_Rect(item_tileset.GetRect(item_terrain.id));
+	item_terrain.Tex_Pos = new SDL_Rect(item_tileset.CreateRect(item_terrain.id));
 
 	// Create a switch depending on Id to create later collision data for later creation
 	// There should be a way of detecting which type of layer we are in, and then load properties, no matter what type it is
@@ -249,6 +251,8 @@ bool j1Map::LoadTerrainData(const pugi::xml_node& tileset_node, const int& id, t
 	// Or do with string and cmp (more memory tho)
 	// switch(
 	//pugi::xpath_node_set terrain_node = tileset_node.select_node("/tile[@id='%d']", id); Test the select node method to load a specific node instead of iterating to find
+
+
 	return true;
 }
 
@@ -259,7 +263,7 @@ bool j1Map::LoadLayerData(const pugi::xml_node& layer_node, layer_info& item_lay
 	item_layer.width = layer_node.attribute("width").as_uint();
 	item_layer.height = layer_node.attribute("height").as_uint();
 
-	//item_layer->draw_sth = (DrawMode)layer_node->attribute("Draw Mode").as_int();
+	//item_layer->draw_mode = layer_node->attribute("draw _mode").as_int();
 
 	//Load all tiles in layer data
 	pugi::xml_node tile_node = layer_node.child("data").child("tile");
@@ -281,39 +285,90 @@ bool j1Map::LoadLayerData(const pugi::xml_node& layer_node, layer_info& item_lay
 	return true;
 }
 
-iPoint j1Map::MapToWorld(int x, int y, int t_width, int t_height) const {
+iPoint j1Map::MapToWorld(int x, int y) const {
 
 	if (Maps->map_type == orthogonal) {
 		return { 
-			x * t_width, 
-			y * t_height 
+			x * (int)Maps->tilewidth,
+			y * (int)Maps->tileheight 
 		};
 	}
 	else if (Maps->map_type == isometric) {
 		return{ 
-			((int)Maps->width * (int)(Maps->tilewidth) / 2) + ((x - y) * (t_width / 2)),
-			abs(x + y) * (t_height / 2)
+			((x - y) * (((int)Maps->tilewidth) / 2)),
+			abs(x + y) * (((int)Maps->tileheight) / 2)
 		};
 	}
 	else
 		return { 0,0 };
 }
 
-iPoint j1Map::WorldToMap(int rx, int ry, int t_width, int t_height) const {
+iPoint j1Map::WorldToMap(int rx, int ry) const {
 
 	if (Maps->map_type == orthogonal) {
 		return { 
-			rx / t_width,
-			ry / t_height 
+			rx / (int)Maps->tilewidth,
+			ry / (int)Maps->tileheight 
 		};
 	}
 	else if (Maps->map_type == isometric) {
+		float half_w = Maps->tilewidth / 2;
+		float half_h = Maps->tileheight / 2;
 		return{ 
-			(2*rx/t_width) + abs((ry / t_height) - (rx / t_width)),
-			abs((ry / t_height) - (rx / t_width)) 
+			(int)(((rx / half_w) + (rx / half_h)) / 2),
+			(int)(((ry / half_h) - (rx / half_w)) / 2)
 		};
 	}
 	else
 		return { 0,0 };
 }
 
+void j1Map::PropagateBFS() {
+	// TODO 7.1 If frontier queue contains elements
+	// pop the last one and calculate its 4 neighbors
+	iPoint curr;
+	if (frontier.Pop(curr)) //Put actual frontier into curr, while it checks if there are frontiers left
+	{
+		iPoint neighbors[4]; //Create the 4 neighbours every tile has (N E S W)
+		neighbors[0].create(curr.x + 1, curr.y + 0); // E
+		neighbors[1].create(curr.x + 0, curr.y + 1); // S
+		neighbors[2].create(curr.x - 1, curr.y + 0); // W
+		neighbors[3].create(curr.x + 0, curr.y - 1); // N
+
+		for (uint i = 0; i < 4; ++i)
+		{
+			// TODO 7.2: For each neighbor, if not visited, add it
+			// to the frontier queue and visited list
+			if (visited.find(neighbors[i]) == -1) //Checks for visited tiles (if visited they don't go in)
+			{
+				frontier.Push(neighbors[i]); //Add them as a frontier
+				visited.add(neighbors[i]); //Add the neighbour that you just visited
+			}
+		}
+	}
+}
+
+void j1Map::DrawBFS() {
+
+}
+
+bool j1Map::IsWalkable(int x, int y) const{
+	bool ret = true;
+
+	 ret = (x >= 0 && x <= Maps->width &&
+		 y >= 0 && y <= Maps->height);
+
+	 if (ret == true) {
+		 p2List_item<layer_info*>* item = Maps->layers.start;
+		 while (item->data->draw_mode == 2)
+			 item = item->next;
+
+		 ret = (item->data->data[y * Maps->width + x] == 0);
+	 }
+		 
+	return ret;
+}
+
+void ResetBFS() {
+
+}

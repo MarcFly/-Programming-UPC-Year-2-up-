@@ -34,6 +34,7 @@
   <tile id="23" terrain="1,1,1,1"/>
  </tileset>
  <tileset firstgid="25" name="meta" tilewidth="64" tileheight="64" tilecount="2">
+  <tileoffset x="0" y="16"/>
   <image source="meta.png" width="128" height="64"/>
  </tileset>
  <layer name="Graphics" width="25" height="25">

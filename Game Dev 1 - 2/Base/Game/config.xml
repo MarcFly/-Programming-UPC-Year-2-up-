@@ -33,7 +33,7 @@
   </textures>
 
   <audio>
-    <master_volume value="64"/>"
+    <master_volume value="0"/>"
     <music_volume value="1"/>
     <fx_volume value="1"/>
     <fade_time value="2"/>
@@ -41,9 +41,9 @@
   </audio>
 
   <map>
-	<folder>TMX tests/</folder>
+	  <folder>TMX tests/</folder>
   </map>
   <scene>
-    
+    <map name="iso_walk.tmx"/>
   </scene>
 </config>

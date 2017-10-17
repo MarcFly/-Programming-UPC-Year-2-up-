@@ -19,10 +19,18 @@ j1Scene::~j1Scene()
 {}
 
 // Called before render is available
-bool j1Scene::Awake()
+bool j1Scene::Awake(const pugi::xml_node& config)
 {
 	LOG("Loading Scene");
 	bool ret = true;
+
+	pugi::xml_node node = config.child("map");
+	while (node.attribute("name").as_string() != "") {
+		p2SString* new_map = new p2SString;
+		new_map->create(node.attribute("name").as_string());
+		Map_list.add(new_map);
+		node = node.next_sibling("map");
+	}
 
 	return ret;
 }
@@ -31,13 +39,8 @@ bool j1Scene::Awake()
 bool j1Scene::Start()
 {
 	bool ret = true;
-	//img = App->tex->Load("textures/test.png");
 	// LOAD MAPS AND MUSIC HERE
-	//if (ret == true) ret = App->map->Load("TMX tests/hexagonal-mini.tmx");
-	if (ret == true) ret = App->map->Load("iso_walk.tmx");
-	//if (ret == true) ret = App->map->Load("TMX tests/orthogonal-outside.tmx");
-	//if (ret == true) ret = App->map->Load("TMX tests/sewers.tmx");
-	//if (ret == true) ret = App->map->Load("TMX tests/Trial.tmx");
+	if (ret == true) ret = App->map->Load(Map_list.start->data->GetString());
 	if (ret == true) ret = App->audio->PlayMusic("audio/music/music_sadpiano.ogg");
 	
 	return ret;
@@ -91,7 +94,7 @@ bool j1Scene::Update(float dt)
 	// "Map:%dx%d Tiles:%dx%d Tilesets:%d"
 	iPoint pos; 
 	App->input->GetMousePosition(pos.x, pos.y);
-	pos = App->map->WorldToMap(pos.x, pos.y, App->map->Maps->tilewidth, App->map->Maps->tileheight);
+	pos = App->map->WorldToMap(pos.x - App->render->camera.x, pos.y - App->render->camera.y);
 	p2SString title("MapSize:%dx%d TileSize:%dx%d Tilesets:%d Layers:%d Tiles:%d Position:%d %d",
 		App->map->Maps->width, App->map->Maps->height,
 		App->map->Maps->tilewidth, App->map->Maps->tileheight,
