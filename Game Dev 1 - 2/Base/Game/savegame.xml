@@ -6,6 +6,7 @@
 	<audio>
 		<master_volume value="64" />
 	</audio>
+	<map />
 	<scene />
 	<renderer>
 		<camera x="370" y="160" />

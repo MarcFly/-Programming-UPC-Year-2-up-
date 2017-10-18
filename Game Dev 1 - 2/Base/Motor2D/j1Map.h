@@ -8,6 +8,7 @@
 #include "j1Textures.h"
 #include "p2Queue.h"
 
+
 // TODO 3.Homework
 // Do layer printing
 /*struct properties {
@@ -82,22 +83,13 @@ struct tileset_info {
 	p2List<terrain_info*> terrains;
 
 	// TODO 4.7 Method that gives the Rect given gid
-	SDL_Rect CreateRect(int gid) const {
-		int x = spacing + tileoffset.x + (((gid - firstgid - (columns * ((gid - firstgid) / columns)))*(tilewidth + spacing)));
-		int y = spacing + (((gid - firstgid) / columns)*(tileheight + spacing));
+	inline SDL_Rect GetRect(int gid) const {
 		int w = tilewidth;
 		int h = tileheight;
-
+		int x = margin + (((gid - firstgid) % columns)*(w + spacing));
+		int y = margin + (((gid - firstgid) / columns)*(h + spacing));
+		
 		return { x,y,w,h };
-	}
-
-	inline SDL_Rect FindRect(int gid) const {
-		p2List_item<terrain_info*>* item = terrains.start;
-
-		while (item->data->id != gid)
-			item = item->next;
-
-		return *item->data->Tex_Pos;
 	}
 
 	~tileset_info() {
@@ -183,10 +175,15 @@ public:
 	iPoint WorldToMap(int rx, int ry) const;
 
 	// BFS
-	void PropagateBFS();
+	iPoint PropagateBFS();
 	void DrawBFS();
 	bool IsWalkable(int x, int y) const;
 	void ResetBFS();
+	void FindPath(const iPoint& pos);
+	void SetStart(const iPoint& pos);
+
+	// Find Tileset
+	tileset_info* GetTilesetFromTileId(int gid) const;
 
 private:
 
@@ -216,8 +213,11 @@ private:
 	bool				map_loaded;
 
 	//BFS
+	iPoint				start;
 	p2Queue<iPoint>		frontier;
 	p2List<iPoint>		visited;
+	p2List<iPoint>		breadcrumbs;
+	p2List<iPoint>		path;
 };
 
 #endif // __j1MAP_H__

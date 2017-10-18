@@ -55,6 +55,10 @@ bool j1Scene::PreUpdate()
 // Called each loop iteration
 bool j1Scene::Update(float dt)
 {
+	// Get Mouse Position
+	iPoint pos;
+	App->input->GetMousePosition(pos.x, pos.y);
+	pos = App->map->WorldToMap(pos.x - App->render->camera.x, pos.y - App->render->camera.y);
 
 	// TODO 2.5: Call load / save methods when pressing l/s
 
@@ -87,14 +91,26 @@ bool j1Scene::Update(float dt)
 	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 		App->render->camera.x += 10;
 
+	if (App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN)
+		App->map->ResetBFS();
+
+	if (App->input->GetKey(SDL_SCANCODE_N) == KEY_DOWN)
+		App->map->PropagateBFS();
+
+	if (App->input->GetKey(SDL_SCANCODE_M) == KEY_REPEAT)
+		App->map->PropagateBFS();
+
+	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+		App->map->FindPath(pos);
+
+	if (App->input->GetKey(SDL_SCANCODE_C) == KEY_DOWN)
+		App->map->SetStart(pos);
 	//App->render->Blit(img, 0, 0);
 	App->map->Draw();
 
 	// TODO 3.7: Set the window title like
 	// "Map:%dx%d Tiles:%dx%d Tilesets:%d"
-	iPoint pos; 
-	App->input->GetMousePosition(pos.x, pos.y);
-	pos = App->map->WorldToMap(pos.x - App->render->camera.x, pos.y - App->render->camera.y);
+	
 	p2SString title("MapSize:%dx%d TileSize:%dx%d Tilesets:%d Layers:%d Tiles:%d Position:%d %d",
 		App->map->Maps->width, App->map->Maps->height,
 		App->map->Maps->tilewidth, App->map->Maps->tileheight,
