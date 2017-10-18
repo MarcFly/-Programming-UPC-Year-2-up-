@@ -180,6 +180,7 @@ public:
 	bool IsWalkable(int x, int y) const;
 	void ResetBFS();
 	void FindPath(const iPoint& pos);
+	void CreatePath(const iPoint& pos);
 	void SetStart(const iPoint& pos);
 
 	// Find Tileset

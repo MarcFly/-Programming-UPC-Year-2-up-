@@ -366,8 +366,11 @@ iPoint j1Map::PropagateBFS() {
 			// to the frontier queue and visited list
 			if (visited.find(neighbours[i]) == -1 && IsWalkable(neighbours[i].x, neighbours[i].y)) //Checks for visited tiles (if visited they don't go in), use .find to find a neighbour in the list
 			{
+
 				frontier.Push(neighbours[i]);	//Add them as a frontier
 				visited.add(neighbours[i]);		//Add the neighbour that you just visited
+
+				// TODO 7.Homework, breadcrumbs are added everytime that it comes from somewhere
 				breadcrumbs.add(curr);
 			}
 		}
@@ -446,6 +449,7 @@ void j1Map::ResetBFS() {
 	breadcrumbs.clear();
 	frontier.Push(start);
 	visited.add(start);
+	breadcrumbs.add(start);
 }
 
 void j1Map::SetStart(const iPoint& pos) {
@@ -462,18 +466,20 @@ void j1Map::FindPath(const iPoint& pos) {
 			test = PropagateBFS();
 		}
 
-		// Create Path to goal
-		path.clear();
-		iPoint goal(pos.x, pos.y);
-		if (visited.find(goal) != -1) {
-			while (goal != start) {
-				path.add(goal);
-				goal = breadcrumbs[visited.find(goal)];
-			}
+	}
+}
+
+void j1Map::CreatePath(const iPoint& pos) {
+
+	// Create Path to goal
+	path.clear();
+	iPoint goal(pos.x, pos.y);
+	if (visited.find(goal) != -1) {
+		while (goal != start) {
 			path.add(goal);
+			goal = breadcrumbs[visited.find(goal)];
 		}
 
+		path.add(goal);
 	}
-
-
 }

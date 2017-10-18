@@ -101,10 +101,11 @@ bool j1Scene::Update(float dt)
 		App->map->PropagateBFS();
 
 	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
-		App->map->FindPath(pos);
+		App->map->CreatePath(pos);
 
 	if (App->input->GetKey(SDL_SCANCODE_C) == KEY_DOWN)
 		App->map->SetStart(pos);
+
 	//App->render->Blit(img, 0, 0);
 	App->map->Draw();
 
