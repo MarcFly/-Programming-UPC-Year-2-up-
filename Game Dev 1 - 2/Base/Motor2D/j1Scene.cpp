@@ -93,10 +93,10 @@ bool j1Scene::Update(float dt)
 
 	// Pathfinding Inputs
 	if (App->input->GetKey(SDL_SCANCODE_N) == KEY_DOWN)
-		App->map->PropagateBFS();
+		App->map->PropagateDijkstra();
 
 	if (App->input->GetKey(SDL_SCANCODE_M) == KEY_REPEAT)
-		App->map->PropagateBFS();
+		App->map->PropagateDijkstra();
 
 	if (App->input->GetMouseButtonDown(1) == KEY_DOWN)
 		App->map->CreatePath(pos);

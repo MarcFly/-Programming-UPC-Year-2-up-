@@ -7,7 +7,9 @@
 #include "j1Module.h"
 #include "j1Textures.h"
 #include "p2Queue.h"
+#include "p2PQueue.h"
 
+#define COST_MAP 100
 
 // TODO 3.Homework
 // Do layer printing
@@ -41,7 +43,7 @@ struct layer_info {
 		return { (int)(tile_width * ((nid) - (width*(nid / width)))), (int)(tile_height * (nid / width))};
 	}
 
-	inline int Get(const int& x, const int& y) { return y*width + x; }
+	inline int Get(const int& x, const int& y) { return data[y*width + x]; }
 
 	~layer_info() {
 		delete[] data;
@@ -220,12 +222,15 @@ private:
 	p2SString			folder;
 	bool				map_loaded;
 
-	//BFS
+	//Pathfinding~
 	iPoint				start;
 	p2Queue<iPoint>		frontier;
+	p2PQueue<iPoint>	pfrontier;
 	p2List<iPoint>		visited;
 	p2List<iPoint>		breadcrumbs;
 	p2List<iPoint>		path;
+
+	uint				cost_so_far[COST_MAP][COST_MAP];
 
 	SDL_Texture*		tile_x = nullptr;
 };
