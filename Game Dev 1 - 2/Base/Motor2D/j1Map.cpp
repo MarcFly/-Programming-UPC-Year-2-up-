@@ -28,7 +28,7 @@ bool j1Map::Awake(const pugi::xml_node& config)
 	folder.create(config.child("folder").child_value());
 
 	start = { 19,4 };
-	ResetBFS(); // Start BFS
+	ResetNav(); // Start BFS
 
 	return ret;
 }
@@ -78,7 +78,7 @@ void j1Map::Draw()
 	
 	}
 
-	DrawBFS();
+	DrawNav();
 	
 }
 
@@ -370,6 +370,38 @@ iPoint j1Map::PropagateBFS() {
 				frontier.Push(neighbours[i]);	//Add them as a frontier
 				visited.add(neighbours[i]);		//Add the neighbour that you just visited
 
+												// TODO 7.Homework, breadcrumbs are added everytime that it comes from somewhere
+				breadcrumbs.add(curr);
+			}
+		}
+	}
+
+	return curr;
+}
+
+iPoint j1Map::PropagateDijkstra() {
+	iPoint curr;
+
+	// TODO 7.1 If frontier queue contains elements
+	// pop the last one and calculate its 4 neighbors
+	iPoint curr;
+	if (frontier.Pop(curr)) //Put actual frontier into curr, while it checks if there are frontiers left
+	{
+		iPoint neighbours[4]; //Create the 4 neighbours every tile has (N E S W)
+		neighbours[0].create(curr.x + 1, curr.y + 0); // E
+		neighbours[1].create(curr.x + 0, curr.y + 1); // S
+		neighbours[2].create(curr.x - 1, curr.y + 0); // W
+		neighbours[3].create(curr.x + 0, curr.y - 1); // N
+
+		for (uint i = 0; i < 4; ++i)
+		{
+			// TODO 7.2: For each neighbor, if not visited, add it
+			// to the frontier queue and visited list
+			if (visited.find(neighbours[i]) == -1 && MovementCost(neighbours[i].x, neighbours[i].y) != -1) //Checks for visited tiles (if visited they don't go in), use .find to find a neighbour in the list
+			{
+				frontier.Push(neighbours[i]);	//Add them as a frontier
+				visited.add(neighbours[i]);		//Add the neighbour that you just visited
+
 				// TODO 7.Homework, breadcrumbs are added everytime that it comes from somewhere
 				breadcrumbs.add(curr);
 			}
@@ -379,7 +411,7 @@ iPoint j1Map::PropagateBFS() {
 	return curr;
 }
 
-void j1Map::DrawBFS() {
+void j1Map::DrawNav() {
 	iPoint point;
 
 	// Draw visited
@@ -410,22 +442,28 @@ void j1Map::DrawBFS() {
 		App->render->Blit(tileset->image.tex, pos.x - tileset->tileoffset.x, pos.y - tileset->tileoffset.y, &r);
 	}
 
+	DrawPath();
+}
+
+void j1Map::DrawPath() {
 	// Draw Path
 
-	item = path.start;
-	while(item)
+	p2List_item<iPoint>* item = path.start;
+	while (item)
 	{
 		tileset_info* tileset = GetTilesetFromTileId(26); //Get green rect
 
 		SDL_Rect r = tileset->GetRect(26);
 		iPoint pos = MapToWorld(item->data.x, item->data.y);
-		
+
 		App->render->Blit(tileset->image.tex, pos.x, pos.y - tileset->tileoffset.y, &r);
 
 		item = item->next;
 	}
+
 }
 
+// Cutre Version for bfs
 bool j1Map::IsWalkable(int x, int y) const{
 	bool ret = true;
 
@@ -443,7 +481,26 @@ bool j1Map::IsWalkable(int x, int y) const{
 	return ret;
 }
 
-void j1Map::ResetBFS() {
+int	 j1Map::MovementCost(int x, int y) const {
+
+	int ret = -1;
+
+	if (x >= 0 && x < Maps->width && y >= 0 && y < Maps->height)
+	{
+		int id = Maps->layers.start->next->data->Get(x, y);
+
+		if (id == 0)
+			ret = 3;
+		else
+			ret = 0;
+	}
+
+	return ret;
+}
+
+
+// Settings makers
+void j1Map::ResetNav() {
 	frontier.Clear();
 	visited.clear();
 	breadcrumbs.clear();
@@ -453,17 +510,32 @@ void j1Map::ResetBFS() {
 }
 
 void j1Map::SetStart(const iPoint& pos) {
-	start = pos;
+	if(IsWalkable(pos.x,pos.y))
+		start = pos;
 }
 
-void j1Map::FindPath(const iPoint& pos) {
-	ResetBFS();
+// Full Propagation
+void j1Map::PropagateToBFS(const iPoint& pos) {
+	ResetNav();
 	if (IsWalkable(pos.x, pos.y))
 	{	
 		// PropagateBFS until you reach the goal
 		iPoint test = start;
 		while (pos != test) {
 			test = PropagateBFS();
+		}
+
+	}
+}
+
+void j1Map::PropagateToDijkstra(const iPoint& pos) {
+	ResetNav();
+	if (MovementCost(pos.x, pos.y) != -1)
+	{
+		// PropagateBFS until you reach the goal
+		iPoint test = start;
+		while (pos != test) {
+			test = PropagateDijkstra();
 		}
 
 	}

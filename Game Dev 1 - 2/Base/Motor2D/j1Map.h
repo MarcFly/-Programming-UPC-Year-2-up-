@@ -174,15 +174,22 @@ public:
 	// TODO 4.9? Translate world to map coordinates
 	iPoint WorldToMap(int rx, int ry) const;
 
-	// BFS
-	iPoint PropagateBFS();
-	void DrawBFS();
+	// Pathfinding
+	
+	void DrawNav();
 	bool IsWalkable(int x, int y) const;
-	void ResetBFS();
-	void FindPath(const iPoint& pos);
+	void ResetNav();
+	void DrawPath();
 	void CreatePath(const iPoint& pos);
 	void SetStart(const iPoint& pos);
+	int	 MovementCost(int x, int y) const;
 
+	// Propagation
+	iPoint PropagateBFS();
+	void PropagateToBFS(const iPoint& pos);
+
+	iPoint PropagateDijkstra();
+	void PropagateToDijkstra(const iPoint& pos);
 	// Find Tileset
 	tileset_info* GetTilesetFromTileId(int gid) const;
 
@@ -219,6 +226,8 @@ private:
 	p2List<iPoint>		visited;
 	p2List<iPoint>		breadcrumbs;
 	p2List<iPoint>		path;
+
+	SDL_Texture*		tile_x = nullptr;
 };
 
 #endif // __j1MAP_H__

@@ -58,7 +58,7 @@ bool j1Scene::Update(float dt)
 	// Get Mouse Position
 	iPoint pos;
 	App->input->GetMousePosition(pos.x, pos.y);
-	pos = App->map->WorldToMap(pos.x - App->render->camera.x, pos.y - App->render->camera.y);
+	pos = App->map->WorldToMap(pos.x - App->render->camera.x, pos.y - App->render->camera.y );
 
 	// TODO 2.5: Call load / save methods when pressing l/s
 
@@ -91,20 +91,20 @@ bool j1Scene::Update(float dt)
 	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 		App->render->camera.x += 10;
 
-	if (App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN)
-		App->map->ResetBFS();
-
+	// Pathfinding Inputs
 	if (App->input->GetKey(SDL_SCANCODE_N) == KEY_DOWN)
 		App->map->PropagateBFS();
 
 	if (App->input->GetKey(SDL_SCANCODE_M) == KEY_REPEAT)
 		App->map->PropagateBFS();
 
-	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+	if (App->input->GetMouseButtonDown(1) == KEY_DOWN)
 		App->map->CreatePath(pos);
 
-	if (App->input->GetKey(SDL_SCANCODE_C) == KEY_DOWN)
+	if (App->input->GetMouseButtonDown(3) == KEY_DOWN) {
 		App->map->SetStart(pos);
+		App->map->ResetNav();
+	}
 
 	//App->render->Blit(img, 0, 0);
 	App->map->Draw();
