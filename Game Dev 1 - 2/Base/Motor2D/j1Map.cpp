@@ -322,9 +322,10 @@ iPoint j1Map::WorldToMap(int rx, int ry) const {
 	else if (Maps->map_type == isometric) {
 		float half_w = Maps->tilewidth * 0.5f;
 		float half_h = Maps->tileheight * 0.5f;
+
 		return{ 
-			(int)(((rx / half_w) + (ry / half_h)) / 2),
-			(int)(((ry / half_h) - (rx / half_w)) / 2)
+			(int)((((rx - half_w)/ half_w) + ((ry)/ half_h)) / 2),
+			(int)((((ry)/ half_h) - ((rx - half_w)/ half_w)) / 2)
 		};
 	}
 	else
@@ -380,12 +381,11 @@ iPoint j1Map::PropagateBFS() {
 }
 
 iPoint j1Map::PropagateDijkstra() {
-	iPoint curr;
 
 	// TODO 7.1 If frontier queue contains elements
 	// pop the last one and calculate its 4 neighbors
 	iPoint curr;
-	if (frontier.Pop(curr)) //Put actual frontier into curr, while it checks if there are frontiers left
+	if (pfrontier.Pop(curr)) //Put actual frontier into curr, while it checks if there are frontiers left
 	{
 		iPoint neighbours[4]; //Create the 4 neighbours every tile has (N E S W)
 		neighbours[0].create(curr.x + 1, curr.y + 0); // E
@@ -395,15 +395,21 @@ iPoint j1Map::PropagateDijkstra() {
 
 		for (uint i = 0; i < 4; ++i)
 		{
+			
 			// TODO 7.2: For each neighbor, if not visited, add it
 			// to the frontier queue and visited list
 			if (visited.find(neighbours[i]) == -1 && MovementCost(neighbours[i].x, neighbours[i].y) != -1) //Checks for visited tiles (if visited they don't go in), use .find to find a neighbour in the list
 			{
-				frontier.Push(neighbours[i]);	//Add them as a frontier
-				visited.add(neighbours[i]);		//Add the neighbour that you just visited
+				int new_cost = cost_so_far[curr.x][curr.y] + MovementCost(neighbours[i].x, neighbours[i].y);
 
-				// TODO 7.Homework, breadcrumbs are added everytime that it comes from somewhere
-				breadcrumbs.add(curr);
+				if (cost_so_far[neighbours[i].x][neighbours[i].y] == 0 || new_cost <= cost_so_far[neighbours[i].x][neighbours[i].y]) {
+					cost_so_far[neighbours[i].x][neighbours[i].y] = new_cost;
+					pfrontier.Push(neighbours[i], new_cost);	//Add them as a frontier
+					visited.add(neighbours[i]);		//Add the neighbour that you just visited
+
+					// TODO 7.Homework, breadcrumbs are added everytime that it comes from somewhere
+					breadcrumbs.add(curr);
+				}
 			}
 		}
 	}
@@ -434,6 +440,18 @@ void j1Map::DrawNav() {
 	for (uint i = 0; i < frontier.Count(); ++i)
 	{
 		point = *(frontier.Peek(i));
+		tileset_info* tileset = GetTilesetFromTileId(26); //Get the red rect
+
+		SDL_Rect r = tileset->GetRect(26);
+		iPoint pos = MapToWorld(point.x, point.y);
+
+		App->render->Blit(tileset->image.tex, pos.x - tileset->tileoffset.x, pos.y - tileset->tileoffset.y, &r);
+	}
+	
+	// Draw pfrontier
+	for (uint i = 0; i < pfrontier.Count(); ++i)
+	{
+		point = *(pfrontier.Peek(i));
 		tileset_info* tileset = GetTilesetFromTileId(26); //Get the red rect
 
 		SDL_Rect r = tileset->GetRect(26);
@@ -501,9 +519,16 @@ int	 j1Map::MovementCost(int x, int y) const {
 
 // Settings makers
 void j1Map::ResetNav() {
+	pfrontier.Clear();
 	frontier.Clear();
 	visited.clear();
 	breadcrumbs.clear();
+
+	for (int i = 0; i < COST_MAP; i++)
+		for (int j = 0; j < COST_MAP; j++)
+			cost_so_far[i][j] = 0;
+
+	pfrontier.Push(start, 0);
 	frontier.Push(start);
 	visited.add(start);
 	breadcrumbs.add(start);
