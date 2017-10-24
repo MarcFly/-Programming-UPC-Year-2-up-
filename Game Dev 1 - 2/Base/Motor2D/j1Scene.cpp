@@ -7,6 +7,7 @@
 #include "j1Render.h"
 #include "j1Window.h"
 #include "j1Map.h"
+#include "j1Pathfinding.h"
 #include "j1Scene.h"
 
 j1Scene::j1Scene() : j1Module()
@@ -93,17 +94,17 @@ bool j1Scene::Update(float dt)
 
 	// Pathfinding Inputs
 	if (App->input->GetKey(SDL_SCANCODE_N) == KEY_DOWN)
-		App->map->PropagateDijkstra();
+		App->pathfinding->PropagateDijkstra();
 
 	if (App->input->GetKey(SDL_SCANCODE_M) == KEY_REPEAT)
-		App->map->PropagateDijkstra();
+		App->pathfinding->PropagateDijkstra();
 
 	if (App->input->GetMouseButtonDown(1) == KEY_DOWN)
-		App->map->CreatePath(pos);
+		App->pathfinding->PropagateAStar(pos);
 
 	if (App->input->GetMouseButtonDown(3) == KEY_DOWN) {
-		App->map->SetStart(pos);
-		App->map->ResetNav();
+		App->pathfinding->SetStart(pos);
+		App->pathfinding->ResetNav();
 	}
 
 	//App->render->Blit(img, 0, 0);

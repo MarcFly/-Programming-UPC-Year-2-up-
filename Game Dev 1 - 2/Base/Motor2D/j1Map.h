@@ -1,15 +1,14 @@
 #ifndef __j1MAP_H__
 #define __j1MAP_H__
 
-#include "PugiXml/src/pugixml.hpp"
+#include "SDL/include/SDL.h"
 #include "p2List.h"
 #include "p2Point.h"
 #include "j1Module.h"
 #include "j1Textures.h"
-#include "p2Queue.h"
-#include "p2PQueue.h"
 
-#define COST_MAP 100
+struct SDL_Rect;
+struct SDL_Color;
 
 // TODO 3.Homework
 // Do layer printing
@@ -123,7 +122,7 @@ struct Map_info {
 
 	orientation	map_type;
 	uint		renderorder;
-	SDL_Color	bg_color;
+	//SDL_Color	bg_color;
 
 	uint		width;
 	uint		height;
@@ -176,22 +175,9 @@ public:
 	// TODO 4.9? Translate world to map coordinates
 	iPoint WorldToMap(int rx, int ry) const;
 
-	// Pathfinding
-	
 	void DrawNav();
-	bool IsWalkable(int x, int y) const;
-	void ResetNav();
 	void DrawPath();
-	void CreatePath(const iPoint& pos);
-	void SetStart(const iPoint& pos);
-	int	 MovementCost(int x, int y) const;
 
-	// Propagation
-	iPoint PropagateBFS();
-	void PropagateToBFS(const iPoint& pos);
-
-	iPoint PropagateDijkstra();
-	void PropagateToDijkstra(const iPoint& pos);
 	// Find Tileset
 	tileset_info* GetTilesetFromTileId(int gid) const;
 
@@ -222,17 +208,7 @@ private:
 	p2SString			folder;
 	bool				map_loaded;
 
-	//Pathfinding~
-	iPoint				start;
-	p2Queue<iPoint>		frontier;
-	p2PQueue<iPoint>	pfrontier;
-	p2List<iPoint>		visited;
-	p2List<iPoint>		breadcrumbs;
-	p2List<iPoint>		path;
-
-	uint				cost_so_far[COST_MAP][COST_MAP];
-
-	SDL_Texture*		tile_x = nullptr;
+	
 };
 
 #endif // __j1MAP_H__
