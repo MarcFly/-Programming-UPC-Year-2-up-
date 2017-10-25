@@ -1,12 +1,14 @@
 #ifndef __j1MAP_H__
 #define __j1MAP_H__
 
-#include "PugiXml/src/pugixml.hpp"
+#include "SDL/include/SDL.h"
 #include "p2List.h"
 #include "p2Point.h"
 #include "j1Module.h"
 #include "j1Textures.h"
-#include "p2Queue.h"
+
+struct SDL_Rect;
+struct SDL_Color;
 
 // TODO 3.Homework
 // Do layer printing
@@ -40,7 +42,7 @@ struct layer_info {
 		return { (int)(tile_width * ((nid) - (width*(nid / width)))), (int)(tile_height * (nid / width))};
 	}
 
-	inline int Get(const int& x, const int& y) { return y*width + x; }
+	inline int Get(const int& x, const int& y) { return data[y*width + x]; }
 
 	~layer_info() {
 		delete[] data;
@@ -82,22 +84,13 @@ struct tileset_info {
 	p2List<terrain_info*> terrains;
 
 	// TODO 4.7 Method that gives the Rect given gid
-	SDL_Rect CreateRect(int gid) const {
-		int x = spacing + tileoffset.x + (((gid - firstgid - (columns * ((gid - firstgid) / columns)))*(tilewidth + spacing)));
-		int y = spacing + (((gid - firstgid) / columns)*(tileheight + spacing));
+	inline SDL_Rect GetRect(int gid) const {
 		int w = tilewidth;
 		int h = tileheight;
-
+		int x = margin + (((gid - firstgid) % columns)*(w + spacing));
+		int y = margin + (((gid - firstgid) / columns)*(h + spacing));
+		
 		return { x,y,w,h };
-	}
-
-	inline SDL_Rect FindRect(int gid) const {
-		p2List_item<terrain_info*>* item = terrains.start;
-
-		while (item->data->id != gid)
-			item = item->next;
-
-		return *item->data->Tex_Pos;
 	}
 
 	~tileset_info() {
@@ -129,7 +122,7 @@ struct Map_info {
 
 	orientation	map_type;
 	uint		renderorder;
-	SDL_Color	bg_color;
+	//SDL_Color	bg_color;
 
 	uint		width;
 	uint		height;
@@ -182,11 +175,11 @@ public:
 	// TODO 4.9? Translate world to map coordinates
 	iPoint WorldToMap(int rx, int ry) const;
 
-	// BFS
-	void PropagateBFS();
-	void DrawBFS();
-	bool IsWalkable(int x, int y) const;
-	void ResetBFS();
+	void DrawNav();
+	void DrawPath();
+
+	// Find Tileset
+	tileset_info* GetTilesetFromTileId(int gid) const;
 
 private:
 
@@ -215,9 +208,7 @@ private:
 	p2SString			folder;
 	bool				map_loaded;
 
-	//BFS
-	p2Queue<iPoint>		frontier;
-	p2List<iPoint>		visited;
+	
 };
 
 #endif // __j1MAP_H__

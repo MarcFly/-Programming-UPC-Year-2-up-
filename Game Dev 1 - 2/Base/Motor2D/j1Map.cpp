@@ -3,10 +3,11 @@
 #include "p2List.h"
 #include "j1App.h"
 #include "j1Render.h"
-#include "j1Textures.h"
+//#include "j1Textures.h"
 #include "j1Map.h"
 #include <math.h>
-#include <string.h>
+#include <string>
+#include "j1Pathfinding.h"
 
 struct SDL_Texture;
 
@@ -43,17 +44,16 @@ void j1Map::Draw()
 
 	iPoint pos = { 0,0 };
 
-	if (Maps != nullptr) { //Check there is a map
+	if (Maps != nullptr) { //Check there is a FindRectmap
 		
-		p2List_item<tileset_info*>* item_tileset = Maps->tilesets.start; //Start tileset list
+		tileset_info* item_tileset; //Start tileset list
 	
 		p2List_item<layer_info*>* item_layer = Maps->layers.start; //Start layer
 
 		while (item_layer != nullptr) { //Check there are layers
 
-			while (Maps->tilesets.count() > 1 && (*item_layer->data->data < item_tileset->data->firstgid || *item_layer->data->data >= item_tileset->data->firstgid + item_tileset->data->tilecount))
-				item_tileset = item_tileset->next; // This only works if layer only works over 1 tileset, if multiple tilesets in a layer, you have to do it before every blit?
-
+			item_tileset = GetTilesetFromTileId(*item_layer->data->data);
+			
 			uint* p = item_layer->data->data; // reset data pointing to data[0]
 
 			for (int i = 0; i < item_layer->data->height; i++) {
@@ -62,10 +62,10 @@ void j1Map::Draw()
 						iPoint pos = MapToWorld(j, i);
 
 						App->render->Blit(
-							item_tileset->data->image.tex,
-							pos.x - item_tileset->data->tileoffset.x,
-							pos.y- item_tileset->data->tileoffset.y,
-							&item_tileset->data->FindRect(*p));
+							item_tileset->image.tex,
+							pos.x - item_tileset->tileoffset.x,
+							pos.y- item_tileset->tileoffset.y,
+							&item_tileset->GetRect(*p));
 					}
 					p++;
 				}
@@ -75,6 +75,8 @@ void j1Map::Draw()
 		}
 	
 	}
+
+	DrawNav();
 	
 }
 
@@ -169,6 +171,7 @@ bool j1Map::Load(const char* file_name)
 	return ret;
 }
 
+// Load INFO--------------------------------------------------------------------------------------------------------------------
 bool j1Map::LoadMapData(const pugi::xml_node& map_node, Map_info& item_map) {
 	bool ret = true;
 
@@ -237,12 +240,12 @@ bool j1Map::LoadTilesetData(const pugi::xml_node& tileset_node, tileset_info& it
 	return ret;
 }
 
-// Load Terrain Data-----------------------------------------------------------------------------------------------------------
+// Load Terrain Data
 bool j1Map::LoadTerrainData(const pugi::xml_node& tileset_node, const int& id, terrain_info& item_terrain, tileset_info& item_tileset) {
 	
 	item_terrain.id = id;
 
-	item_terrain.Tex_Pos = new SDL_Rect(item_tileset.CreateRect(item_terrain.id));
+	item_terrain.Tex_Pos = new SDL_Rect(item_tileset.GetRect(item_terrain.id));
 
 	// Create a switch depending on Id to create later collision data for later creation
 	// There should be a way of detecting which type of layer we are in, and then load properties, no matter what type it is
@@ -256,14 +259,14 @@ bool j1Map::LoadTerrainData(const pugi::xml_node& tileset_node, const int& id, t
 	return true;
 }
 
-// Load Layer Data-----------------------------------------------------------------------------------------------------------
+// Load Layer Data
 bool j1Map::LoadLayerData(const pugi::xml_node& layer_node, layer_info& item_layer) {
 	
 	item_layer.name = layer_node.attribute("name").as_string();
 	item_layer.width = layer_node.attribute("width").as_uint();
 	item_layer.height = layer_node.attribute("height").as_uint();
 
-	//item_layer->draw_mode = layer_node->attribute("draw _mode").as_int();
+	item_layer.draw_mode = layer_node.child("properties").child("property").attribute("value").as_int();
 
 	//Load all tiles in layer data
 	pugi::xml_node tile_node = layer_node.child("data").child("tile");
@@ -284,6 +287,9 @@ bool j1Map::LoadLayerData(const pugi::xml_node& layer_node, layer_info& item_lay
 
 	return true;
 }
+
+
+// Position Funcitons------------------------------------------------------------------
 
 iPoint j1Map::MapToWorld(int x, int y) const {
 
@@ -306,69 +312,98 @@ iPoint j1Map::MapToWorld(int x, int y) const {
 iPoint j1Map::WorldToMap(int rx, int ry) const {
 
 	if (Maps->map_type == orthogonal) {
-		return { 
+		return {
 			rx / (int)Maps->tilewidth,
 			ry / (int)Maps->tileheight 
 		};
 	}
 	else if (Maps->map_type == isometric) {
-		float half_w = Maps->tilewidth / 2;
-		float half_h = Maps->tileheight / 2;
+		float half_w = Maps->tilewidth * 0.5f;
+		float half_h = Maps->tileheight * 0.5f;
+
 		return{ 
-			(int)(((rx / half_w) + (rx / half_h)) / 2),
-			(int)(((ry / half_h) - (rx / half_w)) / 2)
+			(int)((((rx - half_w)/ half_w) + ((ry)/ half_h)) / 2),
+			(int)((((ry)/ half_h) - ((rx - half_w)/ half_w)) / 2)
 		};
 	}
 	else
 		return { 0,0 };
 }
 
-void j1Map::PropagateBFS() {
-	// TODO 7.1 If frontier queue contains elements
-	// pop the last one and calculate its 4 neighbors
-	iPoint curr;
-	if (frontier.Pop(curr)) //Put actual frontier into curr, while it checks if there are frontiers left
+
+// Find Functions
+
+tileset_info* j1Map::GetTilesetFromTileId(int gid) const
+{
+	p2List_item<tileset_info*>* item = Maps->tilesets.start;
+
+	while (Maps->tilesets.count() > 1 && (gid < item->data->firstgid || gid >= item->data->firstgid + item->data->tilecount))
+		item = item->next; // This only works if layer only works over 1 tileset, if multiple tilesets in a layer, you have to do it before every blit?
+
+	return item->data;
+
+}
+
+void j1Map::DrawNav() {
+	iPoint point;
+
+	// Draw visited
+	p2List_item<iPoint>* item = App->pathfinding->visited.start;
+
+	while (item)
 	{
-		iPoint neighbors[4]; //Create the 4 neighbours every tile has (N E S W)
-		neighbors[0].create(curr.x + 1, curr.y + 0); // E
-		neighbors[1].create(curr.x + 0, curr.y + 1); // S
-		neighbors[2].create(curr.x - 1, curr.y + 0); // W
-		neighbors[3].create(curr.x + 0, curr.y - 1); // N
+		point = item->data;
+		tileset_info* tileset = GetTilesetFromTileId(25); //Get green rect
 
-		for (uint i = 0; i < 4; ++i)
-		{
-			// TODO 7.2: For each neighbor, if not visited, add it
-			// to the frontier queue and visited list
-			if (visited.find(neighbors[i]) == -1) //Checks for visited tiles (if visited they don't go in)
-			{
-				frontier.Push(neighbors[i]); //Add them as a frontier
-				visited.add(neighbors[i]); //Add the neighbour that you just visited
-			}
-		}
+		SDL_Rect r = tileset->GetRect(25);
+		iPoint pos = MapToWorld(point.x, point.y);
+
+		App->render->Blit(tileset->image.tex, pos.x, pos.y - tileset->tileoffset.y, &r);
+
+		item = item->next;
 	}
+
+	// Draw frontier
+	for (uint i = 0; i < App->pathfinding->frontier.Count(); ++i)
+	{
+		point = *(App->pathfinding->frontier.Peek(i));
+		tileset_info* tileset = GetTilesetFromTileId(26); //Get the red rect
+
+		SDL_Rect r = tileset->GetRect(26);
+		iPoint pos = MapToWorld(point.x, point.y);
+
+		App->render->Blit(tileset->image.tex, pos.x - tileset->tileoffset.x, pos.y - tileset->tileoffset.y, &r);
+	}
+
+	// Draw pfrontier
+	for (uint i = 0; i < App->pathfinding->pfrontier.Count(); ++i)
+	{
+		point = *(App->pathfinding->pfrontier.Peek(i));
+		tileset_info* tileset = GetTilesetFromTileId(26); //Get the red rect
+
+		SDL_Rect r = tileset->GetRect(26);
+		iPoint pos = MapToWorld(point.x, point.y);
+
+		App->render->Blit(tileset->image.tex, pos.x - tileset->tileoffset.x, pos.y - tileset->tileoffset.y, &r);
+	}
+
+	DrawPath();
 }
 
-void j1Map::DrawBFS() {
+void j1Map::DrawPath() {
+	// Draw Path
 
-}
+	p2List_item<iPoint>* item = App->pathfinding->path.start;
+	while (item)
+	{
+		tileset_info* tileset = GetTilesetFromTileId(26); //Get green rect
 
-bool j1Map::IsWalkable(int x, int y) const{
-	bool ret = true;
+		SDL_Rect r = tileset->GetRect(26);
+		iPoint pos = MapToWorld(item->data.x, item->data.y);
 
-	 ret = (x >= 0 && x <= Maps->width &&
-		 y >= 0 && y <= Maps->height);
+		App->render->Blit(tileset->image.tex, pos.x, pos.y - tileset->tileoffset.y, &r);
 
-	 if (ret == true) {
-		 p2List_item<layer_info*>* item = Maps->layers.start;
-		 while (item->data->draw_mode == 2)
-			 item = item->next;
-
-		 ret = (item->data->data[y * Maps->width + x] == 0);
-	 }
-		 
-	return ret;
-}
-
-void ResetBFS() {
+		item = item->next;
+	}
 
 }

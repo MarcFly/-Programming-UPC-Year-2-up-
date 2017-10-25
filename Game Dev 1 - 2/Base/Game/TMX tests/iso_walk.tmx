@@ -671,7 +671,7 @@
  </layer>
  <layer name="Colisions" width="25" height="25">
   <properties>
-   <property name="Navigation" value="1"/>
+   <property name="Navigation" value="2"/>
    <property name="Nodraw" value="1"/>
   </properties>
   <data>
