@@ -190,6 +190,27 @@ uint PathNode::FindWalkableAdjacents(PathList& list_to_fill) const {
 	if (App->pathfinding->IsWalkable(cell.x, cell.y))
 		list_to_fill.nodes.add(PathNode(-1, -1, cell, this));
 
+	// TODO 8.Homework
+	// north east
+	cell.create(pos.x + 1, pos.y + 1);
+	if (App->pathfinding->IsWalkable(cell.x, cell.y))
+		list_to_fill.nodes.add(PathNode(-1, -1, cell, this));
+
+	// south east
+	cell.create(pos.x + 1, pos.y - 1);
+	if (App->pathfinding->IsWalkable(cell.x, cell.y))
+		list_to_fill.nodes.add(PathNode(-1, -1, cell, this));
+
+	// north west
+	cell.create(pos.x - 1, pos.y + 1);
+	if (App->pathfinding->IsWalkable(cell.x, cell.y))
+		list_to_fill.nodes.add(PathNode(-1, -1, cell, this));
+
+	// south west
+	cell.create(pos.x - 1, pos.y - 1);
+	if (App->pathfinding->IsWalkable(cell.x, cell.y))
+		list_to_fill.nodes.add(PathNode(-1, -1, cell, this));
+
 	return list_to_fill.nodes.count();
 }
 
