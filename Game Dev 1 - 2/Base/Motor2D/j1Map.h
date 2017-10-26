@@ -177,6 +177,7 @@ public:
 
 	void DrawNav();
 	void DrawPath();
+	void DrawNPath();
 
 	// Find Tileset
 	tileset_info* GetTilesetFromTileId(int gid) const;

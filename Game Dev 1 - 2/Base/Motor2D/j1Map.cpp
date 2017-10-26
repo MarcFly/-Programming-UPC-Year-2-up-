@@ -1,6 +1,4 @@
-#include "p2Defs.h"
 #include "p2Log.h"
-#include "p2List.h"
 #include "j1App.h"
 #include "j1Render.h"
 //#include "j1Textures.h"
@@ -164,6 +162,7 @@ bool j1Map::Load(const char* file_name)
 	{
 		// TODO 3.5: LOG all the data loaded
 		// iterate all tilesets and LOG everything
+		//App->pathfinding->SetMap(Maps->width, Maps->height, Maps->layers.start->data->data);
 	}
 	
 	ret = map_loaded;
@@ -285,6 +284,9 @@ bool j1Map::LoadLayerData(const pugi::xml_node& layer_node, layer_info& item_lay
 		p++;
 	}
 
+	if (item_layer.draw_mode == 2)
+		App->pathfinding->SetMap(item_layer.width, item_layer.height, item_layer.data);
+
 	return true;
 }
 
@@ -388,6 +390,7 @@ void j1Map::DrawNav() {
 	}
 
 	DrawPath();
+	DrawNPath();
 }
 
 void j1Map::DrawPath() {
@@ -406,4 +409,27 @@ void j1Map::DrawPath() {
 		item = item->next;
 	}
 
+}
+
+void j1Map::DrawNPath() {
+	
+	for (int i = 0; i < App->pathfinding->closed_test.Count(); i++) {
+		iPoint pos_ = App->pathfinding->closed_test[i];
+		tileset_info* tileset = GetTilesetFromTileId(26); //Get green rect
+
+		SDL_Rect r = tileset->GetRect(25);
+		iPoint pos = MapToWorld(pos_.x, pos_.y);
+
+		App->render->Blit(tileset->image.tex, pos.x, pos.y - tileset->tileoffset.y, &r);
+	}
+
+	for (int i = 0; i < App->pathfinding->last_path.Count(); i++) {
+		iPoint pos_ = App->pathfinding->last_path[i];
+		tileset_info* tileset = GetTilesetFromTileId(26); //Get green rect
+
+		SDL_Rect r = tileset->GetRect(25);
+		iPoint pos = MapToWorld(pos_.x, pos_.y);
+
+		App->render->Blit(tileset->image.tex, pos.x, pos.y - tileset->tileoffset.y, &r);
+	}
 }

@@ -100,7 +100,7 @@ bool j1Scene::Update(float dt)
 		App->pathfinding->PropagateDijkstra();
 
 	if (App->input->GetMouseButtonDown(1) == KEY_DOWN)
-		App->pathfinding->PropagateAStar(pos);
+		App->pathfinding->CreateFPath(App->pathfinding->start, pos);
 
 	if (App->input->GetMouseButtonDown(3) == KEY_DOWN) {
 		App->pathfinding->SetStart(pos);
