@@ -100,10 +100,10 @@ void j1Pathfinding::PropagateAStar(const iPoint& pos) {
 
 	ResetNav();
 
-	// TODO 7.1 If frontier queue contains elements
-	// pop the last one and calculate its 4 neighbors
-	iPoint curr;
 	if (MovementCost(pos.x, pos.y) != -1) {
+		
+		iPoint curr;
+	
 		while (curr != pos) {
 			if (pfrontier.Pop(curr)) //Put actual frontier into curr, while it checks if there are frontiers left
 			{
@@ -116,21 +116,19 @@ void j1Pathfinding::PropagateAStar(const iPoint& pos) {
 				for (uint i = 0; i < 4; ++i)
 				{
 
+					int new_cost = cost_so_far[curr.x][curr.y] + MovementCost(neighbours[i].x, neighbours[i].y) + neighbours[i].DistanceNoSqrt(pos);
+
 					// TODO 7.2: For each neighbor, if not visited, add it
 					// to the frontier queue and visited list
-					if (visited.find(neighbours[i]) == -1 && MovementCost(neighbours[i].x, neighbours[i].y) != -1) //Checks for visited tiles (if visited they don't go in), use .find to find a neighbour in the list
+					if (MovementCost(neighbours[i].x, neighbours[i].y) != -1 && (cost_so_far[neighbours[i].x][neighbours[i].y] == 0 || new_cost <= cost_so_far[neighbours[i].x][neighbours[i].y])) //Checks for visited tiles (if visited they don't go in), use .find to find a neighbour in the list
 					{
-						int new_cost = neighbours[i].DistanceNoSqrt(pos);
+						
+						pfrontier.Push(neighbours[i], new_cost);	//Add them as a frontier
+						breadcrumbs.add(curr);
 						// Calculate last distance and new distance
 
-						if (cost_so_far[neighbours[i].x][neighbours[i].y] == 0 || new_cost <= cost_so_far[neighbours[i].x][neighbours[i].y]) {
-							cost_so_far[neighbours[i].x][neighbours[i].y] = new_cost;
-							pfrontier.Push(neighbours[i], new_cost);	//Add them as a frontier
-							visited.add(neighbours[i]);		//Add the neighbour that you just visited
-
-															// TODO 7.Homework, breadcrumbs are added everytime that it comes from somewhere
-							breadcrumbs.add(curr);
-						}
+						cost_so_far[neighbours[i].x][neighbours[i].y] = new_cost;
+						
 					}
 				}
 			}
@@ -171,11 +169,12 @@ int	 j1Pathfinding::MovementCost(int x, int y) const {
 		if (id == 0)
 			ret = 3;
 		else
-			ret = 0;
+			ret = -1;
 	}
 
 	return ret;
 }
+
 
 
 // Settings makers
@@ -246,4 +245,28 @@ void j1Pathfinding::CreatePath(const iPoint& pos) {
 
 		path.add(goal);
 	}
+}
+
+int j1Pathfinding::CreateFPath(const iPoint& origin, const iPoint& destination) {
+	int ret = 0;
+	/*
+	if ()
+	// Create Path to goal
+	path.clear();
+	iPoint goal(pos.x, pos.y);
+	iPoint f(0, 0);
+	if (visited.find(goal) != -1) {
+		while (goal != start) {
+			path.add(goal);
+
+			
+
+			goal = breadcrumbs[visited.find(goal)];
+		}
+
+		path.add(goal);
+	}
+
+	return ret;
+	*/
 }
