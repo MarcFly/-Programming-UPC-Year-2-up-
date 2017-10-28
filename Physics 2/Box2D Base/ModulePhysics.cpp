@@ -76,33 +76,6 @@ update_status ModulePhysics::PreUpdate()
 // 
 update_status ModulePhysics::PostUpdate()
 {
-	// P2 TODO 1.5: On space bar press, create a circle on mouse position
-	// - You need to transform the position / radius
-	//iPoint pos = { groundCircle.m_p.x, groundCircle.m_p.y - 1000 };
-	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
-		RandomCircle({App->input->GetMouseX(), App->input->GetMouseY()});
-		
-	// P2 TODO 2.1 When press 2, create box on mouse position
-	if (App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN)
-		RandomBox({ App->input->GetMouseX(), App->input->GetMouseY() });
-
-	// P2 TODO 2.3 Create a chain given vertices, convert pixels to meters
-	if (App->input->GetKey(SDL_SCANCODE_3) == KEY_DOWN) {
-		int points[24] = { 
-			-38, 80,
-			-44, -54,
-			-16, -60,
-			-16, -17,
-			19, -19,
-			19, -79,
-			61, -77,
-			57, 73,
-			17, 78,
-			20, 16,
-			-25, 13,
-			-9, 72 };
-		GivenChain(&points[0], { App->input->GetMouseX(), App->input->GetMouseY() }, 24);
-	}
 
 	if(App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 		debug = !debug;
@@ -259,5 +232,5 @@ void ModulePhysics::GivenChain(const int* points, iPoint pos, int size) {
 	b2Body* body = world->CreateBody(&bodydef);
 	body->CreateFixture(&fixt);
 
-	delete p;
+	//delete[] p;
 }
