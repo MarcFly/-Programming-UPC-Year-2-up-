@@ -79,7 +79,7 @@ update_status ModulePhysics::PostUpdate()
 	// P2 TODO 1.5: On space bar press, create a circle on mouse position
 	// - You need to transform the position / radius
 	//iPoint pos = { groundCircle.m_p.x, groundCircle.m_p.y - 1000 };
-	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 		RandomCircle({App->input->GetMouseX(), App->input->GetMouseY()});
 		
 	// P2 TODO 2.1 When press 2, create box on mouse position
