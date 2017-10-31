@@ -122,7 +122,7 @@ bool j1Scene::Update(float dt)
 		pos.x,pos.y
 		);
 	
-	App->win->SetTitle(title.GetString());
+	//App->win->SetTitle(title.GetString());
 	
 	return true;
 }

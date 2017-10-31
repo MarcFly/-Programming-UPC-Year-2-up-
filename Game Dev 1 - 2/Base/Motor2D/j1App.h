@@ -3,6 +3,8 @@
 
 #include "p2List.h"
 #include "j1Module.h"
+#include "j1Timer.h"
+#include "j1PerfTimer.h"
 #include "PugiXml\src\pugixml.hpp"
 
 // Draw Modes
@@ -52,6 +54,8 @@ public:
 	const char* GetArgv(int index) const;
 	const char* GetTitle() const;
 	const char* GetOrganization() const;
+
+	float GetDT() const;
 
 	// TODO 1: Create methods to save and load
 	// that can be called anytime, even if they 
@@ -110,7 +114,15 @@ private:
 
 	p2List<j1Module*>	modules;
 	uint				frames;
+	uint				last_fr;
+	float				avg_fps;
+	float				seconds_since_startup;
+	float				last_frame_ms;
 	float				dt;
+	j1Timer				TickTimer;
+	j1PerfTimer			PerfTimer;
+
+	float sth;
 
 	// TODO 1.2: Create two new variables from pugui namespace:
 	// a xml_document to store the while config file and
@@ -130,6 +142,8 @@ private:
 
 	bool				trigger_load_module;
 	bool				trigger_save_module;
+
+			
 };
 
 extern j1App* App; // No student is asking me about that ... odd :-S

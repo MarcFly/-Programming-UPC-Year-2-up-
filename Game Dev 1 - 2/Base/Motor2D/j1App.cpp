@@ -14,13 +14,18 @@
 #include "j1Pathfinding.h"
 #include "j1App.h"
 
-
+// TODO 9.3: Measure the amount of ms that takes to execute:
+// App constructor, Awake, Start and CleanUp
+// LOG the result
 
 // Constructor
 j1App::j1App(int argc, char* args[]) : argc(argc), args(args)
 {
-	frames = 0;
-
+	frames = 0;//?
+	
+	TickTimer.Start();
+	PerfTimer.Start();
+	float time = TickTimer.Read();
 
 	input = new j1Input();
 	win = new j1Window();
@@ -43,6 +48,9 @@ j1App::j1App(int argc, char* args[]) : argc(argc), args(args)
 
 	// render last to swap buffer
 	AddModule(render);
+
+	time = TickTimer.Read() - time;
+	LOG("%f",time);
 }
 
 // Destructor
@@ -69,6 +77,7 @@ void j1App::AddModule(j1Module* module)
 // Called before render is available
 bool j1App::Awake()
 {
+	float time = TickTimer.Read();
 
 	bool ret = true;
 
@@ -89,11 +98,16 @@ bool j1App::Awake()
 	}
 
 	return ret;
+
+	time = TickTimer.Read() - time;
+	LOG("%f", time);
 }
 
 // Called before the first frame
 bool j1App::Start()
 {
+	float time = TickTimer.Read();
+
 	bool ret = true;
 	p2List_item<j1Module*>* item;
 	item = modules.start;
@@ -103,6 +117,9 @@ bool j1App::Start()
 		ret = item->data->Start();
 		item = item->next;
 	}
+
+	time = TickTimer.Read() - time;
+	LOG("%f", time);
 
 	return ret;
 }
@@ -176,7 +193,7 @@ void j1App::PrepareUpdate()
 // ---------------------------------------------
 void j1App::FinishUpdate()
 {
-	// TODO 2.1: This is a good place to call load / Save functions
+	// TODO 2.1: This is a good place to call load / Save functions, Delay load/save at the end of a frame
 	if (trigger_save_module == true)
 		Save();
 
@@ -185,6 +202,27 @@ void j1App::FinishUpdate()
 	
 	trigger_load_module = false;
 	trigger_save_module = false;
+
+	// TODO 9.4: Now calculate:
+	// Amount of frames since startup
+	// Amount of time since game start (use a low resolution timer)
+	// Average FPS for the whole game life
+	// Amount of ms took the last update
+	// Amount of frames during the last second
+
+	//frames = PerfTimer.ReadTicks();
+	avg_fps = frames / seconds_since_startup;
+	seconds_since_startup = TickTimer.ReadSec();
+	dt = 0.0f;
+	last_frame_ms = PerfTimer.ReadTicks();
+	last_fr = 0;
+	frames++;
+
+	p2SString title;
+	title.create("Av.FPS: %.2f Last Frame Ms: %u Last sec frames: %i Last dt: %.3f Time since startup: %.3f Frame Count: %lu ",
+		avg_fps, last_frame_ms, last_fr, dt, seconds_since_startup, frames);
+	
+	App->win->SetTitle(title.GetString());
 	
 }
 
@@ -256,6 +294,8 @@ bool j1App::PostUpdate()
 // Called before quitting
 bool j1App::CleanUp()
 {
+	float time = TickTimer.Read();
+
 	bool ret = true;
 	p2List_item<j1Module*>* item;
 	item = modules.end;
@@ -265,6 +305,9 @@ bool j1App::CleanUp()
 		ret = item->data->CleanUp();
 		item = item->prev;
 	}
+
+	time = TickTimer.Read() - time;
+	LOG("%f", time);
 
 	return ret;
 }
@@ -290,6 +333,10 @@ const char* j1App::GetTitle() const
 	return title.GetString();
 }
 
+float j1App::GetDT() const
+{
+	return 0.0f;
+}
 // ---------------------------------------
 const char* j1App::GetOrganization() const
 {
