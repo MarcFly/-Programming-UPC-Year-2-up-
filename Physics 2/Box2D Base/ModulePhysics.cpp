@@ -24,6 +24,7 @@ ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app,
 	//P2 TODO 1.2.2 Init the world
 
 	world = new b2World({ 0,0 });
+	world->SetContactListener(this);
 }
 
 // Destructor
@@ -70,6 +71,18 @@ update_status ModulePhysics::PreUpdate()
 	// P2 TODO 1.3: Update the simulation ("step" the world)
 	world->Step(1.0f/60.0f, 8, 3);	//Time Step (using 60fps), velocity of iterations (8 better, 6 bit more optimal), position iterations (3 better, 2 more optimal)
 									//Basically the iterations (vel and pos) are for accuracy purposes, more iterations more accuracy less performance
+
+	for (b2Contact* c = world->GetContactList(); c; c = c->GetNext())
+	{
+		if (c->GetFixtureA()->IsSensor() && c->IsTouching())
+		{
+			PhysBody* pb1 = (PhysBody*)c->GetFixtureA()->GetBody()->GetUserData();
+			PhysBody* pb2 = (PhysBody*)c->GetFixtureA()->GetBody()->GetUserData();
+			if (pb1 && pb2 && pb1->listener)
+				pb1->listener->OnCollision(pb1, pb2);
+		}
+	}
+
 	return UPDATE_CONTINUE;
 }
 
@@ -167,6 +180,7 @@ bool ModulePhysics::CleanUp()
 
 	// P2 TODO 1.2.3 Delete the whole physics world!
 	delete world;
+	body_list.clear();
 
 	return true;
 }
@@ -188,6 +202,8 @@ void ModulePhysics::RandomCircle(iPoint pos) {
 	b2Body* body = world->CreateBody(&bodydef);
 	body->CreateFixture(&fixt);
 
+	body_list.add(PhysBody(body));
+	body->SetUserData(body_list.getLast());
 }
 
 void ModulePhysics::RandomBox(iPoint pos) {
@@ -198,7 +214,9 @@ void ModulePhysics::RandomBox(iPoint pos) {
 
 	b2PolygonShape Rnd;
 	//int sth = groundCircle.m_radius;
-	Rnd.SetAsBox(0.1f + (rand() % 100) / 200.0f, 0.1f + (rand() % 100) / 200.0f);
+	b2Vec2 size = { 0.1f + (rand() % 100) / 200.0f, 0.1f + (rand() % 100) / 200.0f };
+
+	Rnd.SetAsBox(size.x, size.y);
 
 	b2FixtureDef fixt;
 	fixt.shape = &Rnd;
@@ -206,6 +224,9 @@ void ModulePhysics::RandomBox(iPoint pos) {
 
 	b2Body* body = world->CreateBody(&bodydef);
 	body->CreateFixture(&fixt);
+
+	body_list.add(PhysBody(body, size.x, size.y));
+	body->SetUserData(body_list.getLast());
 }
 
 void ModulePhysics::GivenChain(const int* points, iPoint pos, int size) {
@@ -213,24 +234,91 @@ void ModulePhysics::GivenChain(const int* points, iPoint pos, int size) {
 	b2BodyDef bodydef;
 	bodydef.type = b2_dynamicBody;
 	bodydef.position.Set(PIXELS_TO_METERS pos.x, PIXELS_TO_METERS pos.y);
-
-	b2ChainShape chain;
-	//int sth = groundCircle.m_radius;
+	
+	b2Body* body = world->CreateBody(&bodydef);
+		
 	b2Vec2* p = new b2Vec2[size / 2];
-
 	for (int i = 0; i < size / 2; i++) {
-		p[i].x = PIXELS_TO_METERS(points[i * 2]);
-		p[i].y = PIXELS_TO_METERS(points[i * 2 + 1]);
+		p[i].x = PIXELS_TO_METERS(*points);
+		p[i].y = PIXELS_TO_METERS(*++points);
+		points++;
 	}
 
-	chain.CreateLoop(p, size / 2);
+	b2ChainShape chain;
+	
+	chain.CreateLoop(p, size/2);
+	delete[] p;
 
 	b2FixtureDef fixt;
 	fixt.shape = &chain;
-	//fixt.density = 1.0f; // P2 TODO 2.2 Density makes shapes behave normally
-
-	b2Body* body = world->CreateBody(&bodydef);
+	
 	body->CreateFixture(&fixt);
+	
+	body_list.add(PhysBody(body));
+	body->SetUserData(body_list.getLast());
+}
 
-	//delete[] p;
+bool PhysBody::Contains(int x, int y) const
+{
+	// Handout 3 TODO 1: Write the code to return true in case the point
+	// is inside ANY of the shapes contained by this body
+	bool ret = false;
+
+	b2Fixture* item = body->GetFixtureList();
+	while (item->GetDensity() >= 0)
+	{
+		if (item->GetShape()->TestPoint(body->GetTransform(), { PIXELS_TO_METERS x, PIXELS_TO_METERS y }))
+			ret = true;
+		item++;
+	}
+
+
+	return ret;
+}
+
+int PhysBody::RayCast(int x1, int y1, int x2, int y2, float& normal_x, float& normal_y) const
+{
+	// Handout 3 TODO 2: Write code to test a ray cast between both points provided. If not hit return -1
+	// if hit, fill normal_x and normal_y and return the distance between x1,y1 and it's colliding point
+	int ret = -1;
+
+	b2RayCastInput input;
+	b2RayCastOutput output;
+
+	input.p1 = { PIXELS_TO_METERS x1, PIXELS_TO_METERS y1 };
+	input.p2 = { PIXELS_TO_METERS x2, PIXELS_TO_METERS y2 };
+	input.maxFraction = 1.6f;
+
+	b2Fixture* item = body->GetFixtureList();
+	while (item->GetDensity() >= 0)
+	{
+		if (item->GetShape()->TestPoint(body->GetTransform(), input.p2)) {
+			item->GetShape()->RayCast(&output, input, body->GetTransform(), 0);
+			ret = output.fraction * output.normal.LengthSquared();
+		}
+		item++;
+	}
+
+	return ret;
+}
+
+// Handout 3 TODO 3
+
+// Handout 3 TODO 4:  Begin contact from user data, which is their respective PhysBody
+// Handout 3 TODO 7: Call the listeners that are not NULL
+void ModulePhysics::BeginContact(b2Contact* contact)
+{
+	PhysBody* physA = (PhysBody*)contact->GetFixtureA()->GetBody()->GetUserData();
+	PhysBody* physB = (PhysBody*)contact->GetFixtureB()->GetBody()->GetUserData();
+
+	if (physA && physA->listener != NULL)
+		physA->listener->OnCollision(physA, physB);
+
+	if (physB && physB->listener != NULL)
+		physB->listener->OnCollision(physB, physA);
+}
+
+void ModulePhysics::OnCollision(PhysBody* body1, PhysBody* body2)
+{
+
 }

@@ -1,7 +1,7 @@
 #pragma once
 #include "Module.h"
-#include "Animation.h"
-#include "p2DynArray.h"
+#include "p2List.h"
+#include "p2Point.h"
 #include "Globals.h"
 
 #define BOUNCER_TIME 200
@@ -51,6 +51,11 @@ public:
 	update_status Update();
 	bool CleanUp();
 
+	void OnCollision(PhysBody* body1, PhysBody* body2);
+
+	void Draw(iPoint mouse, fVector& normal, int& ray_hit);
+	void DrawRay(iPoint mouse, fVector normal, int ray_hit);
+
 public:
 
 	SDL_Texture* graphics;
@@ -74,4 +79,18 @@ public:
 
 	PhysBody* player_lose;
 	uint player_lose_fx;
+
+public:
+	SDL_Texture* circle;
+	SDL_Texture* box;
+	SDL_Texture* rick;
+
+	PhysBody* sensor;
+	bool sensed;
+
+	uint bonus_fx;
+	iPoint ray;
+	bool ray_on;
+
+	iPoint MouseStd;
 };
