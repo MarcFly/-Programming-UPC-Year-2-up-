@@ -25,6 +25,7 @@ class j1Textures;
 class j1Audio;
 class j1Scene;
 class j1Map;
+class j1Player;
 class j1Pathfinding;
 
 class j1App
@@ -88,6 +89,9 @@ private:
 
 	// Call modules before each loop iteration
 	bool PreUpdate();
+	
+	// Call modules with specific frame required interaction, reach loop iteration
+	bool DoUpdateTick();
 
 	// Call modules on each loop iteration
 	bool DoUpdate();
@@ -114,6 +118,7 @@ public:
 	j1Audio*			audio;
 	j1Scene*			scene;
 	j1Map*				map;
+	j1Player*			player;
 	j1Pathfinding*		pathfinding;
 
 
@@ -153,7 +158,8 @@ private:
 	bool				trigger_load_module;
 	bool				trigger_save_module;
 
-			
+public:
+	int test_ticks = 0;
 };
 
 extern j1App* App; // No student is asking me about that ... odd :-S

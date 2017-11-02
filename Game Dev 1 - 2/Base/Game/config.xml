@@ -43,6 +43,11 @@
   <map>
 	  <folder>TMX tests/</folder>
   </map>
+
+  <player>
+	<ticks value="10"/>
+  </player>
+
   <scene>
     <map name="iso_walk.tmx"/>
   </scene>

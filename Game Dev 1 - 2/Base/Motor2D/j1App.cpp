@@ -11,6 +11,7 @@
 #include "j1Audio.h"
 #include "j1Scene.h"
 #include "j1Map.h"
+#include "j1Player.h"
 #include "j1Pathfinding.h"
 #include "j1App.h"
 
@@ -29,6 +30,7 @@ j1App::j1App(int argc, char* args[]) : argc(argc), args(args)
 	tex = new j1Textures();
 	audio = new j1Audio();
 	scene = new j1Scene();
+	player = new j1Player();
 	map = new j1Map();
 	pathfinding = new j1Pathfinding();
 
@@ -39,6 +41,7 @@ j1App::j1App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(tex);
 	AddModule(audio);
 	AddModule(map);
+	AddModule(player);
 	AddModule(pathfinding);
 	AddModule(scene);
 
@@ -134,6 +137,9 @@ bool j1App::Update()
 	if(ret == true)
 		ret = PreUpdate();
 
+	if (ret == true)
+		ret = DoUpdateTick();
+
 	if(ret == true)
 		ret = DoUpdate();
 
@@ -175,9 +181,11 @@ void j1App::PrepareUpdate()
 	last_sec_frame_count++;
 
 	// TODO 10.4: Calculate the dt: differential time since last frame
-	
-	dt = 1 / (float)fps_cap;
-
+	uint32 time = frame_time.Read();
+	if (frame_time.Read() > 0)
+		dt = ((1000 /fps_cap) + (((1000.0f / fps_cap) - (time / fps_cap)) )) / 1000.0f;
+	else
+		dt = (1000 / fps_cap) / 1000.f;
 	frame_time.Start(); //Do it after dt lol
 }
 
@@ -201,11 +209,28 @@ void j1App::FinishUpdate()
 	// Amount of ms took the last update
 	// Amount of frames during the last second
 
+	p2List_item<j1Module*>* item;
+
+	float time = frame_time.Read();
+
+	for (item = modules.start; item != NULL; item = item->next)
+	{
+		if (item->data->tick_cap > 0) {
+			item->data->test_tens = (((int)time*10 / item->data->tick_cap ) % item->data->tick_cap );
+			item->data->test_tens += 10 * (((int)time*10 / 100) % 100);
+
+			LOG("%i %i", item->data->last_tens, item->data->test_tens);
+		}
+	}
+
 	if (last_sec_frame_time.Read() > 1000)
 	{
 		last_sec_frame_time.Start();
 		prev_last_sec_frame_count = last_sec_frame_count;
 		last_sec_frame_count = 0;
+
+		test_ticks = 0;
+
 	}
 
 	float avg_fps = float(frame_count) / startup_time.ReadSec();
@@ -214,8 +239,8 @@ void j1App::FinishUpdate()
 	uint32 frames_on_last_update = prev_last_sec_frame_count;
 
 	p2SString title;
-	title.create("Av.FPS: %.2f Last Frame Ms: %02u Last sec frames: %i  Time since startup: %.3f Frame Count: %lu ",
-		avg_fps, last_frame_ms, frames_on_last_update, seconds_since_startup, frame_count);
+	title.create("Av.FPS: %.2f Last Frame Ms: %02u Last sec frames: %i  Time since startup: %.3f Frame Count: %i Ticks: %i %i",
+		avg_fps, last_frame_ms, frames_on_last_update, seconds_since_startup,  frame_count, test_ticks / 10);
 
 
 	App->win->SetTitle(title.GetString());
@@ -246,6 +271,42 @@ bool j1App::PreUpdate()
 
 		ret = item->data->PreUpdate();
 	}
+
+	return ret;
+}
+
+// Call modules that require frame specific interaction, each loop iteration
+bool j1App::DoUpdateTick()
+{
+	bool ret = true;
+
+	
+	p2List_item<j1Module*>* item;
+	item = modules.start;
+	j1Module* pModule = NULL;
+
+	for (item = modules.start; item != NULL && ret == true; item = item->next)
+	{
+		pModule = item->data;
+
+		if (pModule->active == false) {
+			continue;
+		}
+
+		// TODO 10.5: send dt as an argument to all updates
+		// you will need to update module parent class
+		// and all modules that use update
+		if (item->data->tick_cap > 0) {
+			
+
+			LOG("%i %i", item->data->last_tens, item->data->test_tens);
+				ret = item->data->UpdateTick(dt * ((float)fps_cap / (float)item->data->tick_cap));
+				//test_ticks++;
+			
+			item->data->last_tens = item->data->test_tens;
+		}
+	}
+	
 
 	return ret;
 }

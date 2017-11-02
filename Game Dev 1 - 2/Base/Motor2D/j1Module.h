@@ -41,12 +41,18 @@ public:
 		return true;
 	}
 
+	// Call modules with specific frame required interaction, reach loop iteration
+	virtual bool UpdateTick(float dt)
+	{
+		return true;
+	}
+
 	// Called each loop iteration
 	virtual bool Update(float dt)
 	{
 		return true;
 	}
-
+	
 	// Called each loop iteration
 	virtual bool PostUpdate()
 	{
@@ -78,6 +84,9 @@ public:
 	bool		trigger_load;
 	bool		trigger_save;
 
+	uint		tick_cap = 0;
+	uint		test_tens;
+	uint		last_tens;
 };
 
 #endif // __j1MODULE_H__
