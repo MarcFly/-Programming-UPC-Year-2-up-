@@ -79,18 +79,19 @@ bool j1Scene::Update(float dt)
 	}
 
 	// Camera movement Inputs
+	// TODO 10.6: Make the camera movement independent of framerate
 
 	if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
-		App->render->camera.y -= 10;
+		App->render->camera.y -= 100 * dt;
 
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-		App->render->camera.y += 10;
+		App->render->camera.y += 100 * dt;
 
 	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-		App->render->camera.x -= 10;
+		App->render->camera.x -= 100 * dt;
 
 	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-		App->render->camera.x += 10;
+		App->render->camera.x += 100 * dt;
 
 	// Pathfinding Inputs
 	if (App->input->GetKey(SDL_SCANCODE_N) == KEY_DOWN)

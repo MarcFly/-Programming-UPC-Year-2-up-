@@ -7,6 +7,9 @@
 #include "j1PerfTimer.h"
 #include "PugiXml\src\pugixml.hpp"
 
+#define PERF_START(timer) timer.Start()
+#define PERF_PEEK(timer) LOG("%s took %f ms", __FUNCTION__, timer.ReadMs())
+
 // Draw Modes
 enum DrawMode {
 	standard = 0,
@@ -113,14 +116,17 @@ public:
 private:
 
 	p2List<j1Module*>	modules;
-	uint				frames;
-	uint				last_fr;
-	float				avg_fps;
-	float				seconds_since_startup;
-	float				last_frame_ms;
-	float				dt;
-	j1Timer				TickTimer;
-	j1PerfTimer			PerfTimer;
+
+	j1PerfTimer			ptimer;
+	uint64				frame_count = 0;
+	j1Timer				startup_time;
+	j1Timer				frame_time;
+	j1Timer				last_sec_frame_time;
+	uint32				last_sec_frame_count = 0;
+	uint32				prev_last_sec_frame_count = 0;
+	uint				fps_cap;
+
+	float dt;
 
 	float sth;
 
