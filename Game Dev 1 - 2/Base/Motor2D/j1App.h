@@ -101,6 +101,10 @@ private:
 	const bool Save();
 
 public:
+	// Framerate change
+	void ChangeFPSLimit();
+
+public:
 
 	// Modules
 	j1Window*			win;

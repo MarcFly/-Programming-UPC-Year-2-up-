@@ -82,16 +82,16 @@ bool j1Scene::Update(float dt)
 	// TODO 10.6: Make the camera movement independent of framerate
 
 	if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
-		App->render->camera.y -= 100 * dt;
+		App->render->camera.y -= 120 * dt;
 
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-		App->render->camera.y += 100 * dt;
+		App->render->camera.y += 120 * dt;
 
 	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-		App->render->camera.x -= 100 * dt;
+		App->render->camera.x -= 120 * dt;
 
 	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-		App->render->camera.x += 100 * dt;
+		App->render->camera.x += 120 * dt;
 
 	// Pathfinding Inputs
 	if (App->input->GetKey(SDL_SCANCODE_N) == KEY_DOWN)
@@ -107,6 +107,10 @@ bool j1Scene::Update(float dt)
 		App->pathfinding->SetStart(pos);
 		App->pathfinding->ResetNav();
 	}
+
+	// Framerate change
+	if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
+		App->ChangeFPSLimit();
 
 	//App->render->Blit(img, 0, 0);
 	App->map->Draw();

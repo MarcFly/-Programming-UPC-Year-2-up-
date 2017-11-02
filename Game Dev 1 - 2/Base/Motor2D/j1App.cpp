@@ -79,9 +79,8 @@ bool j1App::Awake()
 
 	ret = LoadConfig();
 
-	// TODO 1: Read from config file your framerate cap
-	fps_cap = root_node.child("app").child("fps").attribute("value").as_uint();
-
+	ChangeFPSLimit();
+	
 	p2List_item<j1Module*>* item;
 	item = modules.start;
 
@@ -176,7 +175,8 @@ void j1App::PrepareUpdate()
 	last_sec_frame_count++;
 
 	// TODO 10.4: Calculate the dt: differential time since last frame
-	dt = frame_time.ReadSec();
+	
+	dt = 1 / (float)fps_cap;
 
 	frame_time.Start(); //Do it after dt lol
 }
@@ -399,5 +399,20 @@ const bool j1App::Save() {
 	return ret;
 }
 
+void j1App::ChangeFPSLimit() {
 
+	// TODO 1: Read from config file your framerate cap
+	//fps_cap = root_node.child("app").child("fps").attribute("value").as_uint();
+
+	// Code that takes screen refresh rate to set framerate cap
+	DEVMODE lpdvm;
+	memset(&lpdvm, 0, sizeof(DEVMODE));
+	EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &lpdvm);
+	if(fps_cap != lpdvm.dmDisplayFrequency)
+		fps_cap = lpdvm.dmDisplayFrequency;
+	else
+		fps_cap = root_node.child("app").child("fps").attribute("value").as_uint();
+
+
+}
 
