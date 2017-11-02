@@ -45,7 +45,7 @@
   </map>
 
   <player>
-	<ticks value="10"/>
+	<ticks value="60"/>
   </player>
 
   <scene>

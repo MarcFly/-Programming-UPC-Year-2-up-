@@ -85,8 +85,7 @@ public:
 	bool		trigger_save;
 
 	uint		tick_cap = 0;
-	uint		test_tens;
-	uint		last_tens;
+	float		dt_sum = 0;
 };
 
 #endif // __j1MODULE_H__

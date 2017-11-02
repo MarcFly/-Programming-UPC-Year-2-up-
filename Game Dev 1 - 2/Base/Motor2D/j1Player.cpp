@@ -1,5 +1,7 @@
 #include "j1Player.h"
 #include "j1App.h"
+#include "j1Input.h"
+#include "j1Render.h"
 
 j1Player::j1Player()
 {
@@ -38,6 +40,8 @@ bool j1Player::UpdateTick(float dt)
 	bool ret = true;
 
 	App->test_ticks++;
+
+
 
 	return ret;
 }

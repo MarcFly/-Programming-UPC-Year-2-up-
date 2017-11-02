@@ -187,6 +187,18 @@ void j1App::PrepareUpdate()
 	else
 		dt = (1000 / fps_cap) / 1000.f;
 	frame_time.Start(); //Do it after dt lol
+
+	p2List_item<j1Module*>* item;
+	item = modules.start;
+
+	while (item != NULL)
+	{
+		if(item->data->tick_cap > 0)
+			item->data->dt_sum += dt;
+
+		item = item->next;
+	}
+	
 }
 
 // ---------------------------------------------
@@ -209,28 +221,14 @@ void j1App::FinishUpdate()
 	// Amount of ms took the last update
 	// Amount of frames during the last second
 
-	p2List_item<j1Module*>* item;
-
-	float time = frame_time.Read();
-
-	for (item = modules.start; item != NULL; item = item->next)
-	{
-		if (item->data->tick_cap > 0) {
-			item->data->test_tens = (((int)time*10 / item->data->tick_cap ) % item->data->tick_cap );
-			item->data->test_tens += 10 * (((int)time*10 / 100) % 100);
-
-			LOG("%i %i", item->data->last_tens, item->data->test_tens);
-		}
-	}
+	LOG("Ticks %i", test_ticks); //TEST TICKS LOG
 
 	if (last_sec_frame_time.Read() > 1000)
 	{
 		last_sec_frame_time.Start();
 		prev_last_sec_frame_count = last_sec_frame_count;
 		last_sec_frame_count = 0;
-
 		test_ticks = 0;
-
 	}
 
 	float avg_fps = float(frame_count) / startup_time.ReadSec();
@@ -239,8 +237,8 @@ void j1App::FinishUpdate()
 	uint32 frames_on_last_update = prev_last_sec_frame_count;
 
 	p2SString title;
-	title.create("Av.FPS: %.2f Last Frame Ms: %02u Last sec frames: %i  Time since startup: %.3f Frame Count: %i Ticks: %i %i",
-		avg_fps, last_frame_ms, frames_on_last_update, seconds_since_startup,  frame_count, test_ticks / 10);
+	title.create("Av.FPS: %.2f Last Frame Ms: %02u Last sec frames: %i  Time since startup: %.3f Frame Count: %i",
+		avg_fps, last_frame_ms, frames_on_last_update, seconds_since_startup,  frame_count);
 
 
 	App->win->SetTitle(title.GetString());
@@ -297,13 +295,13 @@ bool j1App::DoUpdateTick()
 		// you will need to update module parent class
 		// and all modules that use update
 		if (item->data->tick_cap > 0) {
-			
+			LOG("DT_SUM %.4f", item->data->dt_sum); //DT SUM LOG
 
-			LOG("%i %i", item->data->last_tens, item->data->test_tens);
+			if (item->data->dt_sum  > 1 / (float)item->data->tick_cap) {
 				ret = item->data->UpdateTick(dt * ((float)fps_cap / (float)item->data->tick_cap));
-				//test_ticks++;
+				item->data->dt_sum = 0;
+			}
 			
-			item->data->last_tens = item->data->test_tens;
 		}
 	}
 	
