@@ -14,6 +14,7 @@
 #include "j1Player.h"
 #include "j1Pathfinding.h"
 #include "j1App.h"
+#include "Brofiler\Brofiler.h"
 
 // TODO 9.3: Measure the amount of ms that takes to execute:
 // App constructor, Awake, Start and CleanUp
@@ -82,7 +83,8 @@ bool j1App::Awake()
 
 	ret = LoadConfig();
 
-	ChangeFPSLimit();
+	fps_cap = root_node.child("app").child("fps").attribute("value").as_uint();
+	//ChangeFPSLimit();
 	
 	p2List_item<j1Module*>* item;
 	item = modules.start;
@@ -246,7 +248,9 @@ void j1App::FinishUpdate()
 	// TODO 10.2: Use SDL_Delay to make sure you get your capped framerate
 	
 	// TODO 10.3: Measure accurately the amount of time it SDL_Delay actually waits compared to what was expected
-	uint32 delay = ((last_frame_ms / (1000 / fps_cap)) + 1) * (1000 / fps_cap) - last_frame_ms;
+	uint32 delay = 0;
+	if(cap)
+		delay = ((last_frame_ms / (1000 / fps_cap)) + 1) * (1000 / fps_cap) - last_frame_ms;
 	SDL_Delay(delay);
 	
 }
@@ -266,7 +270,8 @@ bool j1App::PreUpdate()
 		if(pModule->active == false) {
 			continue;
 		}
-
+		p2SString test("PreUpdate %s", item->data->name.GetString());
+		BROFILER_CATEGORY(test.GetString(), Profiler::Color::Chartreuse);
 		ret = item->data->PreUpdate();
 	}
 
@@ -329,6 +334,9 @@ bool j1App::DoUpdate()
 		// you will need to update module parent class
 		// and all modules that use update
 
+		p2SString test("Update %s", item->data->name.GetString());
+		BROFILER_CATEGORY(test.GetString(), Profiler::Color::Gold);
+
 		ret = item->data->Update(dt);
 	}
 
@@ -349,6 +357,9 @@ bool j1App::PostUpdate()
 		if(pModule->active == false) {
 			continue;
 		}
+
+		p2SString test("PostUpdate %s", item->data->name.GetString());
+		BROFILER_CATEGORY(test.GetString(), Profiler::Color::BlanchedAlmond);
 
 		ret = item->data->PostUpdate();
 	}
@@ -464,14 +475,16 @@ void j1App::ChangeFPSLimit() {
 	//fps_cap = root_node.child("app").child("fps").attribute("value").as_uint();
 
 	// Code that takes screen refresh rate to set framerate cap
-	DEVMODE lpdvm;
+	/*DEVMODE lpdvm;
 	memset(&lpdvm, 0, sizeof(DEVMODE));
 	EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &lpdvm);
 	if(fps_cap != lpdvm.dmDisplayFrequency)
 		fps_cap = lpdvm.dmDisplayFrequency;
 	else
 		fps_cap = root_node.child("app").child("fps").attribute("value").as_uint();
+		*/
 
+	cap = !cap;
 
 }
 
