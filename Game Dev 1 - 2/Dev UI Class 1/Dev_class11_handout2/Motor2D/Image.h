@@ -8,7 +8,7 @@ class Image : public UI_Element {
 public:
 	Image() {}
 
-	Image(SDL_Rect& rect, float size) { this->image_rect = rect; this->scale = size; }
+	Image(SDL_Rect& rect, float size) { image_rect = rect; scale = size; }
 
 	bool Awake(pugi::xml_node& config);
 	bool Start();
@@ -38,6 +38,7 @@ bool Image::SpecificPreUpdate()
 
 bool Image::SpecificPostUpdate()
 {
+	Draw();
 	return true;
 }
 

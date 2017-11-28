@@ -8,7 +8,7 @@ class Label : public UI_Element {
 public:
 	Label() {}
 
-	Label(SDL_Rect& rect, float size) { this->image_rect = rect; this->scale = size; }
+	Label(SDL_Rect& rect, float size) { image_rect = rect; scale = size; }
 
 	Label(_TTF_Font* f, const char* c) { content.create(c); font = f; }
 
@@ -38,22 +38,22 @@ bool Label::Start()
 	return true;
 }
 
-bool SpecificPreUpdate()
+bool Label::SpecificPreUpdate()
 {
 	return true;
 }
 
-bool SpecificPostUpdate()
+bool Label::SpecificPostUpdate()
 {
 	return true;
 }
 
-bool Draw()
+bool Label::Draw()
 {
 	return true;
 }
 
-bool CleanUp()
+bool Label::CleanUp()
 {
 	return true;
 }

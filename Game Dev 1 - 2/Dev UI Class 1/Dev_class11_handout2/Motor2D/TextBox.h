@@ -8,7 +8,7 @@ class TextBox : public Interactable {
 public:
 	TextBox() { text = nullptr; }
 
-	TextBox(SDL_Rect& rect, float size) { coll_rect = this->image_rect = rect; this->scale = size; text = new Label(rect, size); }
+	TextBox(SDL_Rect& rect, float size) { coll_rect = image_rect = rect; scale = size; text = new Label(rect, size); }
 
 	bool Start();
 	bool SpecificPreUpdate();

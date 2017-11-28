@@ -7,7 +7,7 @@
 class HyperLink : public Interactable {
 public:
 	HyperLink() {}
-	HyperLink(SDL_Rect& rect, float size) { coll_rect = this->image_rect = rect; this->scale = size; }
+	HyperLink(SDL_Rect& rect, float size) { coll_rect = image_rect = rect; scale = size; }
 
 	bool Awake(pugi::xml_node& config);
 	bool Start();

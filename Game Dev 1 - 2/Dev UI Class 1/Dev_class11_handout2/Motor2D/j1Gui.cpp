@@ -2,6 +2,12 @@
 #include "p2Log.h"
 #include "j1Gui.h"
 
+#include "Label.h"
+#include "Image.h"
+#include "Button.h"
+#include "HyperLink.h"
+#include "TextBox.h"
+
 j1Gui::j1Gui() : j1Module()
 {
 	name.create("gui");
@@ -34,8 +40,6 @@ bool j1Gui::Awake(pugi::xml_node& config)
 			object_node.attribute("size").as_float(),
 			object_node.attribute("type").as_int()));
 
-		objects.end->data->point_atlas = atlas;
-
 		object_node = object_node.next_sibling("object_node");
 	}
 
@@ -52,8 +56,10 @@ bool j1Gui::Start()
 	p2List_item<UI_Element*>* item = objects.start;
 
 	for (int i = 0; i < objects.count(); i++) {
-		if (item->data != nullptr)
+		if (item->data != nullptr) {
 			ret = item->data->Start();
+			item->data->point_atlas = atlas;
+		}
 		item = item->next;
 	}
 

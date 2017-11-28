@@ -7,7 +7,7 @@ class Button : public Interactable {
 public:
 	Button() {}
 
-	Button(SDL_Rect& rect, float size) { coll_rect = this->image_rect = rect; this->scale = size; }
+	Button(SDL_Rect& rect, float size) { coll_rect = image_rect = rect; scale = size; }
 
 	bool Awake(pugi::xml_node& config);
 	bool Start();
