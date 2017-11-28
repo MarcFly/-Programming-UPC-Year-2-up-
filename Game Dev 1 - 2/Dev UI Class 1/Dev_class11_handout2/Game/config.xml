@@ -20,6 +20,9 @@
 
   <gui>
     <atlas file="gui/atlas.png"/>
+    <objects>
+      <obj x="485" y="829" w="328" h="103" size="1" type="1"/>
+    </objects>
   </gui>
 
   <map>

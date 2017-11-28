@@ -61,6 +61,21 @@ public:
 		return mouse_buttons[id - 1];
 	}
 
+	int GetPressedKey()
+	{
+		j1KeyState* p = keyboard;
+
+		for (int i = 0; i < 300; i++)
+		{
+			if (*p == KEY_DOWN)
+				return i;
+
+			p++;
+		}
+
+		return INT_MAX;
+	}
+
 	// Check if a certain window event happened
 	bool GetWindowEvent(int code);
 
