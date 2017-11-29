@@ -40,8 +40,12 @@ bool j1Gui::Awake(pugi::xml_node& config)
 			object_node.attribute("size").as_float(),
 			object_node.attribute("type").as_int()));
 
-		object_node = object_node.next_sibling("object_node");
+		objects.end->data->Awake(object_node);
+
+		object_node = object_node.next_sibling("obj");
 	}
+	
+
 
 	return ret;
 }

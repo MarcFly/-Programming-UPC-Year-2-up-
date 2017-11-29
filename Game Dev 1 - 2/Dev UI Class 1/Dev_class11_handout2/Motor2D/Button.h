@@ -3,6 +3,12 @@
 
 #include "Interactables.h"
 
+enum Button_Type {
+	error__ = 0,
+
+	button_max
+};
+
 class Button : public Interactable {
 public:
 	Button() {}
@@ -16,15 +22,22 @@ public:
 	bool Draw();
 	bool CleanUp();
 
-	void OnClick();
-	void OnHover();
-
 public:
-
+	Label text;
+	iPoint text_offset;
 };
 
 bool Button::Awake(pugi::xml_node& config)
 {
+	text.content.create(config.attribute("label").as_string());
+	text.font = App->font->default;
+
+	position = { config.attribute("posx").as_int(), config.attribute("posy").as_int() };
+	
+	text_offset = { config.attribute("offx").as_int(), config.attribute("offy").as_int() };
+
+	text.scale = scale;
+
 	return true;
 }
 
@@ -40,27 +53,23 @@ bool Button::SpecificPreUpdate()
 
 bool Button::SpecificPostUpdate()
 {
+	Draw();
 	return true;
 }
 
 bool Button::Draw()
 {
+	App->render->Blit(point_atlas, position.x, position.y, &image_rect);
+	text.Draw({ position.x + text_offset.x, position.y + text_offset.y });
+	
 	return true;
 }
 
 bool Button::CleanUp()
 {
+	text.CleanUp();
+
 	return true;
-}
-
-void Button::OnClick()
-{
-
-}
-
-void Button::OnHover()
-{
-
 }
 
 #endif //_BUTTON_H_

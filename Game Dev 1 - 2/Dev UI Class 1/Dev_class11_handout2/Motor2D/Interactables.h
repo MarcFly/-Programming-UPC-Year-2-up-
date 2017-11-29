@@ -3,6 +3,15 @@
 
 #include "UI_Elements.h"
 
+enum mouse_state {
+	Enter = 0,
+	Stay,
+	Leave,
+	Out,
+
+	mouse_max
+};
+
 class Interactable : public UI_Element {
 public:
 
@@ -12,12 +21,9 @@ public:
 	{
 		bool ret = true;
 
-		is_hover = CheckHover();
+		state = CheckHover();
 
-		if (is_hover) {
-			is_click = CheckClick();
-			is_hover = !is_click;
-		}
+		is_click = CheckClick();
 
 		ret = SpecificPreUpdate();
 
@@ -30,9 +36,10 @@ public:
 	{
 		bool ret = true;
 
-		if (is_click)
+		if (is_click && state == Stay)
 			OnClick();
-		else if (is_hover)
+
+		if (!is_click && (state == Enter || state == Stay))
 			OnHover();
 
 		ret = SpecificPostUpdate();
@@ -41,26 +48,31 @@ public:
 	}
 
 public:
-	bool CheckHover()
-	{
-		bool ret = true;
-		
+	mouse_state CheckHover()
+	{		
 		SDL_Rect result;
 		SDL_Rect mouse = { 0,0,2,2 };
 		App->input->GetMousePosition(mouse.x, mouse.y);
 
 		SDL_IntersectRect( &mouse, &coll_rect, &result);
 
-		ret = (result.w > 0 && result.h > 0);
+		if ((result.w > 0 && result.h > 0) && (state == Leave || state == Out))
+			return Enter;
 
-		return ret; 
+		if ((result.w > 0 && result.h > 0) && (state == Enter || state == Stay))
+			return Stay;
+		
+		if ((result.w < 0 || result.h < 0) && (state == Enter || state == Stay))
+			return Leave;
+		
+		return Out;
 	};
 
 	bool CheckClick()
 	{
 		bool ret = false;
 
-		if (CheckHover() && App->input->GetMouseButtonDown(0) == KEY_DOWN) {
+		if (state == Stay && App->input->GetMouseButtonDown(1) == KEY_DOWN) {
 			OnClick();
 
 			return ret;
@@ -69,13 +81,14 @@ public:
 		return ret;
 	}
 
+public:
 	virtual void OnClick() {};
 	virtual void OnHover() {};
-
-public:
-	SDL_Rect coll_rect;
-	bool is_hover = false;
+	
 	bool is_click = false;
+	SDL_Rect coll_rect;
+
+	mouse_state state;
 };
 
 #endif //_INTERACTABLES_H_

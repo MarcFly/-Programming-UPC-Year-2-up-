@@ -6,10 +6,11 @@
 
 class TextBox : public Interactable {
 public:
-	TextBox() { text = nullptr; }
+	TextBox() {}
 
-	TextBox(SDL_Rect& rect, float size) { coll_rect = image_rect = rect; scale = size; text = new Label(rect, size); }
+	TextBox(SDL_Rect& rect, float size) { coll_rect = image_rect = rect; scale = size; }
 
+	bool Awake(pugi::xml_node& config);
 	bool Start();
 	bool SpecificPreUpdate();
 	bool SpecificPostUpdate();
@@ -19,25 +20,34 @@ public:
 	{
 		bool ret = true;
 
-		if (last_input != nullptr)
-			delete last_input;
-		last_input = nullptr;
-
-		delete text;
-
 		return ret;
 	}
 
-	void OnClick() { IsActive = true; }
+	void OnClick();
 	void OnHover() {};
-
-	void SetInactive() { IsActive = false; }
 
 public:
 	bool IsActive = false;
-	char* last_input;
-	Label* text;
+	Label text;
+	iPoint text_offset;
 };
+
+bool TextBox::Awake(pugi::xml_node& config)
+{
+	text.Awake(config);
+
+	position = { config.attribute("posx").as_int(), config.attribute("posy").as_int() };
+
+	text_offset = { config.attribute("offx").as_int(), config.attribute("offy").as_int() };
+
+	text.scale = scale;
+
+	coll_rect.x = position.x;
+	coll_rect.y = position.y;
+
+	return true;
+
+}
 
 bool TextBox::Start()
 {
@@ -45,11 +55,14 @@ bool TextBox::Start()
 	
 	return true;
 }
+
 bool TextBox::SpecificPreUpdate()
-{
-	if(IsActive)
-		last_input = new char(App->input->GetPressedKey());
-	
+{	
+	if ((state == Leave || state == Out) && is_click) {
+		IsActive = false;
+		App->input->StopBuffer();
+	}
+
 	return true;
 }
 
@@ -57,14 +70,11 @@ bool TextBox::SpecificPostUpdate()
 {
 	if (IsActive)
 	{
-		text->content.create("%s%s", text->content.GetString(), last_input);
-
-		delete last_input;
-		last_input = nullptr;
+		if(App->input->GetTextBuffer() != "")
+			text.content.create("%s%s", text.content.GetString(), App->input->GetTextBuffer());
 	}
 
-	delete last_input;
-
+	Draw();
 	return true;
 }
 
@@ -72,9 +82,15 @@ bool TextBox::Draw()
 {
 	bool ret = true;
 
-
-	text->Draw();
+	App->render->Blit(point_atlas, position.x, position.y, &image_rect);
+	text.Draw({ position.x + text_offset.x, position.y + text_offset.y });
 
 	return ret;
+}
+
+void TextBox::OnClick()
+{
+	IsActive = true; 
+	App->input->StartBuffer();
 }
 #endif //_TextBox_H_

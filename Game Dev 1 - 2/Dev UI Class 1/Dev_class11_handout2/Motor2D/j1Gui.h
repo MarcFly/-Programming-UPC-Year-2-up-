@@ -14,7 +14,7 @@ class HyperLink;
 
 // TODO 1: Create your structure of classes
 enum element_type {
-	error_ = -1,
+	error_ = 0,
 	label,
 	image,
 	textbox,

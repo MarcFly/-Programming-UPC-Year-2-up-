@@ -19,7 +19,7 @@ public:
 	bool Start();
 	bool SpecificPreUpdate();
 	bool SpecificPostUpdate();
-	bool Draw();
+	bool Draw(const iPoint& pos);
 	bool CleanUp();
 
 public:
@@ -30,6 +30,10 @@ public:
 
 bool Label::Awake(pugi::xml_node& config)
 {
+	content.create(config.attribute("content").as_string());
+	font = App->font->default;
+	position = { config.attribute("posx").as_int(), config.attribute("posy").as_int() };
+
 	return true;
 }
 
@@ -45,16 +49,22 @@ bool Label::SpecificPreUpdate()
 
 bool Label::SpecificPostUpdate()
 {
+	Draw(position);
 	return true;
 }
 
-bool Label::Draw()
+bool Label::Draw(const iPoint& pos)
 {
+	App->render->Blit(App->font->Print(content.GetString()), pos.x, pos.y);
+
 	return true;
 }
 
 bool Label::CleanUp()
 {
+	content.Clear();
+	font = nullptr;
+
 	return true;
 }
 

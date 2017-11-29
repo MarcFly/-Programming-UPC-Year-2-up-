@@ -2,6 +2,7 @@
 #define __j1INPUT_H__
 
 #include "j1Module.h"
+#include "SDL\include\SDL.h"
 
 //#define NUM_KEYS 352
 #define NUM_MOUSE_BUTTONS 5
@@ -61,27 +62,22 @@ public:
 		return mouse_buttons[id - 1];
 	}
 
-	int GetPressedKey()
-	{
-		j1KeyState* p = keyboard;
-
-		for (int i = 0; i < 300; i++)
-		{
-			if (*p == KEY_DOWN)
-				return i;
-
-			p++;
-		}
-
-		return INT_MAX;
-	}
-
 	// Check if a certain window event happened
 	bool GetWindowEvent(int code);
 
 	// Get mouse / axis position
 	void GetMousePosition(int &x, int &y);
 	void GetMouseMotion(int& x, int& y);
+
+	const char* GetTextBuffer() 
+	{ 
+		p2SString ret;
+		ret.create(text_buffer.GetString()); 
+		text_buffer.Clear(); 
+		return ret.GetString(); 
+	}
+	void StartBuffer() { SDL_StartTextInput(); }
+	void StopBuffer() { SDL_StopTextInput(); }
 
 private:
 	bool		windowEvents[WE_COUNT];
@@ -91,6 +87,7 @@ private:
 	int			mouse_motion_y;
 	int			mouse_x;
 	int			mouse_y;
+	p2SString	text_buffer;
 };
 
 #endif // __j1INPUT_H__
