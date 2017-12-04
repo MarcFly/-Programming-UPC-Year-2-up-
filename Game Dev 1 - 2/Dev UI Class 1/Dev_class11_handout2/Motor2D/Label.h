@@ -55,7 +55,12 @@ bool Label::SpecificPostUpdate()
 
 bool Label::Draw(const iPoint& pos)
 {
-	App->render->Blit(App->font->Print(content.GetString()), pos.x, pos.y);
+	SDL_Texture* temp = App->font->Print(content.GetString());
+	
+	App->render->Blit(temp, pos.x, pos.y);
+
+	App->tex->UnLoad(temp);
+	temp = nullptr;
 
 	return true;
 }
