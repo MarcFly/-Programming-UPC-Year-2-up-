@@ -72,8 +72,9 @@ public:
 	{
 		bool ret = false;
 
-		if (state == Stay && App->input->GetMouseButtonDown(1) == KEY_DOWN) {
-			OnClick();
+		if (App->input->GetMouseButtonDown(1) == KEY_DOWN) {
+			if(state == Stay)
+				OnClick();
 
 			return ret;
 		}

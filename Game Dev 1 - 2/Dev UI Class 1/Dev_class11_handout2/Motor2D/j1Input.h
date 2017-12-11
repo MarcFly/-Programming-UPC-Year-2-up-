@@ -70,12 +70,15 @@ public:
 	void GetMouseMotion(int& x, int& y);
 
 	const char* GetTextBuffer() 
-	{ 
-		p2SString ret;
-		ret.create(text_buffer.GetString()); 
-		text_buffer.Clear(); 
-		return ret.GetString(); 
+	{
+		return text_buffer.GetString(); 
 	}
+	
+	void ClearTextBuffer()
+	{
+		text_buffer.Clear();
+	}
+
 	void StartBuffer() { SDL_StartTextInput(); }
 	void StopBuffer() { SDL_StopTextInput(); }
 
@@ -87,7 +90,9 @@ private:
 	int			mouse_motion_y;
 	int			mouse_x;
 	int			mouse_y;
+
 	p2SString	text_buffer;
+
 };
 
 #endif // __j1INPUT_H__

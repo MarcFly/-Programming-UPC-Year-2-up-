@@ -45,6 +45,7 @@ bool TextBox::Awake(pugi::xml_node& config)
 	coll_rect.x = position.x;
 	coll_rect.y = position.y;
 
+
 	return true;
 
 }
@@ -53,15 +54,21 @@ bool TextBox::Start()
 {
 	bool ret = true;
 	
+	text.Start();
+
 	return true;
 }
 
 bool TextBox::SpecificPreUpdate()
 {	
-	if ((state == Leave || state == Out) && is_click) {
-		IsActive = false;
-		App->input->StopBuffer();
+	if ((state == Leave || state == Out)) {
+		if (is_click) {
+			IsActive = false;
+			App->input->StopBuffer();
+		}
 	}
+
+	text.SpecificPostUpdate();
 
 	return true;
 }
@@ -70,9 +77,15 @@ bool TextBox::SpecificPostUpdate()
 {
 	if (IsActive)
 	{
-		if(App->input->GetTextBuffer() != "")
-			text.content.create("%s%s", text.content.GetString(), App->input->GetTextBuffer());
+
+		text.content.create("%s%s", text.content.GetString(), App->input->GetTextBuffer());
+		App->input->ClearTextBuffer();
+
+		if (App->input->GetKey(SDL_SCANCODE_BACKSPACE) == KEY_DOWN && text.content.GetCapacity() > 1)
+			text.content.EraseBack() ;
 	}
+
+	text.position = { position.x + text_offset.x, position.y + text_offset.y };
 
 	Draw();
 	return true;
@@ -83,13 +96,15 @@ bool TextBox::Draw()
 	bool ret = true;
 
 	App->render->Blit(point_atlas, position.x, position.y, &image_rect);
-	text.Draw({ position.x + text_offset.x, position.y + text_offset.y });
+
+	text.SpecificPostUpdate();
 
 	return ret;
 }
 
 void TextBox::OnClick()
 {
+
 	IsActive = true; 
 	App->input->StartBuffer();
 }

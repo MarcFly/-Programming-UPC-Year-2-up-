@@ -25,7 +25,7 @@ public:
 public:
 	p2SString content;
 	_TTF_Font* font = nullptr;
-
+	SDL_Texture* blit = nullptr;
 };
 
 bool Label::Awake(pugi::xml_node& config)
@@ -44,6 +44,7 @@ bool Label::Start()
 
 bool Label::SpecificPreUpdate()
 {
+
 	return true;
 }
 
@@ -55,12 +56,13 @@ bool Label::SpecificPostUpdate()
 
 bool Label::Draw(const iPoint& pos)
 {
-	SDL_Texture* temp = App->font->Print(content.GetString());
-	
-	App->render->Blit(temp, pos.x, pos.y);
+	if (blit != nullptr)
+		App->tex->UnLoad(blit);
+	blit = nullptr;
 
-	App->tex->UnLoad(temp);
-	temp = nullptr;
+	blit = App->font->Print(content.GetString());
+	
+	App->render->Blit(blit, pos.x, pos.y);
 
 	return true;
 }
@@ -69,6 +71,10 @@ bool Label::CleanUp()
 {
 	content.Clear();
 	font = nullptr;
+
+	if (blit != nullptr)
+		App->tex->UnLoad(blit);
+	blit = nullptr;
 
 	return true;
 }
